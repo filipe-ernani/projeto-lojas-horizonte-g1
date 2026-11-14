@@ -1,23 +1,14 @@
-import "./App.css";
-import { BrowserRouter, Routes, Router, Navigate } from "react-router-dom";
-
-//Pages
-
-//Components
-//Contexts
-//Hooks
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Teste from "@/pages/_Teste/Teste";
 
 function App() {
   return (
-    <>
-      <div className="App">
-        <BrowserRouter>
-          <Routes>
-            <Router></Router>
-          </Routes>
-        </BrowserRouter>
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/_teste" element={<Teste />} />
+        <Route path="*" element={<Navigate to="/_teste" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
