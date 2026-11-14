@@ -1,0 +1,74 @@
+categoria_olist,categoria_horizonte,incluir,justificativa
+fashion_bolsas_e_acessorios,Acessórios,true,Moda: bolsas e acessórios
+malas_acessorios,Acessórios,true,Moda: malas e acessórios de viagem
+relogios_presentes,Acessórios,true,"Moda: relógios, acessório de vestuário"
+beleza_saude,Beleza,true,Adjacente: linha de beleza vendida por redes de moda
+perfumaria,Beleza,true,Adjacente: perfumaria vendida por redes de moda
+fashion_calcados,Calçados,true,Moda: calçados
+cama_mesa_banho,Casa,true,"Adjacente: têxteis para casa, linha comum em redes de moda"
+casa_conforto,Casa,true,Adjacente: têxteis e conforto para casa
+casa_conforto_2,Casa,true,Adjacente: têxteis e conforto para casa
+esporte_lazer,Esporte,true,"Adjacente: artigos esportivos, 7,7% dos itens; linha fitness comum em redes de moda"
+fashion_esporte,Esporte,true,Moda: vestuário esportivo
+fashion_roupa_feminina,Feminino,true,Moda: vestuário feminino
+fashion_roupa_infanto_juvenil,Infantil,true,Moda: vestuário infantojuvenil
+fashion_roupa_masculina,Masculino,true,Moda: vestuário masculino
+fashion_underwear_e_moda_praia,Moda íntima e praia,true,Moda: underwear e praia
+agro_industria_e_comercio,,false,Fora do mix de uma rede de moda
+alimentos,,false,Fora do mix de uma rede de moda
+alimentos_bebidas,,false,Fora do mix de uma rede de moda
+artes,,false,Fora do mix de uma rede de moda
+artes_e_artesanato,,false,Fora do mix de uma rede de moda
+artigos_de_festas,,false,Fora do mix de uma rede de moda
+artigos_de_natal,,false,Fora do mix de uma rede de moda
+audio,,false,Fora do mix de uma rede de moda
+automotivo,,false,Fora do mix de uma rede de moda
+bebes,,false,Fora do mix de uma rede de moda
+bebidas,,false,Fora do mix de uma rede de moda
+brinquedos,,false,Fora do mix de uma rede de moda
+casa_construcao,,false,Fora do mix de uma rede de moda
+cds_dvds_musicais,,false,Fora do mix de uma rede de moda
+cine_foto,,false,Fora do mix de uma rede de moda
+climatizacao,,false,Fora do mix de uma rede de moda
+consoles_games,,false,Fora do mix de uma rede de moda
+construcao_ferramentas_construcao,,false,Fora do mix de uma rede de moda
+construcao_ferramentas_ferramentas,,false,Fora do mix de uma rede de moda
+construcao_ferramentas_iluminacao,,false,Fora do mix de uma rede de moda
+construcao_ferramentas_jardim,,false,Fora do mix de uma rede de moda
+construcao_ferramentas_seguranca,,false,Fora do mix de uma rede de moda
+cool_stuff,,false,Fora do mix de uma rede de moda
+dvds_blu_ray,,false,Fora do mix de uma rede de moda
+eletrodomesticos,,false,Fora do mix de uma rede de moda
+eletrodomesticos_2,,false,Fora do mix de uma rede de moda
+eletronicos,,false,Fora do mix de uma rede de moda
+eletroportateis,,false,Fora do mix de uma rede de moda
+ferramentas_jardim,,false,Fora do mix de uma rede de moda
+flores,,false,Fora do mix de uma rede de moda
+fraldas_higiene,,false,Fora do mix de uma rede de moda
+industria_comercio_e_negocios,,false,Fora do mix de uma rede de moda
+informatica_acessorios,,false,Fora do mix de uma rede de moda
+instrumentos_musicais,,false,Fora do mix de uma rede de moda
+la_cuisine,,false,Fora do mix de uma rede de moda
+livros_importados,,false,Fora do mix de uma rede de moda
+livros_interesse_geral,,false,Fora do mix de uma rede de moda
+livros_tecnicos,,false,Fora do mix de uma rede de moda
+market_place,,false,Fora do mix de uma rede de moda
+moveis_colchao_e_estofado,,false,Fora do mix de uma rede de moda
+moveis_cozinha_area_de_servico_jantar_e_jardim,,false,Fora do mix de uma rede de moda
+moveis_decoracao,,false,Fora do mix de uma rede de moda
+moveis_escritorio,,false,Fora do mix de uma rede de moda
+moveis_quarto,,false,Fora do mix de uma rede de moda
+moveis_sala,,false,Fora do mix de uma rede de moda
+musica,,false,Fora do mix de uma rede de moda
+papelaria,,false,Fora do mix de uma rede de moda
+pc_gamer,,false,Fora do mix de uma rede de moda
+pcs,,false,Fora do mix de uma rede de moda
+pet_shop,,false,Fora do mix de uma rede de moda
+portateis_casa_forno_e_cafe,,false,Fora do mix de uma rede de moda
+portateis_cozinha_e_preparadores_de_alimentos,,false,Fora do mix de uma rede de moda
+seguros_e_servicos,,false,Fora do mix de uma rede de moda
+sinalizacao_e_seguranca,,false,Fora do mix de uma rede de moda
+tablets_impressao_imagem,,false,Fora do mix de uma rede de moda
+telefonia,,false,Fora do mix de uma rede de moda
+telefonia_fixa,,false,Fora do mix de uma rede de moda
+utilidades_domesticas,,false,Fora do mix de uma rede de moda
