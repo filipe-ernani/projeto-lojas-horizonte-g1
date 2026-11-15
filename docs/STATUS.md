@@ -3,8 +3,8 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 15/11/2026 (tela de Login implementada com modos entrar, cadastrar e recuperar senha)
-**Fase atual:** 2. O que não depende de dados (layout, rotas e Login prontos; falta ChatWidget)
+**Última atualização:** 15/11/2026 (estrutura da Home implementada com seções, ProductCard, ProductGrid, CategoryList, ProductImage, RatingPill, EmptyState e estados)
+**Fase atual:** 3. Estrutura das telas (Home pronta; pendente ChatWidget da Fase 2 e Catálogo da Fase 3)
 
 ## Bloqueios externos
 
@@ -14,7 +14,8 @@
 ## Em andamento
 
 - Fase 2 (UI): `ChatWidget` (só a interface, sem resposta real).
-- Design: `IconButton` e `EmptyState` em `components/ui/`.
+- Fase 3 (UI): Catálogo (`/catalogo`).
+- Design: `IconButton` em `components/ui/`.
 
 ## Roteiro por fases
 
@@ -46,7 +47,7 @@ Marque `[x]` quando a tarefa passar na definição de pronto (ver `AGENTS.md`).
 
 Cada tela com layout completo, componentes recebendo dados por props e estados de carregando, erro e vazio.
 
-- [ ] Home
+- [x] Home
 - [ ] Catálogo (filtros preço, tamanho, categoria; busca; paginação)
 - [ ] Produto (cor, tamanho, comentários, semelhantes)
 - [ ] Favoritos
@@ -70,7 +71,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
-- **De:** UI (`ui-builder`) → **Para:** Design (`design-guardian`): criar `IconButton` (com suporte a contador) e `EmptyState` em `src/components/ui/` conforme `docs/DESIGN.md` (seção 4). Hoje `Header` usa links estilizados e as páginas usam `PageSkeleton` temporário até esses componentes existirem.
+- **De:** UI (`ui-builder`) → **Para:** Design (`design-guardian`): criar `IconButton` (com suporte a contador) em `src/components/ui/` conforme `docs/DESIGN.md` (seção 4). `EmptyState`, `ProductImage` e `RatingPill` foram implementados na base de UI/design para destravar a vitrine.
 
 ## Problemas conhecidos
 
@@ -85,3 +86,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 15/11 | Completados `firebase.js` (senderId, storageBucket, `GoogleAuthProvider`), tradução de erros no `AuthContextProvider.jsx`, `.env.example` e `!.env.example` no `.gitignore` | `feat(dados): completa config do Firebase, tradução de erros e .env.example` | UI: Header, Footer, rotas/`PrivateRoute`, Login e `ChatWidget`          |
 | 15/11 | Envolvido app com `BrowserRouter` e `AuthProvider`; criados `Header`, `Footer`, `PrivateRoute`, `Layout`, `PageSkeleton` e rotas públicas/privadas em `App.jsx` | `feat(ui): cria Header, Footer, PrivateRoute e rotas principais` | UI: tela de Login e `ChatWidget` (e Design: `IconButton` e `EmptyState`) |
 | 15/11 | Implementada tela de Login (`/login`) com 3 modos (entrar, criar conta, recuperar senha), integração ao `useAuth`, validações nativas, acessibilidade e design responsivo | `feat(ui): implementa tela de Login com três modos e autenticação` | UI: `ChatWidget` (e Design: `IconButton` e `EmptyState`) |
+| 15/11 | Implementada estrutura da Home (`/`) com seções (hero, categorias, vitrine/novidades, benefícios), componentes de dados via props (`CategoryList`, `ProductGrid`, `ProductCard`), `ProductImage`, `RatingPill`, `EmptyState` e estados | `feat(ui): implementa estrutura da Home com seções e componentes de vitrine` | UI: Catálogo (`/catalogo`) ou `ChatWidget` |
