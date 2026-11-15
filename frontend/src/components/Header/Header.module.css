@@ -75,7 +75,9 @@
   font-weight: var(--fw-medium);
   text-decoration: none;
   border-radius: var(--radius-sm);
-  transition: color 0.15s ease, background 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
 }
 
 .navLink:hover {
@@ -127,7 +129,7 @@
   gap: var(--space-1);
 }
 
-.iconButton {
+.menuTrigger {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -136,29 +138,11 @@
   height: var(--control-h-sm);
   border-radius: var(--radius-pill);
   color: var(--color-ink);
-  text-decoration: none;
   transition: background 0.15s ease;
 }
 
-.iconButton:hover {
+.menuTrigger:hover {
   background: var(--color-surface);
-}
-
-.badge {
-  position: absolute;
-  top: var(--space-1);
-  right: var(--space-1);
-  min-width: 1.125rem;
-  height: 1.125rem;
-  padding-inline: var(--space-1);
-  border-radius: var(--radius-pill);
-  background: var(--color-ink);
-  color: var(--color-paper);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 @media (min-width: 1024px) {

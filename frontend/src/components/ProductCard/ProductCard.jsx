@@ -7,9 +7,9 @@ import styles from "./ProductCard.module.css";
 
 /**
  * Card de produto conforme docs/DESIGN.md:
- * Imagem 4:5 com FavoriteButton no canto superior direito.
+ * Imagem 4:5 com FavoriteButton posicionado sobre a imagem (irmão do Link).
  * Abaixo: linha de preço em negrito + RatingPill, nome (15 px) e categoria (muted 14 px).
- * O link envolve o card levando a /produto/:id.
+ * Acessibilidade: o FavoriteButton fica fora do Link para evitar aninhamento de elementos interativos.
  */
 export default function ProductCard({ produto }) {
   if (!produto) {
@@ -28,11 +28,6 @@ export default function ProductCard({ produto }) {
       >
         <div className={styles.imageContainer}>
           <ProductImage imagemUrl={imagemUrl} alt={nome} />
-          <div className={styles.favoriteWrapper}>
-            <FavoriteButton
-              ariaLabel={`Adicionar ${nome} aos favoritos`}
-            />
-          </div>
         </div>
 
         <div className={styles.content}>
@@ -45,6 +40,12 @@ export default function ProductCard({ produto }) {
           <p className={styles.category}>{categoria}</p>
         </div>
       </Link>
+
+      <div className={styles.favoriteWrapper}>
+        <FavoriteButton
+          ariaLabel={`Adicionar ${nome} aos favoritos`}
+        />
+      </div>
     </article>
   );
 }
