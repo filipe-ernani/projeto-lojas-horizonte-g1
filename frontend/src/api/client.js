@@ -1,7 +1,6 @@
 import { auth } from "../firebase";
 
-function removerBarrasFinais(url) {
-  let limpa = url || "";
+function removerBarrasFinais(limpa = "") {
   while (limpa.endsWith("/")) {
     limpa = limpa.slice(0, -1);
   }
@@ -31,7 +30,11 @@ export async function request(caminho, opcoes = {}) {
   const caminhoNormalizado = caminho.startsWith("/") ? caminho : `/${caminho}`;
   const headers = new Headers(opcoes.headers);
 
-  if (opcoes.body && !(opcoes.body instanceof FormData) && !headers.has("Content-Type")) {
+  if (
+    opcoes.body &&
+    !(opcoes.body instanceof FormData) &&
+    !headers.has("Content-Type")
+  ) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -54,7 +57,8 @@ export async function request(caminho, opcoes = {}) {
   const dados = parseJsonSeguro(texto);
 
   if (!resposta.ok) {
-    const mensagem = dados?.erro || `Erro ${resposta.status} ao comunicar com o servidor.`;
+    const mensagem =
+      dados?.erro || `Erro ${resposta.status} ao comunicar com o servidor.`;
     const erro = new Error(mensagem);
     erro.status = resposta.status;
     throw erro;
