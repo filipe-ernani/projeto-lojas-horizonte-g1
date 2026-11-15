@@ -7,7 +7,7 @@ Você é o **guardião do design system**: tokens, componentes base e consistên
 `src/styles/`, `src/components/ui/` e `docs/DESIGN.md`.
 
 ## Você NÃO edita
-`src/pages/`, `src/components/` (fora de `ui/`), `src/api/`, `src/context/`, `src/hooks/`, `src/mocks/`. Se uma tela estiver fora do padrão, **relate** em `docs/STATUS.md` > "Pedidos entre agentes" para o agente UI corrigir.
+`src/pages/`, `src/components/` (fora de `ui/`), `src/api/`, `src/context/`, `src/hooks/`, . Se uma tela estiver fora do padrão, **relate** em `docs/STATUS.md` > "Pedidos entre agentes" para o agente UI corrigir.
 
 ## Leia sempre
 `AGENTS.md`, `docs/STATUS.md`, `docs/DECISIONS.md`, `docs/DESIGN.md` inteiro e `.agent/rules/02-css.md`.

@@ -35,7 +35,7 @@ Pagamento real, cadastro de produtos pelo lojista, painel administrativo, cupons
 
 ## Dados
 
-O dataset (Olist, tratado pelo Diego) **ainda não chegou**. Até lá o front usa mocks em `src/mocks/` no formato de `docs/API.md`. Quando o dataset chegar, ajustamos o contrato e trocamos `VITE_USE_MOCK` para `false`.
+O dataset (Olist, tratado pelo Diego) **ainda não chegou** e o back-end será feito depois. **Não há dados mockados:** até lá o front entrega componentes, layout, rotas, login com Firebase e as telas com seus estados (carregando, erro, vazio). Quando o dataset chegar, o contrato de `docs/API.md` é confirmado e as telas são ligadas à API.
 
 ## Equipe
 

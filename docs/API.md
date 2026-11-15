@@ -1,6 +1,6 @@
 # API.md — Contrato de dados (PROVISÓRIO)
 
-> **Provisório** até o dataset e o back-end ficarem prontos. O front usa estes formatos; os mocks em `src/mocks/` seguem exatamente isto. Se o contrato mudar, atualize **este arquivo primeiro**, depois os mocks e `src/api/`.
+> **Provisório** até o dataset e o back-end ficarem prontos. Não há mocks: o front só liga estes formatos quando a API existir. Se o contrato mudar, atualize **este arquivo primeiro**, depois `src/api/`.
 > Regra para agentes: só use rotas e campos que estão aqui. Faltou algo? Pergunte ao Caio e registre em `docs/DECISIONS.md`.
 
 Base: `VITE_API_URL` (ex.: `http://localhost:3000`). JSON em **camelCase**. Valores monetários em **número** (reais, ex.: `520` ou `89.9`), formatados no front com `formatCurrency`.
@@ -64,6 +64,6 @@ O preço e o total são **sempre calculados pelo servidor**; o front só exibe.
 
 Resposta de erro: `{ erro: "mensagem curta em português" }` com status HTTP adequado (`400`, `401`, `404`, `409` para estoque insuficiente, `500`). O front mostra a mensagem do campo `erro` quando existir.
 
-## Mock
+## Sem mock
 
-Com `VITE_USE_MOCK=true`, `src/api/` lê de `src/mocks/*.json`, simula 300 ms de atraso e guarda favoritos, carrinho, endereços e pedidos em `localStorage` (chave `horizonte-mock-*`), para a demo funcionar sem back-end.
+Não existem dados de exemplo no front. Sem back-end, as telas de dados mostram o estado de erro ou vazio. Quando o dataset e a API estiverem prontos, este contrato é revisado antes de qualquer `src/api/` de recurso.

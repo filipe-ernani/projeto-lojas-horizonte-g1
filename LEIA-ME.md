@@ -68,12 +68,12 @@ export default defineConfig({
 1. Abra a pasta no Antigravity.
 2. Crie uma conversa com o agente **Design** e cole: `Atue como o agente Design. Siga docs/agentes/design-guardian.md e rode /retomar.`
 3. Peça: "Crie o componente `Button`." Depois `/revisar`, `/explicar` e `/handoff`.
-4. Repita com **Dados** (mocks e `client.js`) e **UI** (Home).
+4. Repita com **Dados** (`utils`, `client.js` e login Firebase) e **UI** (Home).
 
 O guia dos agentes está em `docs/agentes/README.md`.
 
 ## 6. Quando o dataset chegar
 
 1. Atualize `docs/API.md` com o formato real.
-2. Peça ao agente **Dados** para ajustar mocks e `src/api/`.
-3. Troque `VITE_USE_MOCK=false` no `.env` e teste com o back-end.
+2. Peça ao agente **Dados** para criar `src/api/` e os hooks de cada recurso (skill `criar-hook-api`).
+3. Ligue os hooks às páginas (agente **UI**) e teste sucesso, vazio e erro.

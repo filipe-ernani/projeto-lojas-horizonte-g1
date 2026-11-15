@@ -45,10 +45,9 @@ npm run build    # build de produção
 
 ```
 src/
-  api/            # funções que falam com a API ou com o mock          -> Dados
+  api/            # funções que falam com a API (fetch)               -> Dados
   context/        # AuthContext, CartContext, FavoritesContext         -> Dados
   hooks/          # useProducts, useFavorites, ...                     -> Dados
-  mocks/          # JSON de exemplo (formato igual ao docs/API.md)     -> Dados
   utils/          # formatCurrency, formatDate                         -> Dados
   firebase.js     # configuração do Firebase (lê o .env)               -> Dados
   styles/         # tokens.css, reset.css, global.css                  -> Design
@@ -73,9 +72,16 @@ Precisa mexer na pasta de outro agente? **Não edite.** Registre o pedido em `do
 - Dinheiro sempre via `formatCurrency` (BRL). Nada de `toFixed` espalhado.
 - Sem `console.log` esquecido, sem código comentado, sem arquivos sem uso.
 
-## Dados: mock primeiro
+## Dados: sem mock
 
-Enquanto o dataset e a API não chegam, a variável `VITE_USE_MOCK=true` faz `src/api/` devolver o conteúdo de `src/mocks/`. Os mocks seguem **exatamente** o formato de `docs/API.md`. Quando a API existir, troque a variável para `false`; as telas não devem mudar.
+**Não usamos dados mockados.** O dataset (Olist, tratado por outro integrante) e o back-end ainda não existem, e o Caio vai esperar por eles. Por isso:
+
+- **Proibido** criar `src/mocks/`, JSON de exemplo, listas de produtos inventadas ou `localStorage` simulando back-end.
+- O que **não depende de back-end** é feito já: componentes, layout, rotas, login com Firebase.
+- Telas de dados (catálogo, produto, favoritos, carrinho...) são construídas com **estrutura e estados** (carregando, erro, vazio). Sem API, elas mostram erro ou vazio, e isso é esperado.
+- Componentes recebem dados **por props**. Quando houver API, só se liga o hook à página.
+- Para ver um componente com conteúdo, o Caio pode pedir uma página de teste (`src/pages/_Teste`) com props escritas na hora, descartada depois. Isso não vira dado do app.
+- `docs/API.md` é o contrato **provisório**. Será confirmado quando o dataset chegar. Até lá, não escreva `src/api/` de recurso que o Caio não pediu.
 
 ## Segredos e arquivos sensíveis (`.gitignore`)
 

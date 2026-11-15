@@ -5,7 +5,7 @@ Quatro papéis. Você (Caio) é o **orquestrador**: aprova planos, decide priori
 | Agente | Arquivo | Pastas que edita | Faz |
 |---|---|---|---|
 | **UI** | `ui-builder.md` | `components/` (exceto `ui/`), `pages/`, `routes/` | Telas e componentes de negócio |
-| **Dados** | `data-builder.md` | `api/`, `context/`, `hooks/`, `mocks/`, `utils/`, `firebase.js` | Mock, API, hooks, Context, login |
+| **Dados** | `data-builder.md` | `api/`, `context/`, `hooks/`, `utils/`, `firebase.js` | API, hooks, Context, login |
 | **Design** | `design-guardian.md` | `styles/`, `components/ui/`, `docs/DESIGN.md` | Tokens, componentes base, consistência visual |
 | **Revisor** | `reviewer.md` | nenhuma (só lê e relata) | Lint, build, navegador, checklist |
 
@@ -21,7 +21,7 @@ Quatro papéis. Você (Caio) é o **orquestrador**: aprova planos, decide priori
 ## Ordem recomendada
 
 1. **Design:** tokens (já prontos no kit) e componentes `ui/`.
-2. **Dados:** `client.js`, mocks e a primeira camada (produtos).
+2. **Dados:** `utils`, `client.js` e Firebase Auth (login). Sem mocks; hooks de dados só quando o dataset chegar.
 3. **UI:** Home, Catálogo, Produto.
 4. Repita por fatia: Login, Favoritos, Carrinho, Perfil, Checkout, Pedidos, Chat.
 

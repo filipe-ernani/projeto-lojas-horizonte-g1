@@ -3,60 +3,67 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 14/11/2026 (Fase 0 conferida, Button criado e página temporária `/_teste` pronta)
-**Fase atual:** 1. Base visual (Design)
+**Última atualização:** 15/11/2026 (formatadores, cliente HTTP, Firebase e AuthContext criados)
+**Fase atual:** 2. O que não depende de dados (Dados concluído; falta UI)
+
+## Bloqueios externos
+
+- **Dataset (Diego):** ainda não chegou. Sem ele, não há dados reais nas telas. **Não usamos mocks** (ver D-19).
+- **Back-end (Caio):** será feito depois do front. Telas de dados ficam com estrutura e estados até lá.
 
 ## Em andamento
 
-- Fase 1 iniciada: `Button` criado em `frontend/src/components/ui/Button/` + página temporária `/_teste`. Próximo componente: `IconButton`.
+- Fase 2 (UI): Header, Footer, rotas/`PrivateRoute`, tela de Login e `ChatWidget`.
+- Lembrete: criar o arquivo `.env` local a partir do `.env.example` antes de testar o login com Firebase.
 
 ## Roteiro por fases
 
 Marque `[x]` quando a tarefa passar na definição de pronto (ver `AGENTS.md`).
 
-### Fase 0. Preparação (14 a 15/11)
+### Fase 0. Preparação
 - [ ] Criar o projeto Vite (`react`, JSX) e instalar `react-router-dom`, `firebase`, `lucide-react`
 - [ ] Copiar este kit para a raiz; importar `tokens.css`, `reset.css`, `global.css` no `main.jsx`
 - [ ] Configurar alias `@` para `src/` no `vite.config.js`
 - [ ] Carregar a fonte Inter no `index.html`
-- [ ] Criar `.env.example` e `.env` (Firebase, `VITE_API_URL`, `VITE_USE_MOCK=true`)
-- [ ] Mocks iniciais em `src/mocks/` (produtos, categorias, avaliações) no formato de `docs/API.md`
-- [ ] `src/api/client.js` com a chave mock/API
+- [ ] Criar `.env` a partir do `.env.example` (Firebase e `VITE_API_URL`); conferir que está no `.gitignore`
 
 ### Fase 1. Base visual (Design)
 - [ ] `components/ui/`: Button, IconButton, Field, Checkbox, Radio, Chip, ColorSwatch, Badge, RatingPill, Accordion, QuantityStepper, ProductImage, EmptyState
 
-### Fase 2. Vitrine (UI + Dados)
-- [ ] Header e Footer
+### Fase 2. O que não depende de dados (Dados + UI)
+- [x] Dados: `utils/formatCurrency.js` e `formatDate.js`
+- [x] Dados: `src/api/client.js` (fetch real, `VITE_API_URL`, `Authorization`, campo `erro`)
+- [x] Dados: `src/firebase.js` e `AuthContext` (Google, e-mail/senha, sair, recuperar senha por link)
+- [ ] UI: Header e Footer
+- [ ] UI: rotas e `PrivateRoute`
+- [ ] UI: tela de Login
+- [ ] UI: `ChatWidget` (só a interface, sem resposta real)
+
+### Fase 3. Estrutura das telas (UI, sem dados)
+Cada tela com layout completo, componentes recebendo dados por props e estados de carregando, erro e vazio.
 - [ ] Home
-- [ ] Catálogo com filtros (preço, tamanho, categoria), busca e paginação
+- [ ] Catálogo (filtros preço, tamanho, categoria; busca; paginação)
 - [ ] Produto (cor, tamanho, comentários, semelhantes)
-
-### Fase 3. Conta
-- [ ] Firebase Auth: login Google e e-mail/senha, recuperar senha, `AuthContext`, `PrivateRoute`
-- [ ] Login (tela)
-
-### Fase 4. Compra
-- [ ] Favoritos (`FavoritesContext` e tela)
-- [ ] Carrinho (`CartContext` e tela)
-- [ ] Perfil com endereços
+- [ ] Favoritos
+- [ ] Carrinho
 - [ ] Checkout simulado
+- [ ] Perfil com endereços
 - [ ] Meus pedidos
 
-### Fase 5. Chat
-- [ ] `ChatWidget` com resposta mock
-- [ ] Ligar à rota `/api/chat` real
+### Fase 4. Ligar à API (BLOQUEADA até dataset e back-end)
+- [ ] Confirmar `docs/API.md` com o formato real do dataset
+- [ ] Dados: `src/api/` e hooks por recurso (`criar-hook-api`)
+- [ ] Dados: `CartContext` e `FavoritesContext`
+- [ ] UI: ligar hooks às páginas
+- [ ] Chat: ligar à rota `/api/chat`
 
-### Fase 6. Acabamento
+### Fase 5. Acabamento
 - [ ] Revisão responsiva em 390, 768 e 1440 px
-- [ ] Trocar `VITE_USE_MOCK` para `false` quando a API e o dataset estiverem prontos
 - [ ] README do projeto e roteiro da demo (3 minutos)
 
 ## Pedidos entre agentes
 
-- **De Design para UI / Dados:** Criar as pastas restantes da estrutura do `AGENTS.md` dentro de `frontend/src/` (`pages/`, `api/`, `hooks/`, `context/`, `mocks/`, `utils/`, `routes/`).
-- **De Design para Dados / Infra:** Atualizar `.gitignore` (raiz e `frontend/.gitignore`) com `.env.*`, `!.env.example`, `*-firebase-adminsdk-*.json`, `serviceAccount*.json`, `*.pem`, `*.key` e `.firebase/` (conforme `AGENTS.md` e `D-18`), e criar `.env` a partir de `.env.example`.
-- **De Design para UI:** `frontend/src/App.jsx` foi ajustado temporariamente para apontar para a página de teste `/_teste` (`Teste.jsx`); remover a rota temporária quando as telas reais forem criadas.
+(Vazio. Um agente que precisa de mudança em pasta de outro escreve aqui: de quem, para quem, o quê.)
 
 ## Problemas conhecidos
 
@@ -66,5 +73,5 @@ Marque `[x]` quando a tarefa passar na definição de pronto (ver `AGENTS.md`).
 
 | Data | O que foi feito | Commit sugerido | Próximo passo |
 |---|---|---|---|
-| 14/11 | Kit de agentes, design e contexto criado | `chore: adiciona kit de agentes, design e contexto` | Fase 0 |
-| 14/11 | Ajusta `index.html`, registra pendências da Fase 0 e cria componente `Button` + `/_teste` | `feat(ui): cria componente Button e pagina temporaria de teste` | Criar `IconButton` em `components/ui/` |
+| 15/11 | Kit de agentes, design e contexto criado (sem mocks) | `chore: adiciona kit de agentes, design e contexto` | Fase 0 |
+| 15/11 | Criados `formatCurrency`, `formatDate`, `api/client.js`, `firebase.js` e `AuthContext` | `feat(dados): cria formatadores, cliente HTTP e AuthContext` | UI: Header, Footer, rotas/`PrivateRoute` e Login (e criar `.env` local) |

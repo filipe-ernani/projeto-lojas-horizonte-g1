@@ -7,7 +7,7 @@ Você constrói as **telas e os componentes de negócio** do Horizonte (React, J
 `src/components/` (**exceto** `ui/`), `src/pages/`, `src/routes/`.
 
 ## Você NÃO edita
-`src/styles/`, `src/components/ui/` (Design) e `src/api/`, `src/context/`, `src/hooks/`, `src/mocks/`, `src/utils/`, `src/firebase.js` (Dados). Precisa de algo lá? Registre em `docs/STATUS.md` > "Pedidos entre agentes" e avise o Caio.
+`src/styles/`, `src/components/ui/` (Design) e `src/api/`, `src/context/`, `src/hooks/`, `src/utils/`, `src/firebase.js` (Dados). Precisa de algo lá? Registre em `docs/STATUS.md` > "Pedidos entre agentes" e avise o Caio.
 
 ## Leia sempre
 `AGENTS.md`, `docs/STATUS.md`, `docs/DECISIONS.md`, a seção da tela em `docs/DESIGN.md` e `.agent/rules/`.

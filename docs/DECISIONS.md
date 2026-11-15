@@ -8,7 +8,7 @@
 | D-02 | 13/11 | Estilo com **CSS Modules** + tokens em `tokens.css` | O briefing pede "CSS puro"; CSS Modules é CSS comum com escopo local. Confirmar com a coordenação |
 | D-03 | 13/11 | Stack enxuta: sem Zod, TanStack Query, MSW, React Hook Form, axios | Prazo curto e Caio está aprendendo; cada biblioteca nova é risco |
 | D-04 | 13/11 | Dados via `fetch` nativo, Context API e hooks próprios | Mesmo motivo de D-03 |
-| D-05 | 13/11 | Mock primeiro (`VITE_USE_MOCK`), API depois | O dataset ainda não chegou; o front não pode esperar |
+| D-05 | 13/11 | ~~Mock primeiro~~ **Substituída por D-19** | — |
 | D-06 | 13/11 | Filtros do catálogo: **preço, tamanho, categoria**. Sem cor, marca e estilo | Pedido do Caio; marca e estilo não existem nos dados |
 | D-07 | 13/11 | Produto: escolher **tamanho** (número em calçados) e **cor** | Pedido do Caio |
 | D-08 | 13/11 | **Favoritos** (coração) entram no escopo | Pedido do Caio |
@@ -21,4 +21,5 @@
 | D-15 | 14/11 | Contexto do projeto em arquivos (`docs/`), sem "agente de memória" | Arquivos versionados não alucinam; resumo gerado por modelo pode errar |
 | D-16 | 14/11 | Cada agente só edita as próprias pastas (ver `AGENTS.md`) | Evita conflito entre agentes em paralelo |
 | D-17 | 14/11 | Ao fim de cada tarefa o agente entrega **sugestão de commit** (formato `tipo(escopo): resumo`); quem commita é o Caio | Registro do que foi feito e evidência no GitHub para o PMO |
+| D-19 | 14/11 | **Sem dados mockados.** O front entrega estrutura, componentes, rotas, login e estados (carregando, erro, vazio); os dados vêm da API real quando o dataset e o back-end existirem. O back-end fica para depois | Pedido do Caio: esperar o dataset do outro integrante |
 | D-18 | 14/11 | Arquivos sensíveis sempre no `.gitignore` antes de qualquer commit; `git status` obrigatório antes de sugerir commit | Evitar vazamento de chaves |
