@@ -1,0 +1,32 @@
+.container {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--control-h-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--color-ink);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.label {
+  font-size: var(--fs-sm);
+  color: var(--color-ink);
+  line-height: 1.4;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.disabled .input {
+  cursor: not-allowed;
+}
