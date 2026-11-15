@@ -1,0 +1,62 @@
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-h-sm);
+  height: var(--control-h-sm);
+  min-width: var(--control-h-sm);
+  min-height: var(--control-h-sm);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-ink);
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--color-surface);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: currentColor;
+  transition:
+    transform 0.15s ease,
+    fill 0.15s ease;
+}
+
+.active .icon {
+  fill: currentColor;
+}
+
+.badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: var(--space-1);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  border: 2px solid var(--color-paper);
+  border-radius: var(--radius-pill);
+  font-size: 0.6875rem;
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  pointer-events: none;
+}

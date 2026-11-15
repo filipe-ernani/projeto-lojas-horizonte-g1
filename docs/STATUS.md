@@ -3,7 +3,7 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 15/11/2026 (revisão de design em EmptyState, ProductImage e RatingPill concluída)
+**Última atualização:** 15/11/2026 (IconButton criado em components/ui/ com suporte a contador, Link e estado ativo)
 **Fase atual:** 3. Estrutura das telas (Home pronta; pendente ChatWidget da Fase 2 e Catálogo da Fase 3)
 
 ## Bloqueios externos
@@ -15,7 +15,7 @@
 
 - Fase 2 (UI): `ChatWidget` (só a interface, sem resposta real).
 - Fase 3 (UI): Catálogo (`/catalogo`).
-- Design: `IconButton` em `components/ui/`.
+- Design: `Field` em `components/ui/`.
 
 ## Roteiro por fases
 
@@ -31,7 +31,7 @@ Marque `[x]` quando a tarefa passar na definição de pronto (ver `AGENTS.md`).
 
 ### Fase 1. Base visual (Design)
 
-- [ ] `components/ui/`: Button [x], IconButton [ ], Field [ ], Checkbox [ ], Radio [ ], Chip [ ], ColorSwatch [ ], Badge [ ], RatingPill [x], Accordion [ ], QuantityStepper [ ], ProductImage [x], EmptyState [x]
+- [ ] `components/ui/`: Button [x], IconButton [x], Field [ ], Checkbox [ ], Radio [ ], Chip [ ], ColorSwatch [ ], Badge [ ], RatingPill [x], Accordion [ ], QuantityStepper [ ], ProductImage [x], EmptyState [x]
 
 ### Fase 2. O que não depende de dados (Dados + UI)
 
@@ -71,7 +71,8 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
-- **De:** UI (`ui-builder`) → **Para:** Design (`design-guardian`): criar `IconButton` (com suporte a contador) em `src/components/ui/` conforme `docs/DESIGN.md` (seção 4).
+- **De:** Design (`design-guardian`) → **Para:** UI (`ui-builder`): `IconButton` pronto; trocar os links do Header e o FavoriteButton por ele.
+- *(Resolvido em 15/11)* `IconButton` criado com CSS Module, área de toque de 44px, badge de contador, navegação por Link e estado ativo.
 - *(Resolvido em 15/11)* Revisão de `EmptyState`, `ProductImage` e `RatingPill` realizada por Design: tokens conferidos, acessibilidade aprimorada e aninhamento inválido de botão corrigido.
 
 ## Problemas conhecidos
@@ -92,3 +93,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 15/11 | Implementada tela de Login (`/login`) com 3 modos (entrar, criar conta, recuperar senha), integração ao `useAuth`, validações nativas, acessibilidade e design responsivo | `feat(ui): implementa tela de Login com três modos e autenticação` | UI: `ChatWidget` (e Design: `IconButton` e `EmptyState`) |
 | 15/11 | Implementada estrutura da Home (`/`) com seções (hero, categorias, vitrine/novidades, benefícios), componentes de dados via props (`CategoryList`, `ProductGrid`, `ProductCard`), `ProductImage`, `RatingPill`, `EmptyState` e estados | `feat(ui): implementa estrutura da Home com seções e componentes de vitrine` | UI: Catálogo (`/catalogo`) ou `ChatWidget` |
 | 15/11 | Revisão de Design em `src/components/ui/` (EmptyState, ProductImage, RatingPill): tokens de controle, acessibilidade (role="img", aria-hidden), remoção de aninhamento button/link | `style(ui): padroniza tokens e acessibilidade de EmptyState, ProductImage e RatingPill` | Design: IconButton ou UI: Catálogo (`/catalogo`) |
+| 15/11 | Criado `src/components/ui/IconButton` com CSS Module, tokens de 44px, badge de contador (99+), suporte a Link/button e estado ativo | `feat(ui): cria componente IconButton com contador e navegação por Link` | UI: trocar links do Header e FavoriteButton por IconButton ou Catálogo (`/catalogo`) |
