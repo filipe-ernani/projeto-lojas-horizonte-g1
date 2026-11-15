@@ -1,0 +1,137 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-line);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  color: var(--color-ink);
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: var(--fs-2xl);
+  }
+}
+
+.summaryCard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  padding: var(--space-5);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+}
+
+@media (min-width: 640px) {
+  .summaryCard {
+    grid-template-columns: 200px 1fr;
+    align-items: center;
+    padding: var(--space-6);
+    gap: var(--space-8);
+  }
+}
+
+.scoreBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-1);
+}
+
+.bigScore {
+  font-size: 3rem;
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+.starsWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.starIcon {
+  color: var(--color-star);
+  fill: var(--color-star);
+}
+
+.scoreLabel {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-muted);
+}
+
+.totalLabel {
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+}
+
+.distributionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.distRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.starLabel {
+  width: 70px;
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.track {
+  flex: 1;
+  height: 8px;
+  background-color: var(--color-line);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background-color: var(--color-star);
+  border-radius: var(--radius-pill);
+  transition: width var(--transition-normal);
+}
+
+.distCount {
+  width: 32px;
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+  text-align: right;
+}
+
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.emptyReviews {
+  padding: var(--space-6);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.emptyText {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
