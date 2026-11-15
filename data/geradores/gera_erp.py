@@ -60,7 +60,7 @@ def indice_da_loja_fisica(datas: pd.DatetimeIndex, cfg: dict) -> pd.Series:
         valores.append(sem_dia_semana.loc[origem])
 
     indice = pd.Series(valores, index=datas).clip(cfg["indice_minimo"], cfg["indice_maximo"])
-    fator_loja = pd.Series([cfg["fator_dia_semana"][DIAS[d.dayofweek]] for d in datas], index=datas)
+    fator_loja = pd.Series([cfg["fator_dia_semana"][DIAS[d.day_of_week]] for d in datas], index=datas)
     return indice * fator_loja
 
 
