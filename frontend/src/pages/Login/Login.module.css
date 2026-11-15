@@ -1,0 +1,442 @@
+/* Estrutura mobile-first para a tela de Login */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--color-paper);
+}
+
+/* Banner lateral escuro: oculto em mobile, visível em desktop */
+.bannerSection {
+  display: none;
+}
+
+/* Área do formulário */
+.formSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-6) var(--gutter);
+  width: 100%;
+}
+
+.formCard {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cabeçalho mobile */
+.formHeaderMobile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.mobileLogo {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.14em;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  text-decoration: none;
+  min-height: var(--control-h-sm);
+  padding: 0 var(--space-2);
+}
+
+.backLink:hover {
+  color: var(--color-ink);
+}
+
+/* Títulos do formulário */
+.formHeading {
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  line-height: 1.25;
+  color: var(--color-ink);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+/* Alertas de erro e sucesso */
+.alertError {
+  background: rgba(223, 55, 55, 0.08);
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger-text);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  margin-bottom: var(--space-6);
+}
+
+.alertSuccess {
+  background: var(--color-surface);
+  border: 1px solid var(--color-ink);
+  color: var(--color-ink);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  margin-bottom: var(--space-6);
+  line-height: 1.4;
+}
+
+/* Formulário e campos */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-ink);
+}
+
+.optional {
+  font-weight: var(--fw-regular);
+  color: var(--color-muted);
+}
+
+.inlineAction {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  color: var(--color-link);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.inlineAction:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.input {
+  width: 100%;
+  height: var(--control-h);
+  padding: 0 var(--space-4);
+  background: var(--color-field);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-md);
+  font-family: inherit;
+  color: var(--color-ink);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.input::placeholder {
+  color: var(--color-muted);
+}
+
+.input:focus {
+  background: var(--color-paper);
+  border-color: var(--color-ink);
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.inputError {
+  border-color: var(--color-danger);
+}
+
+.inputError:focus {
+  border-color: var(--color-danger);
+  outline-color: var(--color-danger);
+}
+
+.fieldError {
+  font-size: var(--fs-xs);
+  color: var(--color-danger-text);
+  font-weight: var(--fw-medium);
+  margin-top: var(--space-1);
+}
+
+/* Input com botão de visibilidade de senha */
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWithToggle {
+  padding-right: var(--space-12);
+}
+
+.passwordToggle {
+  position: absolute;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--control-h-sm);
+  height: var(--control-h-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.passwordToggle:hover:not(:disabled) {
+  color: var(--color-ink);
+}
+
+.passwordToggle:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.passwordToggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Ações e botões */
+.submitBtn {
+  margin-top: var(--space-2);
+}
+
+.socialBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: var(--space-6) 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.dividerText {
+  padding: 0 var(--space-3);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  color: var(--color-muted);
+  letter-spacing: 0.05em;
+}
+
+.googleBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.googleIcon {
+  flex-shrink: 0;
+}
+
+/* Rodapé do formulário: alternância de modos */
+.formFooter {
+  margin-top: var(--space-8);
+  text-align: center;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-surface);
+}
+
+.switchText {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+.switchButton {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-link);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.switchButton:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.switchButton:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+/* Estado de carregamento inicial da sessão */
+.loadingWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-6);
+  background: var(--color-paper);
+}
+
+.loadingSkeleton {
+  width: 100%;
+  max-width: 440px;
+  height: 480px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* Breakpoint Tablet (>= 640px) */
+@media (min-width: 640px) {
+  .formSection {
+    padding: var(--space-10) var(--gutter);
+  }
+}
+
+/* Breakpoint Desktop (>= 1024px) */
+@media (min-width: 1024px) {
+  .page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .bannerSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    padding: var(--space-12) var(--space-10);
+    position: relative;
+    user-select: none;
+  }
+
+  .bannerContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .bannerLogo {
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.14em;
+    color: var(--color-paper);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .bannerLogo:focus-visible {
+    outline: 2px solid var(--color-paper);
+    outline-offset: 4px;
+  }
+
+  .bannerText {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .bannerTagline {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-line);
+  }
+
+  .bannerTitle {
+    font-size: var(--fs-4xl);
+    font-weight: var(--fw-bold);
+    line-height: 1.15;
+    color: var(--color-paper);
+  }
+
+  .bannerDescription {
+    font-size: var(--fs-md);
+    line-height: 1.6;
+    color: var(--color-line);
+  }
+
+  .bannerFooter {
+    font-size: var(--fs-xs);
+    color: var(--color-muted);
+  }
+
+  .formSection {
+    overflow-y: auto;
+    padding: var(--space-12) var(--space-8);
+  }
+
+  /* Oculta o header mobile redundante no desktop */
+  .formHeaderMobile {
+    display: none;
+  }
+}

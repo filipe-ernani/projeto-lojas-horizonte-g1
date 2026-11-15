@@ -3,8 +3,8 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 15/11/2026 (Header, Footer, PrivateRoute e rotas/esqueletos de páginas criados)
-**Fase atual:** 2. O que não depende de dados (layout e rotas prontos; falta Login e ChatWidget)
+**Última atualização:** 15/11/2026 (tela de Login implementada com modos entrar, cadastrar e recuperar senha)
+**Fase atual:** 2. O que não depende de dados (layout, rotas e Login prontos; falta ChatWidget)
 
 ## Bloqueios externos
 
@@ -13,8 +13,8 @@
 
 ## Em andamento
 
-- Fase 2 (UI): tela de Login e `ChatWidget`.
-- Lembrete: criar o arquivo `.env` local a partir do `.env.example` antes de testar o login com Firebase.
+- Fase 2 (UI): `ChatWidget` (só a interface, sem resposta real).
+- Design: `IconButton` e `EmptyState` em `components/ui/`.
 
 ## Roteiro por fases
 
@@ -39,7 +39,7 @@ Marque `[x]` quando a tarefa passar na definição de pronto (ver `AGENTS.md`).
 - [x] Dados: `src/firebase.js` e `AuthContext` (Google, e-mail/senha, sair, recuperar senha por link)
 - [x] UI: Header e Footer
 - [x] UI: rotas e `PrivateRoute`
-- [ ] UI: tela de Login
+- [x] UI: tela de Login
 - [ ] UI: `ChatWidget` (só a interface, sem resposta real)
 
 ### Fase 3. Estrutura das telas (UI, sem dados)
@@ -84,3 +84,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 15/11 | Criados `formatCurrency`, `formatDate`, `api/client.js`, `firebase.js` e `AuthContext`                                                                                      | `feat(dados): cria formatadores, cliente HTTP e AuthContext`                 | UI: Header, Footer, rotas/`PrivateRoute` e Login (e criar `.env` local) |
 | 15/11 | Completados `firebase.js` (senderId, storageBucket, `GoogleAuthProvider`), tradução de erros no `AuthContextProvider.jsx`, `.env.example` e `!.env.example` no `.gitignore` | `feat(dados): completa config do Firebase, tradução de erros e .env.example` | UI: Header, Footer, rotas/`PrivateRoute`, Login e `ChatWidget`          |
 | 15/11 | Envolvido app com `BrowserRouter` e `AuthProvider`; criados `Header`, `Footer`, `PrivateRoute`, `Layout`, `PageSkeleton` e rotas públicas/privadas em `App.jsx` | `feat(ui): cria Header, Footer, PrivateRoute e rotas principais` | UI: tela de Login e `ChatWidget` (e Design: `IconButton` e `EmptyState`) |
+| 15/11 | Implementada tela de Login (`/login`) com 3 modos (entrar, criar conta, recuperar senha), integração ao `useAuth`, validações nativas, acessibilidade e design responsivo | `feat(ui): implementa tela de Login com três modos e autenticação` | UI: `ChatWidget` (e Design: `IconButton` e `EmptyState`) |
