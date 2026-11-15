@@ -99,3 +99,68 @@ catalogo:
   # para que alguns produtos vendam muito mais que outros (padrão comum no varejo).
   # Valores de uma lognormal: mediana 1, com poucos SKUs bem acima disso.
   popularidade_sigma: 0.8
+
+# ---------------------------------------------------------------------------
+# ERP: vendas das lojas físicas, cadastro de produtos e estoque diário
+# Gerado por data/geradores/gera_erp.py
+# ---------------------------------------------------------------------------
+erp:
+  pasta_saida: data/saida/erp          # ignorada pelo Git (.gitignore)
+  data_inicio: "2025-02-01"            # jan/2025 tem índice de sazonalidade instável (poucos dados no Olist)
+  data_fim: "2026-11-15"               # data fixa para o resultado ser reproduzível
+
+  # Lojas físicas. porte define o volume de vendas e o tamanho do sortimento.
+  lojas:
+    - {loja_id: L01, nome: Horizonte Paulista,        cidade: São Paulo,           uf: SP, porte: G}
+    - {loja_id: L02, nome: Horizonte Tatuapé,         cidade: São Paulo,           uf: SP, porte: M}
+    - {loja_id: L03, nome: Horizonte Campinas,        cidade: Campinas,            uf: SP, porte: M}
+    - {loja_id: L04, nome: Horizonte Santos,          cidade: Santos,              uf: SP, porte: M}
+    - {loja_id: L05, nome: Horizonte São José,        cidade: São José dos Campos, uf: SP, porte: M}
+    - {loja_id: L06, nome: Horizonte Ribeirão Preto,  cidade: Ribeirão Preto,      uf: SP, porte: P}
+    - {loja_id: L07, nome: Horizonte Sorocaba,        cidade: Sorocaba,            uf: SP, porte: P}
+    - {loja_id: L08, nome: Horizonte Rio Centro,      cidade: Rio de Janeiro,      uf: RJ, porte: G}
+    - {loja_id: L09, nome: Horizonte Niterói,         cidade: Niterói,             uf: RJ, porte: P}
+    - {loja_id: L10, nome: Horizonte Belo Horizonte,  cidade: Belo Horizonte,      uf: MG, porte: G}
+    - {loja_id: L11, nome: Horizonte Uberlândia,      cidade: Uberlândia,          uf: MG, porte: M}
+    - {loja_id: L12, nome: Horizonte Juiz de Fora,    cidade: Juiz de Fora,        uf: MG, porte: P}
+
+  portes:
+    # unidades: média de itens vendidos num dia normal (índice 1,0)
+    # sortimento: fração dos SKUs do catálogo que a loja trabalha
+    G: {unidades_dia: 80, sortimento: 1.00}
+    M: {unidades_dia: 50, sortimento: 0.85}
+    P: {unidades_dia: 30, sortimento: 0.70}
+
+  # D16 (proposta): grupos que as lojas físicas não vendem. Use [] para vender tudo.
+  grupos_fora_da_loja_fisica: [Casa]
+
+  # Peso de cada grupo na demanda da loja física (multiplica a popularidade do SKU)
+  peso_grupo: {Vestuário: 1.0, Acessórios: 0.8, Esporte: 0.6, Beleza: 0.7, Casa: 0.5}
+
+  # D15 (proposta): padrão de dia da semana da loja física (média 1,0).
+  # O gerador remove o padrão do online (Olist) e aplica este.
+  fator_dia_semana: {seg: 0.80, ter: 0.85, qua: 0.90, qui: 0.95, sex: 1.15, sab: 1.45, dom: 0.90}
+
+  indice_minimo: 0.4    # limita dias extremos do índice de sazonalidade
+  indice_maximo: 8.0
+
+  # Cupom fiscal: quantidade de itens por compra (1 + distribuição geométrica)
+  itens_por_cupom_media: 1.8
+  horario_abertura: 10
+  horario_fechamento: 22
+
+  # Descontos em datas promocionais (fração sobre o preço de tabela)
+  promocoes:
+    - {nome: Black Friday 2025, inicio: "2025-11-28", fim: "2025-12-01", desconto: 0.25}
+
+  # Política de estoque por loja e SKU, em dias de venda média
+  estoque:
+    dias_maximo: 30         # estoque após reposição
+    ponto_pedido_dias: 10   # pede reposição quando o estoque cai a esse nível
+    prazo_entrega_dias: 5   # dias entre o pedido e a chegada
+
+  # "Sujeira" plantada de propósito para as checagens de qualidade encontrarem
+  sujeira:
+    linhas_duplicadas: 0.002   # 0,2% das linhas de venda repetidas
+    sku_nulo: 0.001            # 0,1% sem SKU
+    quantidade_negativa: 0.001 # 0,1% com quantidade negativa
