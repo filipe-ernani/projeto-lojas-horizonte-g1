@@ -71,11 +71,15 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
-- **De:** UI (`ui-builder`) → **Para:** Design (`design-guardian`): criar `IconButton` (com suporte a contador) em `src/components/ui/` conforme `docs/DESIGN.md` (seção 4). `EmptyState`, `ProductImage` e `RatingPill` foram implementados na base de UI/design para destravar a vitrine.
+- **De:** UI (`ui-builder`) → **Para:** Design (`design-guardian`): revisar `EmptyState`, `ProductImage` e `RatingPill` (criados pelo UI em `src/components/ui/`) e ajustar ao `docs/DESIGN.md`.
+- **De:** UI (`ui-builder`) → **Para:** Design (`design-guardian`): criar `IconButton` (com suporte a contador) em `src/components/ui/` conforme `docs/DESIGN.md` (seção 4).
 
 ## Problemas conhecidos
 
-(Vazio.)
+- `Home.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando a Home usar o hook de dados (Fase 4).
+- `Home.jsx` define `categorias = []` e `produtos = []` como props padrão para manter a vitrine funcional sem dados; substituir pela integração dos hooks na Fase 4.
+- `ProductCard.jsx` e `FavoriteButton.jsx` possuem botão de favoritos apenas visual com `preventDefault`; integrar ao `FavoritesContext` na Fase 4.
+- `Header.jsx` usa links estilizados em vez de `IconButton` com contador até o componente ser implementado por Design.
 
 ## Registro de sessões
 
