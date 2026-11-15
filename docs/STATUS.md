@@ -3,7 +3,7 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 15/11/2026 (estrutura do Catálogo implementada com filtros, paginação, busca e estados)
+**Última atualização:** 15/11/2026 (criados componentes ColorSwatch, QuantityStepper e Badge em components/ui/)
 **Fase atual:** 3. Estrutura das telas (Home e Catálogo prontos; pendente Produto, Favoritos, etc., e ChatWidget da Fase 2)
 
 ## Bloqueios externos
@@ -15,7 +15,7 @@
 
 - Fase 2 (UI): `ChatWidget` (só a interface, sem resposta real).
 - Fase 3 (UI): Produto (`/produto/:id`).
-- Design: `QuantityStepper`, `Badge` e `ColorSwatch` em `components/ui/`.
+- Design: `Breadcrumb` em `components/ui/`.
 
 ## Roteiro por fases
 
@@ -31,7 +31,7 @@ Marque `[x]` quando a tarefa passar na definição de pronto (ver `AGENTS.md`).
 
 ### Fase 1. Base visual (Design)
 
-- [ ] `components/ui/`: Button [x], IconButton [x], Field [x], Checkbox [x], Radio [x], Chip [x], ColorSwatch [ ], Badge [ ], RatingPill [x], Accordion [x], QuantityStepper [ ], ProductImage [x], EmptyState [x]
+- [ ] `components/ui/`: Button [x], IconButton [x], Field [x], Checkbox [x], Radio [x], Chip [x], ColorSwatch [x], Badge [x], RatingPill [x], Accordion [x], QuantityStepper [x], ProductImage [x], EmptyState [x]
 
 ### Fase 2. O que não depende de dados (Dados + UI)
 
@@ -71,6 +71,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
+- **De:** Design (`design-guardian`) → **Para:** UI (`ui-builder`): componentes `ColorSwatch`, `QuantityStepper` e `Badge` prontos em `src/components/ui/` para as telas de Produto e Carrinho.
 - *(Resolvido em 15/11)* Componentes de base (`Checkbox`, `Radio`, `Chip`, `Accordion`, `Field`) integrados no `FilterPanel` e no Catálogo pelo agente UI.
 - *(Resolvido em 15/11)* Integração do `IconButton` no `Header` (favoritos, cesta, conta) e no `FavoriteButton` concluída pelo UI.
 - *(Resolvido em 15/11)* `IconButton` criado com CSS Module, área de toque de 44px, badge de contador, navegação por Link e estado ativo.
@@ -99,3 +100,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 15/11 | Integrado `IconButton` no `Header` e no `FavoriteButton`, com remoção de CSS não utilizado e resolução do pedido entre agentes | `refactor(ui): integra IconButton no Header e FavoriteButton` | UI: Catálogo (`/catalogo`) ou `ChatWidget` |
 | 15/11 | Criados componentes base `Checkbox`, `Radio`, `Chip`, `Accordion` e `Field` em `src/components/ui/` com CSS Modules, tokens e acessibilidade (aria-describedby, aria-pressed) | `feat(ui): cria componentes Checkbox, Radio, Chip, Accordion e Field` | UI: tela de Catálogo (`/catalogo`) |
 | 15/11 | Implementada estrutura da tela de Catálogo (`/catalogo`) com FilterPanel (desktop e mobile), filtros na URL (useSearchParams), paginação, ordenação e estados | `feat(ui): implementa estrutura do Catálogo com filtros e paginação` | UI: tela de Produto (`/produto/:id`) ou `ChatWidget` |
+| 15/11 | Criados `ColorSwatch`, `QuantityStepper` e `Badge` em `src/components/ui/` com CSS Modules, tokens, área de toque de 44px e acessibilidade | `feat(ui): cria componentes ColorSwatch, QuantityStepper e Badge` | UI: tela de Produto (`/produto/:id`) |
