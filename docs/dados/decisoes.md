@@ -32,6 +32,8 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D13 | Catálogo sintético de 200 SKUs, com preços calibrados pelo Olist | Proposta |
 | D14 | Sazonalidade como índice relativo, não contagem bruta | Aceita |
 | D15 | Padrão de dia da semana próprio para as lojas físicas | Proposta |
+| D16 | Grupo Casa vendido só nos canais online | Proposta |
+| D17 | Premissas do gerador do ERP (lojas, volume, estoque e sujeira plantada) | Proposta |
 
 ---
 
@@ -166,3 +168,62 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
   | 0,80 | 0,85 | 0,90 | 0,95 | 1,15 | 1,45 | 0,90 |
 
   O site mantém o padrão do Olist, por ser canal online.
+
+## D16 · Grupo Casa vendido só nos canais online
+
+- **Data:** 2026-11-15
+- **Status:** Proposta (validar com o squad; afeta o site do Caio e o dashboard do Henry)
+- **Contexto:** o catálogo tem 8 SKUs de Casa (almofada, toalha, manta, cortina, jogo de cama). No marketplace, Casa tem volume real relevante (11.553 itens no Olist), mas são produtos volumosos e fora do núcleo de moda, que disputariam espaço de loja com o vestuário.
+- **Decisão:** as lojas físicas não vendem o grupo Casa. Ele aparece só no site e no marketplace, como extensão de sortimento do online. Parâmetro em `parametros.yaml`: `grupos_fora_da_loja_fisica: [Casa]` (com `[]`, as lojas passam a vender tudo).
+- **Alternativa descartada:** vender o catálogo inteiro em todas as lojas. Seria mais simples, mas não mostraria a diferença de sortimento entre canais, comum no varejo multicanal.
+- **Impacto:**
+  - O sortimento das lojas físicas parte de 192 SKUs (200 menos os 8 de Casa).
+  - No dashboard, Casa tem receita zero nas lojas físicas por desenho, não por falha de dados.
+  - O giro de estoque de Casa só existe no site.
+  - A previsão de demanda de Casa usa apenas histórico online.
+
+## D17 · Premissas do gerador do ERP
+
+- **Data:** 2026-11-15
+- **Status:** Proposta (validar com o squad)
+- **Contexto:** não existe ERP real. O canal loja física precisa de dados plausíveis, reproduzíveis e com problemas conhecidos para as checagens de qualidade. Script: `data/geradores/gera_erp.py`. Todos os números estão na seção `erp` do `parametros.yaml`.
+- **Lojas:** 12 no Sudeste (7 em SP, 2 no RJ, 3 em MG). O porte define o volume e o sortimento:
+
+  | Porte | Lojas | Itens num dia normal | Sortimento | SKUs |
+  |---|---|---|---|---|
+  | G | L01 Paulista, L08 Rio Centro, L10 Belo Horizonte | 80 | 100% | 192 |
+  | M | L02, L03, L04, L05, L11 | 50 | 85% | 163 |
+  | P | L06, L07, L09, L12 | 30 | 70% | 134 |
+
+  Os SKUs mais populares têm mais chance de entrar no sortimento das lojas menores.
+- **Período:** 01/02/2025 a 15/11/2026 (653 dias). Janeiro de 2025 fica de fora porque o índice de sazonalidade é instável no início do Olist. A data final é fixa para o resultado ser reproduzível. Datas após 25/08/2026 usam o índice do mesmo dia 52 semanas antes (D14).
+- **Volume diário:** itens do porte × índice de sazonalidade sem o efeito de dia da semana do online × fator de dia da semana da loja física (D15). O índice é limitado entre 0,4 e 8,0 para evitar dias extremos.
+- **Escolha dos produtos:** popularidade do SKU (lognormal do catálogo) × peso do grupo (Vestuário 1,0; Acessórios 0,8; Beleza 0,7; Esporte 0,6).
+- **Cupom fiscal:** média de 1,8 item por cupom. Horário entre 10h e 22h, com pico às 17h.
+- **Preço:** preço de tabela do catálogo. Black Friday 2025: 25% de desconto de 28/11 a 01/12. O desconto muda só o preço; o aumento de volume vem do índice de sazonalidade.
+- **Estoque:** simulado dia a dia, por loja e SKU, com base na demanda média do SKU na loja:
+  - estoque máximo de 30 dias de venda;
+  - novo pedido quando o estoque cai a 10 dias de venda;
+  - reposição chega 5 dias depois do pedido.
+
+  A loja só vende o que tem: a demanda sem estoque é perdida (não vira pedido pendente). A política não antecipa picos, e esse é o problema que a previsão de demanda resolve.
+- **Sujeira plantada** nas vendas, para as checagens de qualidade encontrarem:
+
+  | Problema | Taxa | Linhas no arquivo |
+  |---|---|---|
+  | Linha duplicada (cópia exata) | 0,2% | 801 |
+  | SKU nulo | 0,1% | 400 |
+  | Quantidade negativa (e valor negativo) | 0,1% | 401 |
+
+  Uma linha pode ter mais de um problema: uma das duplicadas é cópia de uma linha com quantidade negativa, por isso são 401 negativas para 400 plantadas.
+- **Resultado** (seed 42; arquivos idênticos a cada execução, conferido por checksum):
+  - `erp_vendas.csv.gz`: 401.335 linhas e 225.410 cupons.
+  - Receita sem a sujeira: R$ 30,8 mi. Ticket médio: R$ 136,78.
+  - Mediana de 585 itens por dia; 4.200 na Black Friday (28/11/2025).
+  - `erp_estoque_diario.csv.gz`: 1.258.331 linhas (loja × SKU × dia).
+  - Ruptura (combinações loja × SKU com estoque final zero): mediana de 1,3% ao dia, subindo para 23,4% em 01/12/2025 e voltando a 2% só em 04/12.
+- **Limitações assumidas:**
+  - Todas as lojas seguem a mesma curva de sazonalidade (sem eventos locais).
+  - Não há devoluções, trocas nem transferência de estoque entre lojas.
+  - O custo é fixo, vindo do catálogo.
+  - A única promoção é a Black Friday.
