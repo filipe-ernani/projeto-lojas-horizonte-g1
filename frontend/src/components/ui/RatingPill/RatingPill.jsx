@@ -21,7 +21,12 @@ export default function RatingPill({ nota, qtdAvaliacoes, className = "" }) {
           : `Nota ${notaFormatada} de 5`
       }
     >
-      <Star className={styles.starIcon} size={14} strokeWidth={1.8} />
+      <Star
+        className={styles.starIcon}
+        size={14}
+        strokeWidth={1.8}
+        aria-hidden="true"
+      />
       <span className={styles.nota}>{notaFormatada}</span>
       {qtdAvaliacoes ? (
         <span className={styles.qtd}>({qtdAvaliacoes})</span>

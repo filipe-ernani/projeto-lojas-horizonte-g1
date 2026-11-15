@@ -5,7 +5,7 @@ import styles from "./ProductImage.module.css";
 /**
  * Imagem de produto conforme docs/DESIGN.md:
  * Proporção 4:5, fundo --color-card, raio 16px (--radius-lg).
- * Sem imagem ou em caso de erro: placeholder com ícone de camiseta.
+ * Sem imagem ou em caso de erro: placeholder com ícone de camiseta cinza.
  */
 export default function ProductImage({
   imagemUrl,
@@ -29,6 +29,7 @@ export default function ProductImage({
       ) : (
         <div
           className={styles.placeholder}
+          role="img"
           aria-label={alt || "Produto sem imagem disponível"}
         >
           <Shirt

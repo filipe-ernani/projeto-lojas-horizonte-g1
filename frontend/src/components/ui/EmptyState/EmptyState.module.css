@@ -15,8 +15,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: var(--control-h);
+  height: var(--control-h);
   border-radius: var(--radius-pill);
   background: var(--color-paper);
   color: var(--color-ink);
@@ -37,13 +37,12 @@
 .mensagem {
   font-size: var(--fs-sm);
   color: var(--color-muted);
-  max-width: 440px;
+  max-width: 44ch;
   margin: 0;
   line-height: 1.5;
 }
 
-.actionLink {
-  text-decoration: none;
+.actionButton {
   margin-top: var(--space-2);
 }
 

@@ -3,7 +3,7 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 15/11/2026 (estrutura da Home implementada com seções, ProductCard, ProductGrid, CategoryList, ProductImage, RatingPill, EmptyState e estados)
+**Última atualização:** 15/11/2026 (revisão de design em EmptyState, ProductImage e RatingPill concluída)
 **Fase atual:** 3. Estrutura das telas (Home pronta; pendente ChatWidget da Fase 2 e Catálogo da Fase 3)
 
 ## Bloqueios externos
@@ -31,7 +31,7 @@ Marque `[x]` quando a tarefa passar na definição de pronto (ver `AGENTS.md`).
 
 ### Fase 1. Base visual (Design)
 
-- [ ] `components/ui/`: Button, IconButton, Field, Checkbox, Radio, Chip, ColorSwatch, Badge, RatingPill, Accordion, QuantityStepper, ProductImage, EmptyState
+- [ ] `components/ui/`: Button [x], IconButton [ ], Field [ ], Checkbox [ ], Radio [ ], Chip [ ], ColorSwatch [ ], Badge [ ], RatingPill [x], Accordion [ ], QuantityStepper [ ], ProductImage [x], EmptyState [x]
 
 ### Fase 2. O que não depende de dados (Dados + UI)
 
@@ -71,8 +71,8 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
-- **De:** UI (`ui-builder`) → **Para:** Design (`design-guardian`): revisar `EmptyState`, `ProductImage` e `RatingPill` (criados pelo UI em `src/components/ui/`) e ajustar ao `docs/DESIGN.md`.
 - **De:** UI (`ui-builder`) → **Para:** Design (`design-guardian`): criar `IconButton` (com suporte a contador) em `src/components/ui/` conforme `docs/DESIGN.md` (seção 4).
+- *(Resolvido em 15/11)* Revisão de `EmptyState`, `ProductImage` e `RatingPill` realizada por Design: tokens conferidos, acessibilidade aprimorada e aninhamento inválido de botão corrigido.
 
 ## Problemas conhecidos
 
@@ -91,3 +91,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 15/11 | Envolvido app com `BrowserRouter` e `AuthProvider`; criados `Header`, `Footer`, `PrivateRoute`, `Layout`, `PageSkeleton` e rotas públicas/privadas em `App.jsx` | `feat(ui): cria Header, Footer, PrivateRoute e rotas principais` | UI: tela de Login e `ChatWidget` (e Design: `IconButton` e `EmptyState`) |
 | 15/11 | Implementada tela de Login (`/login`) com 3 modos (entrar, criar conta, recuperar senha), integração ao `useAuth`, validações nativas, acessibilidade e design responsivo | `feat(ui): implementa tela de Login com três modos e autenticação` | UI: `ChatWidget` (e Design: `IconButton` e `EmptyState`) |
 | 15/11 | Implementada estrutura da Home (`/`) com seções (hero, categorias, vitrine/novidades, benefícios), componentes de dados via props (`CategoryList`, `ProductGrid`, `ProductCard`), `ProductImage`, `RatingPill`, `EmptyState` e estados | `feat(ui): implementa estrutura da Home com seções e componentes de vitrine` | UI: Catálogo (`/catalogo`) ou `ChatWidget` |
+| 15/11 | Revisão de Design em `src/components/ui/` (EmptyState, ProductImage, RatingPill): tokens de controle, acessibilidade (role="img", aria-hidden), remoção de aninhamento button/link | `style(ui): padroniza tokens e acessibilidade de EmptyState, ProductImage e RatingPill` | Design: IconButton ou UI: Catálogo (`/catalogo`) |
