@@ -3,8 +3,8 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 15/11/2026 (criados componentes de UI para o Catálogo: Checkbox, Radio, Chip, Accordion e Field)
-**Fase atual:** 3. Estrutura das telas (Home pronta; pendente ChatWidget da Fase 2 e Catálogo da Fase 3)
+**Última atualização:** 15/11/2026 (estrutura do Catálogo implementada com filtros, paginação, busca e estados)
+**Fase atual:** 3. Estrutura das telas (Home e Catálogo prontos; pendente Produto, Favoritos, etc., e ChatWidget da Fase 2)
 
 ## Bloqueios externos
 
@@ -14,7 +14,7 @@
 ## Em andamento
 
 - Fase 2 (UI): `ChatWidget` (só a interface, sem resposta real).
-- Fase 3 (UI): Catálogo (`/catalogo`).
+- Fase 3 (UI): Produto (`/produto/:id`).
 - Design: `QuantityStepper`, `Badge` e `ColorSwatch` em `components/ui/`.
 
 ## Roteiro por fases
@@ -48,7 +48,7 @@ Marque `[x]` quando a tarefa passar na definição de pronto (ver `AGENTS.md`).
 Cada tela com layout completo, componentes recebendo dados por props e estados de carregando, erro e vazio.
 
 - [x] Home
-- [ ] Catálogo (filtros preço, tamanho, categoria; busca; paginação)
+- [x] Catálogo (filtros preço, tamanho, categoria; busca; paginação)
 - [ ] Produto (cor, tamanho, comentários, semelhantes)
 - [ ] Favoritos
 - [ ] Carrinho
@@ -71,7 +71,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
-- **De:** Design (`design-guardian`) → **Para:** UI (`ui-builder`): componentes `Checkbox`, `Radio`, `Chip`, `Accordion` e `Field` prontos em `src/components/ui/` para a construção do Catálogo e seus filtros.
+- *(Resolvido em 15/11)* Componentes de base (`Checkbox`, `Radio`, `Chip`, `Accordion`, `Field`) integrados no `FilterPanel` e no Catálogo pelo agente UI.
 - *(Resolvido em 15/11)* Integração do `IconButton` no `Header` (favoritos, cesta, conta) e no `FavoriteButton` concluída pelo UI.
 - *(Resolvido em 15/11)* `IconButton` criado com CSS Module, área de toque de 44px, badge de contador, navegação por Link e estado ativo.
 - *(Resolvido em 15/11)* Revisão de `EmptyState`, `ProductImage` e `RatingPill` realizada por Design: tokens conferidos, acessibilidade aprimorada e aninhamento inválido de botão corrigido.
@@ -80,6 +80,8 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 - `Home.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando a Home usar o hook de dados (Fase 4).
 - `Home.jsx` define `categorias = []` e `produtos = []` como props padrão para manter a vitrine funcional sem dados; substituir pela integração dos hooks na Fase 4.
+- `Catalogo.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando o Catálogo usar o hook de dados (Fase 4).
+- `Catalogo.jsx` define `produtos = []`, `categorias = []` e `tamanhos = []` como props padrão para manter o catálogo funcional sem dados; substituir pela integração dos hooks na Fase 4.
 - `ProductCard.jsx` e `FavoriteButton.jsx` possuem botão de favoritos apenas visual com `preventDefault`; integrar ao `FavoritesContext` na Fase 4.
 
 ## Registro de sessões
@@ -96,3 +98,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 15/11 | Criado `src/components/ui/IconButton` com CSS Module, tokens de 44px, badge de contador (99+), suporte a Link/button e estado ativo | `feat(ui): cria componente IconButton com contador e navegação por Link` | UI: trocar links do Header e FavoriteButton por IconButton ou Catálogo (`/catalogo`) |
 | 15/11 | Integrado `IconButton` no `Header` e no `FavoriteButton`, com remoção de CSS não utilizado e resolução do pedido entre agentes | `refactor(ui): integra IconButton no Header e FavoriteButton` | UI: Catálogo (`/catalogo`) ou `ChatWidget` |
 | 15/11 | Criados componentes base `Checkbox`, `Radio`, `Chip`, `Accordion` e `Field` em `src/components/ui/` com CSS Modules, tokens e acessibilidade (aria-describedby, aria-pressed) | `feat(ui): cria componentes Checkbox, Radio, Chip, Accordion e Field` | UI: tela de Catálogo (`/catalogo`) |
+| 15/11 | Implementada estrutura da tela de Catálogo (`/catalogo`) com FilterPanel (desktop e mobile), filtros na URL (useSearchParams), paginação, ordenação e estados | `feat(ui): implementa estrutura do Catálogo com filtros e paginação` | UI: tela de Produto (`/produto/:id`) ou `ChatWidget` |
