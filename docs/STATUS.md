@@ -3,7 +3,7 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 15/11/2026 (formatadores, cliente HTTP, Firebase e AuthContext criados)
+**Última atualização:** 15/11/2026 (ajustes em `firebase.js`, tradução de erros no `AuthContextProvider.jsx` e `.env.example`)
 **Fase atual:** 2. O que não depende de dados (Dados concluído; falta UI)
 
 ## Bloqueios externos
@@ -75,3 +75,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 |---|---|---|---|
 | 15/11 | Kit de agentes, design e contexto criado (sem mocks) | `chore: adiciona kit de agentes, design e contexto` | Fase 0 |
 | 15/11 | Criados `formatCurrency`, `formatDate`, `api/client.js`, `firebase.js` e `AuthContext` | `feat(dados): cria formatadores, cliente HTTP e AuthContext` | UI: Header, Footer, rotas/`PrivateRoute` e Login (e criar `.env` local) |
+| 15/11 | Completados `firebase.js` (senderId, storageBucket, `GoogleAuthProvider`), tradução de erros no `AuthContextProvider.jsx`, `.env.example` e `!.env.example` no `.gitignore` | `feat(dados): completa config do Firebase, tradução de erros e .env.example` | UI: Header, Footer, rotas/`PrivateRoute`, Login e `ChatWidget` |
