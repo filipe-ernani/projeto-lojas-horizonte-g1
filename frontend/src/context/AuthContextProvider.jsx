@@ -25,7 +25,8 @@ const MENSAGENS_ERRO_FIREBASE = {
   "auth/network-request-failed": "Sem conexão com a internet. Tente novamente.",
   "auth/popup-closed-by-user": "Login com Google cancelado.",
   "auth/cancelled-popup-request": "Login com Google cancelado.",
-  "auth/popup-blocked": "O navegador bloqueou a janela do Google. Libere os pop-ups.",
+  "auth/popup-blocked":
+    "O navegador bloqueou a janela do Google. Libere os pop-ups.",
   "auth/operation-not-allowed": "Método de login não habilitado.",
 };
 
@@ -40,8 +41,8 @@ function traduzirErroFirebase(erro) {
 async function executarAcaoAuth(acao) {
   try {
     return await acao();
-  } catch (erro) {
-    throw new Error(traduzirErroFirebase(erro), { cause: erro });
+  } catch (error_) {
+    throw new Error(traduzirErroFirebase(error_), { cause: error_ });
   }
 }
 
@@ -101,7 +102,7 @@ export function AuthProvider({ children }) {
       sair,
       recuperarSenha,
     }),
-    [usuario, carregando]
+    [usuario, carregando],
   );
 
   return <AuthContext value={valor}>{children}</AuthContext>;
