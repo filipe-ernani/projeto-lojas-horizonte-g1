@@ -1,0 +1,101 @@
+# Parâmetros dos geradores sintéticos da Lojas Horizonte.
+# Todos os números de negócio dos dados sintéticos ficam aqui, em um só lugar,
+# para serem revisados, ajustados e explicados na apresentação.
+
+seed: 42  # semente fixa: o mesmo arquivo gera sempre o mesmo resultado
+
+catalogo:
+  arquivo_saida: data/referencia/catalogo.csv
+
+  # Faixas de preço (R$) calibradas pelo Olist:
+  # quartis de horizonte.silver.marketplace_itens
+  # (filtro: valido AND incluir AND periodo_completo), notebook 04_calibracao_catalogo.
+  #
+  # margem = margem bruta sobre o preço de venda -> custo = preco * (1 - margem).
+  # As margens são premissas do squad (o Olist não tem custo).
+  #
+  # skus = quantidade de produtos da categoria no catálogo. A distribuição
+  # privilegia vestuário, que é o núcleo de uma rede de moda.
+  #
+  # Regra de preço (para itens parecidos terem preços coerentes):
+  # - tipos: listados do MAIS BARATO para o MAIS CARO. O preço-base de cada tipo
+  #   é um ponto da faixa de preço do Olist, espaçado entre os quantis 15% e 85%.
+  # - complementos: também do mais barato para o mais caro; aplicam um fator
+  #   de 0,90 (primeiro) a 1,15 (último) sobre o preço-base.
+  # - cor: não muda o preço. Mesmo modelo em cores diferentes = mesmo preço.
+  categorias:
+    Feminino:
+      grupo: Vestuário
+      skus: 45
+      preco: {p25: 29.99, mediana: 49.00, p75: 65.90}   # Olist: só 47 itens, referência fraca
+      margem: 0.60
+      tipos: [Short, Blusa, Saia, Camisa, Calça, Macacão, Vestido, Jaqueta]
+      complementos: [Malha, Algodão, Jeans, Viscose, Tricô, Linho, Cetim]
+    Masculino:
+      grupo: Vestuário
+      skus: 35
+      preco: {p25: 40.90, mediana: 59.90, p75: 126.90}  # Olist: 130 itens
+      margem: 0.60
+      tipos: [Camiseta, Bermuda, Polo, Camisa, Calça, Moletom, Jaqueta]
+      complementos: [Malha, Algodão, Piquet, Sarja, Jeans, Linho]
+    Infantil:
+      grupo: Vestuário
+      skus: 20
+      preco: {p25: 39.99, mediana: 49.90, p75: 89.99}   # Olist: só 8 itens, referência fraca
+      margem: 0.58
+      tipos: [Body, Camiseta, Bermuda, Pijama, Vestido, Conjunto]
+      complementos: [Malha, Algodão, Estampado, Moletom]
+    Calçados:
+      grupo: Vestuário
+      skus: 25
+      preco: {p25: 35.90, mediana: 79.90, p75: 99.90}   # Olist: 259 itens
+      margem: 0.50
+      tipos: [Chinelo, Sapatilha, Sandália, Tênis, Mocassim, Bota]
+      complementos: [Casual, Tressê, Confort, Esportivo, Couro]
+    Moda íntima e praia:
+      grupo: Vestuário
+      skus: 15
+      preco: {p25: 49.90, mediana: 59.90, p75: 79.90}   # Olist: 131 itens
+      margem: 0.62
+      tipos: [Calcinha, Cueca, Sutiã, Sunga, Biquíni, Maiô]
+      complementos: [Básico, Microfibra, Estampado, Renda]
+    Acessórios:
+      grupo: Acessórios
+      skus: 25
+      preco: {p25: 49.90, mediana: 102.90, p75: 180.00} # Olist: 9.069 itens
+      margem: 0.55
+      tipos: [Carteira, Cinto, Óculos de Sol, Mochila, Bolsa, Relógio, Mala]
+      complementos: [Sintético, Casual, Viagem, Clássico, Couro]
+    Esporte:
+      grupo: Esporte
+      skus: 15
+      preco: {p25: 44.00, mediana: 77.90, p75: 129.90}  # Olist: 8.603 itens
+      margem: 0.45
+      tipos: [Garrafa, Top, Camiseta Dry, Bermuda, Legging, Tapete de Yoga]
+      complementos: [Treino, Fitness, Running, Performance]
+    Beleza:
+      grupo: Beleza
+      skus: 12
+      preco: {p25: 44.50, mediana: 79.99, p75: 138.90}  # Olist: 12.958 itens
+      margem: 0.40
+      tipos: [Sabonete Líquido, Hidratante, Body Splash, Kit Maquiagem, Perfume]
+      complementos: [Suave, Cítrico, Floral, Amadeirado]
+      usa_cor: false   # perfume e hidratante não têm cor
+    Casa:
+      grupo: Casa
+      skus: 8
+      preco: {p25: 48.04, mediana: 79.90, p75: 115.99}  # Olist: 11.553 itens
+      margem: 0.50
+      tipos: [Almofada, Toalha de Banho, Manta, Cortina, Jogo de Cama]
+      complementos: [Microfibra, Algodão, Linho, Percal]
+
+  quantil_minimo: 0.15     # preço-base do tipo mais barato
+  quantil_maximo: 0.85     # preço-base do tipo mais caro
+  fator_complemento: [0.90, 1.15]
+
+  cores: [Preto, Branco, Azul, Bege, Verde, Vinho, Cinza, Rosa, Marrom, Off-white]
+
+  # Popularidade relativa de cada SKU, usada pelos geradores do ERP e do site
+  # para que alguns produtos vendam muito mais que outros (padrão comum no varejo).
+  # Valores de uma lognormal: mediana 1, com poucos SKUs bem acima disso.
+  popularidade_sigma: 0.8
