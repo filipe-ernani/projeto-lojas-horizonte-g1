@@ -107,7 +107,7 @@
   height: 100%;
   background-color: var(--color-star);
   border-radius: var(--radius-pill);
-  transition: width var(--transition-normal);
+  transition: width 0.15s ease;
 }
 
 .distCount {

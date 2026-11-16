@@ -264,15 +264,9 @@ export default function Produto({
               </p>
             </Accordion>
 
-            <Accordion titulo="Materiais e composição">
-              <p className={styles.accordionParagraph}>
-                Confeccionado com fibras nobres selecionadas, acabamento estruturado e toque suave na pele. Instruções de lavagem na etiqueta interna.
-              </p>
-            </Accordion>
-
             <Accordion titulo="Entrega e devoluções">
               <p className={styles.accordionParagraph}>
-                Entrega para todo o território nacional. Troca ou devolução facilitada em até 30 dias corridos após o recebimento.
+                Envio disponível para todo o Brasil. Política de troca ou devolução garantida conforme as diretrizes da loja.
               </p>
             </Accordion>
           </div>

@@ -35,7 +35,7 @@
   background: transparent;
   cursor: pointer;
   overflow: hidden;
-  transition: border-color var(--transition-fast);
+  transition: border-color 0.15s ease;
 }
 
 .thumbnailBtn:hover {

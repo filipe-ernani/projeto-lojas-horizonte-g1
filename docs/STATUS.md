@@ -3,7 +3,7 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 15/11/2026 (implementada estrutura da página de Produto /produto/:id)
+**Última atualização:** 16/11/2026 (correções de tokens CSS em src/ e remoção de texto fixo de materiais em Produto.jsx)
 **Fase atual:** 3. Estrutura das telas (Home, Catálogo e Produto prontos; pendente Favoritos, Carrinho, Checkout, Perfil, Pedidos e ChatWidget da Fase 2)
 
 ## Bloqueios externos
@@ -71,6 +71,9 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
+- *(Resolvido em 16/11)* Removido acordeão fixo "Materiais e composição" de `Produto.jsx` (regra D-19) e mantido texto institucional neutro de entrega e devoluções.
+- *(Resolvido em 16/11)* Substituídas variáveis CSS inexistentes em `ReviewCard`, `ProductGallery`, `ProductReviews` e `Produto` por valores diretos (`line-height` e `transition`). Varredura em todo o `src/` resultou em 0 variáveis indefinidas.
+- *(Resolvido em 15/11)* Correção e alinhamento de tokens do `Badge` em `components/ui/` (`neutro`, `escuro`, `perigo`), com verificação de `ColorSwatch` e `QuantityStepper`.
 - *(Resolvido em 15/11)* Componentes `ColorSwatch`, `QuantityStepper` e `Badge` integrados na tela de Produto e disponíveis para as próximas telas pelo agente UI.
 - *(Resolvido em 15/11)* Componentes de base (`Checkbox`, `Radio`, `Chip`, `Accordion`, `Field`) integrados no `FilterPanel` e no Catálogo pelo agente UI.
 - *(Resolvido em 15/11)* Integração do `IconButton` no `Header` (favoritos, cesta, conta) e no `FavoriteButton` concluída pelo UI.
@@ -79,6 +82,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Problemas conhecidos
 
+- Informações de materiais e composição na página de Produto dependem da chegada do dataset e de confirmação no `docs/API.md` (Fase 4).
 - `Home.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando a Home usar o hook de dados (Fase 4).
 - `Home.jsx` define `categorias = []` e `produtos = []` como props padrão para manter a vitrine funcional sem dados; substituir pela integração dos hooks na Fase 4.
 - `Catalogo.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando o Catálogo usar o hook de dados (Fase 4).
@@ -105,3 +109,5 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 15/11 | Implementada estrutura da tela de Catálogo (`/catalogo`) com FilterPanel (desktop e mobile), filtros na URL (useSearchParams), paginação, ordenação e estados | `feat(ui): implementa estrutura do Catálogo com filtros e paginação` | UI: tela de Produto (`/produto/:id`) ou `ChatWidget` |
 | 15/11 | Criados `ColorSwatch`, `QuantityStepper` e `Badge` em `src/components/ui/` com CSS Modules, tokens, área de toque de 44px e acessibilidade | `feat(ui): cria componentes ColorSwatch, QuantityStepper e Badge` | UI: tela de Produto (`/produto/:id`) |
 | 15/11 | Implementada estrutura da tela de Produto (`/produto/:id`) com galeria 4:5, seleção de cor/tamanho (D-07), ReviewCard, resumo de notas e produtos semelhantes | `feat(ui): implementa estrutura da tela de Produto` | UI: tela de Favoritos (`/favoritos`) ou `ChatWidget` |
+| 15/11 | Auditoria e alinhamento de tokens em `src/components/ui/Badge` (`neutro` com `color: var(--color-muted)`), conferência de `ColorSwatch`/`QuantityStepper` e registro de pedidos ao UI/Revisor | `fix(ui): ajusta token de texto no Badge e audita componentes base` | UI: corrigir acordeão em Produto e ajustar tokens inexistentes |
+| 16/11 | Correção de variáveis CSS inexistentes em `ReviewCard`, `ProductGallery`, `ProductReviews` e `Produto`; remoção de texto fixo de materiais em `Produto.jsx` (D-19) | `fix(ui): remove texto fixo de materiais e substitui variáveis inexistentes por valores diretos` | UI: tela de Favoritos (`/favoritos`) ou `ChatWidget` |

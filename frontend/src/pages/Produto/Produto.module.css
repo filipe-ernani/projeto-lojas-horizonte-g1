@@ -43,7 +43,7 @@
   font-weight: var(--fw-medium);
   color: var(--color-muted);
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color 0.15s ease;
 }
 
 .categoryLink:hover {
@@ -62,7 +62,7 @@
   margin: 0;
   font-size: var(--fs-xl);
   font-weight: var(--fw-bold);
-  line-height: var(--lh-tight);
+  line-height: 1.2;
   color: var(--color-ink);
 }
 
@@ -136,7 +136,7 @@
   font-size: var(--fs-xs);
   font-weight: var(--fw-medium);
   color: var(--color-danger-text);
-  line-height: var(--lh-normal);
+  line-height: 1.5;
 }
 
 .actionRow {
@@ -156,7 +156,7 @@
   margin: 0;
   padding: var(--space-2) 0;
   font-size: var(--fs-sm);
-  line-height: var(--lh-relaxed);
+  line-height: 1.5;
   color: var(--color-muted);
 }
 
