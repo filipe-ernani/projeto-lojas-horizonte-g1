@@ -1,46 +1,52 @@
 # Projeto Integrador - Plataforma de Dados e IA para Lojas Horizonte
 
 ## 1. Visão Geral do Projeto
-Este repositório contém o projeto de modernização tecnológica e implementação de inteligência artificial para as Lojas Horizonte, desenvolvido pelo Grupo 1. O cliente é uma rede de moda composta por 12 lojas físicas e um e-commerce em fase de crescimento. O projeto tem como objetivo migrar os sistemas para o Google Cloud, garantindo escalabilidade, e construir uma plataforma unificada de dados com recursos de IA.
+Este repositório contém o projeto de modernização tecnológica e implementação de inteligência artificial para as Lojas Horizonte, desenvolvido pelo Grupo 1. O cliente é uma rede de moda composta por 12 lojas físicas e um e-commerce em fase de crescimento. O projeto tem como objetivo migrar os sistemas para o Google Cloud, garantindo escalabilidade em picos de acesso, e construir uma plataforma unificada de dados com recursos de IA para previsão de demanda.
 
 ## 2. Dores do Cliente e Problemas Resolvidos
-O desenvolvimento deste MVP foca em solucionar os seguintes gargalos operacionais e de negócio identificados no cliente:
-* Instabilidade e lentidão do site em datas de pico de acesso, como a Black Friday, chegando a apresentar 40 minutos de inatividade.
-* Fragmentação de dados espalhados entre o ERP, o site e marketplaces, resultando em uma falta de visão unificada sobre vendas, estoque e margens.
-* Alto índice de abandono de carrinho sem acompanhamento ou análise estruturada.
-* Ausência de personalização e recomendação inteligente de produtos para os usuários.
+O desenvolvimento deste MVP foca em solucionar os seguintes gargalos operacionais e de negócio:
+- Instabilidade e lentidão do site na última Black Friday, chegando a apresentar 40 minutos de inatividade total.
+- Fragmentação de dados espalhados entre o ERP, o site e marketplaces; com a diretoria montando relatórios manuais em planilhas.
+- Alto índice de abandono de carrinho sem acompanhamento ou análise estruturada.
+- Nenhuma personalização ou previsão de vendas para antecipar picos de demanda.
 
 ## 3. Escopo da Solução (MVP)
-Para mitigar os problemas levantados, a squad desenvolveu um Protótipo Funcional (MVP) focado em dados e escalabilidade. A solução é composta por:
-* **Aplicação Web:** Loja demonstrativa contemplando catálogo, carrinho e finalização de pedido.
-* **Pipeline de Dados:** Ingestão e tratamento de dados unificando clientes, pedidos e pagamentos, resolvendo valores nulos.
-* **Inteligência Artificial:** Sistema RAG não-vetorial (recuperador lexical, TF-IDF ou OKAPI BM25) integrado ao catálogo e às avaliações (reviews) para atuar no suporte ao cliente.
-* **Business Intelligence:** Dashboard gerencial com indicadores estratégicos, incluindo receita, ticket médio, taxa de conversão, abandono de carrinho e giro de estoque.
+Para mitigar os problemas, a squad desenvolveu um Protótipo Funcional (MVP) focado em dados e escalabilidade:
+- **Aplicação Web:** Loja demonstrativa (API local + Postgres) contemplando catálogo, carrinho e finalização de pedido.
+- **Pipeline de Dados:** Ingestão e tratamento de dados unificando clientes, pedidos e pagamentos das 3 fontes (ERP, site, Olist).
+- **Inteligência Artificial:** Agente "Analista Horizonte" (ADK + Gemini) focado em previsão de demanda semanal para a Black Friday, utilizando MLflow. *(Nota: Chat de suporte na vitrine está fora do escopo inicial)*.
+- **Business Intelligence:** Dashboard AI/BI e alerta automatizado no Google Sheets com 8 indicadores estratégicos (Receita, Ticket Médio, Conversão, Giro de Estoque, etc).
 
 ## 4. Arquitetura e Stack Tecnológica
-Em conformidade com as regras de risco e custo zero, o projeto adota um modelo híbrido entre o desenho ideal na nuvem e a execução prática:
+Adotamos um modelo híbrido entre o desenho ideal na nuvem e a execução prática obrigatória do MVP:
 
 ### 4.1. Arquitetura Conceitual (Google Cloud)
-Desenho técnico projetado para suportar o ambiente de produção real com alta disponibilidade:
-* **Armazenamento e Banco de Dados:** Cloud SQL para dados transacionais e integração de fontes.
-* **Data Warehouse:** BigQuery para consolidação das fontes (ERP, site, marketplace).
-* **Processamento e Hospedagem:** App Engine ou GKE (Google Kubernetes Engine) com autoscaling para lidar com picos de tráfego.
+Desenho projetado para suportar produção real com alta disponibilidade:
+- **Hospedagem API:** Cloud Run escalando horizontalmente em picos de requisição, dispensando GKE/App Engine.
+- **Banco Transacional:** Cloud SQL for PostgreSQL (HA + réplica de leitura).
+- **Data Warehouse:** BigQuery consumindo via Cloud Storage e Datastream (CDC).
 
 ### 4.2. Execução Prática (Stack Obrigatória)
-Ambiente de testes e prototipação utilizado para demonstrar a solução funcionando:
-* **Engenharia de Dados e BI:** Databricks Community Edition (Pipeline Medallion e dashboards AI/BI).
-* **Inteligência Artificial:** Agent Development Kit (ADK) executado via comando `adk web`.
-* **Desenvolvimento e Versionamento:** VS Code e GitHub.
-* **Dataset Base:** Brazilian E-Commerce Public Dataset by Olist (Kaggle).
+Ambiente de testes utilizado para demonstrar a solução:
+- **Dados e BI:** Databricks Free Edition com Unity Catalog (Pipeline Medallion).
+- **IA e Modelagem:** Agent Development Kit (ADK) via `adk web` e MLflow.
+- **Testes de Carga:** Locust e Workspace API (Gmail) para health check.
+- **Dataset:** Brazilian E-Commerce Public Dataset by Olist e geradores sintéticos em Python.
 
 ## 5. Equipe e Responsabilidades
-A governança e execução do projeto foram divididas entre as seguintes áreas e responsáveis:
+- **PMO (Filipe):** Governança ágil, condução das Dailies, mapeamento de riscos, gestão de resposta a incidentes (SLA 99.9%) e estimativa de custos na GCP Pricing Calculator.
+- **Engenharia de Dados (Diego):** Pipeline Medallion (Bronze, Silver, Gold), arquitetura GCP, geradores de dados sintéticos e matriz de acessos (IAM).
+- **Engenharia de IA (Emanuel):** Modelo de previsão de demanda semanal no MLflow e desenvolvimento do agente interno Analista Horizonte no ADK.
+- **FullStack (Caio):** API FastAPI (catálogo e carrinho), plano de autoscaling, testes de carga com Locust e integração de alertas no Gmail.
+- **BI & Analytics (Henry):** Dicionário de métricas, Databricks AI/BI Dashboard e relatórios automatizados consumindo a camada Gold.
 
-* **PMO (Filipe):** Responsável pela governança estrutural do GitHub, condução do Relatório Ágil Diário (Dailies), mapeamento operacional e gestão da matriz de riscos.
-* **Engenharia de Dados (Diego):** Responsável por desenvolver o Pipeline Medallion (camadas Bronze, Silver, Gold), unificando bases de pedidos, clientes e pagamentos, além de realizar a limpeza de dados e resolução de nulos.
-* **Engenharia de IA (Emanuel):** Responsável por construir o sistema RAG não-vetorial de suporte ao cliente, consultando diretamente o catálogo de produtos e as reviews.
-* **Desenvolvimento FullStack (Caio):** Responsável por estruturar a aplicação web (catálogo e carrinho) e realizar sua integração com o modelo de inteligência artificial desenvolvido.
-* **BI & Analytics (Henry):** Responsável por desenvolver o Databricks Dashboard gerencial consumindo as tabelas Gold, fornecendo visibilidade sobre abandono de carrinho, ticket médio e cancelamentos.
+## 6. Governança e Cronograma Ágil (5 Dias)
+O acompanhamento do projeto é realizado através do Kanban neste repositório.
 
-## 6. Governança e Cronograma Ágil
-O acompanhamento do projeto é realizado através de Relatórios Ágeis Diários durante o ciclo de 5 dias úteis de execução. Todo o mapeamento de tarefas, controle de bloqueios e progresso individual encontra-se registrado no quadro Kanban (Projects) deste repositório, garantindo rastreabilidade e transparência.
+| Dia | Foco | Entregáveis Principais |
+| :--- | :--- | :--- |
+| **Dia 1** | Planejamento | Setup do GitHub, contas Databricks, leitura inicial do Olist. |
+| **Dia 2** | Desenho e Contratos | Diagrama GCP, contrato da camada Gold, schema da API. |
+| **Dia 3** | Construção | Camadas Bronze/Silver prontas, API no ar, V1 do Dashboard. |
+| **Dia 4** | Integração | Camada Gold final, Agente IA conectado, teste de carga, documentação. |
+| **Dia 5** | Validação | Pitch Deck, ensaio da simulação de incidente e apresentação final. |
