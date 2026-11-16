@@ -24,11 +24,10 @@ export default function IconButton({
   }
 
   const temContador = typeof contador === "number" && contador > 0;
-  const badgeTexto = temContador
-    ? contador > 99
-      ? "99+"
-      : String(contador)
-    : null;
+  let badgeTexto = null;
+  if (temContador) {
+    badgeTexto = contador > 99 ? "99+" : String(contador);
+  }
 
   const classes = [
     styles.button,
@@ -41,9 +40,11 @@ export default function IconButton({
   const inlineStyle =
     tamanho !== 44 ? { width: tamanho, height: tamanho } : undefined;
 
-  const ariaLabelFinal = temContador
-    ? `${rotulo} (${badgeTexto} ${contador === 1 ? "item" : "itens"})`
-    : rotulo;
+  let ariaLabelFinal = rotulo;
+  if (temContador) {
+    const sufixoItem = contador === 1 ? "item" : "itens";
+    ariaLabelFinal = `${rotulo} (${badgeTexto} ${sufixoItem})`;
+  }
 
   const content = (
     <>

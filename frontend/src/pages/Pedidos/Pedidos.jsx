@@ -20,16 +20,51 @@ export default function Pedidos({
   const [estado, setEstado] = useState(estadoInicial);
 
   const temPedidos = pedidos && pedidos.length > 0;
+  const rotuloPedidos =
+    pedidos.length === 1 ? "pedido realizado" : "pedidos realizados";
+  const subtituloPedidos = temPedidos
+    ? `${pedidos.length} ${rotuloPedidos}`
+    : "Acompanhe o histórico de suas compras";
+
+  function renderConteudo() {
+    if (estado === "carregando") {
+      return <PedidosSkeleton />;
+    }
+    if (estado === "erro") {
+      return (
+        <EmptyState
+          titulo="Não foi possível carregar seus pedidos"
+          mensagem="Ocorreu um erro ao buscar o seu histórico de pedidos. Tente novamente em instantes."
+          textoAcao="Tentar de novo"
+          onAcao={() => setEstado("vazio")}
+        />
+      );
+    }
+    if (!temPedidos) {
+      return (
+        <EmptyState
+          icone={Package}
+          titulo="Você ainda não fez pedidos"
+          mensagem="Quando você concluir uma compra, o histórico completo e o andamento aparecerão aqui."
+          textoAcao="Explorar catálogo"
+          para="/catalogo"
+        />
+      );
+    }
+    return (
+      <div className={styles.ordersList}>
+        {pedidos.map((pedido) => (
+          <OrderCard key={pedido.id} pedido={pedido} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <main className={`container ${styles.main}`}>
       <header className={styles.header}>
         <h1 className={styles.title}>Meus pedidos</h1>
-        <p className={styles.subtitle}>
-          {temPedidos
-            ? `${pedidos.length} ${pedidos.length === 1 ? "pedido realizado" : "pedidos realizados"}`
-            : "Acompanhe o histórico de suas compras"}
-        </p>
+        <p className={styles.subtitle}>{subtituloPedidos}</p>
       </header>
 
       <div className={styles.layout}>
@@ -38,30 +73,7 @@ export default function Pedidos({
         </aside>
 
         <section className={styles.content} aria-label="Histórico de pedidos">
-          {estado === "carregando" ? (
-            <PedidosSkeleton />
-          ) : estado === "erro" ? (
-            <EmptyState
-              titulo="Não foi possível carregar seus pedidos"
-              mensagem="Ocorreu um erro ao buscar o seu histórico de pedidos. Tente novamente em instantes."
-              textoAcao="Tentar de novo"
-              onAcao={() => setEstado("vazio")}
-            />
-          ) : !temPedidos ? (
-            <EmptyState
-              icone={Package}
-              titulo="Você ainda não fez pedidos"
-              mensagem="Quando você concluir uma compra, o histórico completo e o andamento aparecerão aqui."
-              textoAcao="Explorar catálogo"
-              para="/catalogo"
-            />
-          ) : (
-            <div className={styles.ordersList}>
-              {pedidos.map((pedido) => (
-                <OrderCard key={pedido.id} pedido={pedido} />
-              ))}
-            </div>
-          )}
+          {renderConteudo()}
         </section>
       </div>
     </main>

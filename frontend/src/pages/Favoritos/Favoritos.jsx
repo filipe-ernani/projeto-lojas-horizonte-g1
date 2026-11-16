@@ -58,15 +58,16 @@ export default function Favoritos({
     );
   }
 
+  const rotuloItens = produtos.length === 1 ? "item salvo" : "itens salvos";
+  const subtituloFavoritos = temProdutos
+    ? `${produtos.length} ${rotuloItens}`
+    : "0 itens salvos";
+
   return (
     <main className={`container ${styles.main}`}>
       <header className={styles.header}>
         <h1 className={styles.title}>Favoritos</h1>
-        <p className={styles.subtitle}>
-          {temProdutos
-            ? `${produtos.length} ${produtos.length === 1 ? "item salvo" : "itens salvos"}`
-            : "0 itens salvos"}
-        </p>
+        <p className={styles.subtitle}>{subtituloFavoritos}</p>
       </header>
 
       {!temProdutos ? (

@@ -4,16 +4,30 @@ import { Heart } from "lucide-react";
 import Button from "@/components/ui/Button/Button";
 import IconButton from "@/components/ui/IconButton/IconButton";
 import RatingPill from "@/components/ui/RatingPill/RatingPill";
-import Chip from "@/components/ui/Chip/Chip";
-import ColorSwatch from "@/components/ui/ColorSwatch/ColorSwatch";
 import Accordion from "@/components/ui/Accordion/Accordion";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
-import ProductGrid from "@/components/ProductGrid/ProductGrid";
 import { formatCurrency } from "@/utils/formatCurrency";
 import ProductGallery from "./ProductGallery";
 import ProductReviews from "./ProductReviews";
+import ProductColorSelector from "./ProductColorSelector";
+import ProductSizeSelector from "./ProductSizeSelector";
+import ProductSimilarSection from "./ProductSimilarSection";
 import ProdutoSkeleton from "./ProdutoSkeleton";
 import styles from "./Produto.module.css";
+
+function obterMensagemFalta({ temCor, temTamanho, saoCalcados }) {
+  if (!temCor && !temTamanho) {
+    return "Selecione uma cor e um tamanho para adicionar à cesta.";
+  }
+  if (!temCor) {
+    return "Selecione uma cor para adicionar à cesta.";
+  }
+  if (!temTamanho) {
+    const rotuloTipo = saoCalcados ? "número" : "tamanho";
+    return `Selecione um ${rotuloTipo} para adicionar à cesta.`;
+  }
+  return "";
+}
 
 /**
  * Página de Detalhes do Produto (/produto/:id) conforme docs/DESIGN.md e docs/API.md:
@@ -101,15 +115,11 @@ export default function Produto({
   const temCor = !precisaCor || Boolean(corSelecionada);
   const temTamanho = !precisaTamanho || Boolean(tamanhoSelecionado);
   const podeAdicionar = temCor && temTamanho;
-
-  let mensagemFalta = "";
-  if (!temCor && !temTamanho) {
-    mensagemFalta = "Selecione uma cor e um tamanho para adicionar à cesta.";
-  } else if (!temCor) {
-    mensagemFalta = "Selecione uma cor para adicionar à cesta.";
-  } else if (!temTamanho) {
-    mensagemFalta = `Selecione um ${saoCalcados ? "número" : "tamanho"} para adicionar à cesta.`;
-  }
+  const mensagemFalta = obterMensagemFalta({
+    temCor,
+    temTamanho,
+    saoCalcados,
+  });
 
   function handleAdicionar() {
     if (!podeAdicionar) {
@@ -160,69 +170,18 @@ export default function Produto({
             <span className={styles.price}>{formatCurrency(preco)}</span>
           </div>
 
-          {/* Seletor de Cores */}
-          {precisaCor ? (
-            <fieldset className={styles.selectorGroup}>
-              <legend className={styles.selectorLegend}>
-                <span className={styles.selectorTitle}>Cor</span>
-                {corSelecionada ? (
-                  <span className={styles.selectedLabel}>
-                    : {corSelecionada.nome}
-                  </span>
-                ) : null}
-              </legend>
+          <ProductColorSelector
+            cores={cores}
+            corSelecionada={corSelecionada}
+            onSelecionarCor={setCorSelecionada}
+          />
 
-              <div className={styles.optionsRow} role="radiogroup">
-                {cores.map((cor) => {
-                  const estaSelecionada =
-                    corSelecionada?.nome === cor.nome ||
-                    corSelecionada?.hex === cor.hex;
-
-                  return (
-                    <ColorSwatch
-                      key={cor.nome || cor.hex}
-                      cor={cor.hex}
-                      nome={cor.nome}
-                      selected={estaSelecionada}
-                      onClick={() => setCorSelecionada(cor)}
-                    />
-                  );
-                })}
-              </div>
-            </fieldset>
-          ) : null}
-
-          {/* Seletor de Tamanhos / Números */}
-          {precisaTamanho ? (
-            <fieldset className={styles.selectorGroup}>
-              <legend className={styles.selectorLegend}>
-                <span className={styles.selectorTitle}>
-                  {saoCalcados ? "Número (calçado)" : "Tamanho"}
-                </span>
-                {tamanhoSelecionado ? (
-                  <span className={styles.selectedLabel}>
-                    : {tamanhoSelecionado}
-                  </span>
-                ) : null}
-              </legend>
-
-              <div className={styles.optionsRow} role="radiogroup">
-                {tamanhos.map((tamanho) => {
-                  const estaSelecionado = tamanhoSelecionado === tamanho;
-
-                  return (
-                    <Chip
-                      key={tamanho}
-                      selected={estaSelecionado}
-                      onClick={() => setTamanhoSelecionado(tamanho)}
-                    >
-                      {tamanho}
-                    </Chip>
-                  );
-                })}
-              </div>
-            </fieldset>
-          ) : null}
+          <ProductSizeSelector
+            tamanhos={tamanhos}
+            saoCalcados={saoCalcados}
+            tamanhoSelecionado={tamanhoSelecionado}
+            onSelecionarTamanho={setTamanhoSelecionado}
+          />
 
           {/* Mensagem curta da regra D-07 */}
           {mensagemFalta ? (
@@ -277,20 +236,7 @@ export default function Produto({
       <ProductReviews avaliacoes={avaliacoes} />
 
       {/* Seção de Produtos Semelhantes */}
-      {Array.isArray(produtosSemelhantes) && produtosSemelhantes.length > 0 ? (
-        <section
-          className={styles.similarSection}
-          aria-labelledby="semelhantes-heading"
-        >
-          <div className={styles.similarHeader}>
-            <h2 id="semelhantes-heading" className={styles.similarTitle}>
-              Produtos semelhantes
-            </h2>
-          </div>
-
-          <ProductGrid produtos={produtosSemelhantes} />
-        </section>
-      ) : null}
+      <ProductSimilarSection produtos={produtosSemelhantes} />
     </main>
   );
 }

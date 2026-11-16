@@ -55,16 +55,14 @@ export default function Carrinho({
     (acc, item) => acc + (item.quantidade || 1),
     0,
   );
+  const rotuloItens = totalItens === 1 ? "item" : "itens";
+  const subtituloCesta = temItens ? `${totalItens} ${rotuloItens}` : "0 itens";
 
   return (
     <main className={`container ${styles.main}`}>
       <header className={styles.header}>
         <h1 className={styles.title}>Sua cesta</h1>
-        <p className={styles.subtitle}>
-          {temItens
-            ? `${totalItens} ${totalItens === 1 ? "item" : "itens"}`
-            : "0 itens"}
-        </p>
+        <p className={styles.subtitle}>{subtituloCesta}</p>
       </header>
 
       {!temItens ? (

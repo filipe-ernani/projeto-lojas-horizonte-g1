@@ -3,7 +3,7 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 16/11/2026 (implementação das telas de Checkout e Meus pedidos com AddressOption, PaymentOptions, OrderCard, AccountNav e skeletons)
+**Última atualização:** 16/11/2026 (Refatoração de qualidade SonarQube: modularização do Login.jsx, extração do useLoginForm, eliminação de operadores ternários aninhados e redução de complexidade ciclomática em pages e components)
 **Fase atual:** 3. Estrutura das telas (Home, Catálogo, Produto, Favoritos, Carrinho, Checkout e Pedidos prontos; pendente Perfil e ChatWidget da Fase 2)
 
 ## Bloqueios externos
