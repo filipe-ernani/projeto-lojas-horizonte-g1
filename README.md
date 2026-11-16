@@ -14,7 +14,7 @@ O desenvolvimento deste MVP foca em solucionar os seguintes gargalos operacionai
 Para mitigar os problemas levantados, a squad desenvolveu um Protótipo Funcional (MVP) focado em dados e escalabilidade. A solução é composta por:
 * **Aplicação Web:** Loja demonstrativa contemplando catálogo, carrinho e finalização de pedido.
 * **Pipeline de Dados:** Ingestão e tratamento de dados unificando clientes, pedidos e pagamentos, resolvendo valores nulos.
-* **Inteligência Artificial:** Sistema RAG não-vetorial (recuperador lexical, TF-IDF ou OKAPI BM25) integrado ao catálogo e às avaliações (reviews) para atuar no suporte ao cliente.
+* **Inteligência Artificial:** Sistema RAG não-vetorial integrado ao catálogo e às avaliações (reviews) para atuar no suporte ao cliente.
 * **Business Intelligence:** Dashboard gerencial com indicadores estratégicos, incluindo receita, ticket médio, taxa de conversão, abandono de carrinho e giro de estoque.
 
 ## 4. Arquitetura e Stack Tecnológica
