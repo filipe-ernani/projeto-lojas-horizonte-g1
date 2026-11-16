@@ -3,8 +3,8 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 16/11/2026 (correções de tokens CSS em src/ e remoção de texto fixo de materiais em Produto.jsx)
-**Fase atual:** 3. Estrutura das telas (Home, Catálogo e Produto prontos; pendente Favoritos, Carrinho, Checkout, Perfil, Pedidos e ChatWidget da Fase 2)
+**Última atualização:** 16/11/2026 (implementação das telas de Favoritos e Carrinho com CartItem, OrderSummary e skeletons)
+**Fase atual:** 3. Estrutura das telas (Home, Catálogo, Produto, Favoritos e Carrinho prontos; pendente Checkout, Perfil, Pedidos e ChatWidget da Fase 2)
 
 ## Bloqueios externos
 
@@ -14,7 +14,7 @@
 ## Em andamento
 
 - Fase 2 (UI): `ChatWidget` (só a interface, sem resposta real).
-- Fase 3 (UI): Favoritos (`/favoritos`).
+- Fase 3 (UI): Checkout simulado (`/checkout`).
 - Design: `Breadcrumb` em `components/ui/`.
 
 ## Roteiro por fases
@@ -50,8 +50,8 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - [x] Home
 - [x] Catálogo (filtros preço, tamanho, categoria; busca; paginação)
 - [x] Produto (cor, tamanho, comentários, semelhantes)
-- [ ] Favoritos
-- [ ] Carrinho
+- [x] Favoritos
+- [x] Carrinho
 - [ ] Checkout simulado
 - [ ] Perfil com endereços
 - [ ] Meus pedidos
@@ -91,6 +91,11 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - `Produto.jsx` possui botão de favoritos apenas visual com toggle local; integrar ao `FavoritesContext` na Fase 4.
 - `Produto.jsx` recebe `onAdicionar` como prop; conectar ao `CartContext` na Fase 4.
 - `ProductCard.jsx` e `FavoriteButton.jsx` possuem botão de favoritos apenas visual com `preventDefault`; integrar ao `FavoritesContext` na Fase 4.
+- `Favoritos.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando Favoritos usar o hook de dados (Fase 4).
+- `Favoritos.jsx` define `produtos = []` como prop padrão e recebe `onFavoritar` como prop; conectar ao `FavoritesContext` na Fase 4.
+- `Carrinho.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando o Carrinho usar o hook de dados (Fase 4).
+- `Carrinho.jsx` define `carrinho = { itens: [], subtotal: 0, frete: 0, total: 0 }` como prop padrão e recebe `onAlterarQuantidade` e `onRemover` como props; conectar ao `CartContext` na Fase 4.
+- `OrderSummary.jsx` recebe `total` por prop e nunca calcula no front; na Fase 4 os totais virão calculados diretamente da API (`/api/carrinho`).
 
 ## Registro de sessões
 
@@ -111,3 +116,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 15/11 | Implementada estrutura da tela de Produto (`/produto/:id`) com galeria 4:5, seleção de cor/tamanho (D-07), ReviewCard, resumo de notas e produtos semelhantes | `feat(ui): implementa estrutura da tela de Produto` | UI: tela de Favoritos (`/favoritos`) ou `ChatWidget` |
 | 15/11 | Auditoria e alinhamento de tokens em `src/components/ui/Badge` (`neutro` com `color: var(--color-muted)`), conferência de `ColorSwatch`/`QuantityStepper` e registro de pedidos ao UI/Revisor | `fix(ui): ajusta token de texto no Badge e audita componentes base` | UI: corrigir acordeão em Produto e ajustar tokens inexistentes |
 | 16/11 | Correção de variáveis CSS inexistentes em `ReviewCard`, `ProductGallery`, `ProductReviews` e `Produto`; remoção de texto fixo de materiais em `Produto.jsx` (D-19) | `fix(ui): remove texto fixo de materiais e substitui variáveis inexistentes por valores diretos` | UI: tela de Favoritos (`/favoritos`) ou `ChatWidget` |
+| 16/11 | Implementada estrutura das telas Favoritos (`/favoritos`) e Carrinho (`/carrinho`), criando `CartItem`, `OrderSummary`, `FavoritosSkeleton`, `CarrinhoSkeleton`, com suporte a estados, acessibilidade e handlers por props | `feat(ui): implementa estrutura das telas de Favoritos e Carrinho` | UI: Checkout simulado (`/checkout`) ou `ChatWidget` |

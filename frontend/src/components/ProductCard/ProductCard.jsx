@@ -9,15 +9,30 @@ import styles from "./ProductCard.module.css";
  * Card de produto conforme docs/DESIGN.md:
  * Imagem 4:5 com FavoriteButton posicionado sobre a imagem (irmão do Link).
  * Abaixo: linha de preço em negrito + RatingPill, nome (15 px) e categoria (muted 14 px).
- * Acessibilidade: o FavoriteButton fica fora do Link para evitar aninhamento de elementos interativos.
+ * Acessibilidade: FavoriteButton e ações extras ficam fora do Link para evitar aninhamento interativo.
  */
-export default function ProductCard({ produto }) {
+export default function ProductCard({
+  produto,
+  isFavorito = false,
+  onFavoritar,
+  acoes,
+}) {
   if (!produto) {
     return null;
   }
 
   const { id, nome, categoria, preco, imagemUrl, notaMedia } = produto;
   const precoFormatado = formatCurrency(preco);
+
+  function handleFavoritar(evento) {
+    if (evento) {
+      evento.preventDefault();
+      evento.stopPropagation();
+    }
+    if (onFavoritar) {
+      onFavoritar(produto);
+    }
+  }
 
   return (
     <article className={styles.card}>
@@ -43,9 +58,17 @@ export default function ProductCard({ produto }) {
 
       <div className={styles.favoriteWrapper}>
         <FavoriteButton
-          ariaLabel={`Adicionar ${nome} aos favoritos`}
+          isFavorito={isFavorito}
+          onClick={handleFavoritar}
+          ariaLabel={
+            isFavorito
+              ? `Remover ${nome} dos favoritos`
+              : `Adicionar ${nome} aos favoritos`
+          }
         />
       </div>
+
+      {acoes ? <div className={styles.actions}>{acoes}</div> : null}
     </article>
   );
 }

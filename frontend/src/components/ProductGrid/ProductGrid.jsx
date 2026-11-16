@@ -5,13 +5,16 @@ import styles from "./ProductGrid.module.css";
 /**
  * Grade de produtos conforme docs/DESIGN.md:
  * 2 colunas no mobile, 3 no tablet e 4 no desktop via classe global .product-grid.
- * Recebe a lista de produtos por props.
+ * Recebe a lista de produtos por props e suporta ações/favoritos configuráveis.
  */
 export default function ProductGrid({
   produtos = [],
   emptyTitulo = "Nenhum produto encontrado",
   emptyMensagem = "Não há produtos para exibir nesta seção no momento.",
   className = "",
+  isFavorito = false,
+  onFavoritar,
+  renderAcoes,
 }) {
   if (!produtos || produtos.length === 0) {
     return (
@@ -27,9 +30,19 @@ export default function ProductGrid({
 
   return (
     <div className={`product-grid ${styles.grid} ${className}`.trim()}>
-      {produtos.map((produto) => (
-        <ProductCard key={produto.id} produto={produto} />
-      ))}
+      {produtos.map((produto) => {
+        const itemFavorito =
+          typeof isFavorito === "function" ? isFavorito(produto) : isFavorito;
+        return (
+          <ProductCard
+            key={produto.id}
+            produto={produto}
+            isFavorito={itemFavorito}
+            onFavoritar={onFavoritar}
+            acoes={renderAcoes ? renderAcoes(produto) : null}
+          />
+        );
+      })}
     </div>
   );
 }
