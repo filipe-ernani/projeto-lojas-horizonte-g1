@@ -218,3 +218,16 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- Projeto Lojas Horizonte ---
+# Credenciais
+.databrickscfg
+kaggle.json
+
+# Estado local dos Databricks Asset Bundles
+.databricks/
+
+# Dados brutos e gerados (o Olist tem ~120 MB; não versionar)
+data/olist/
+data/saida/
+*.parquet
