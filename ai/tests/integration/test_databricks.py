@@ -3,6 +3,8 @@ import os
 import pytest
 
 from agente_horizonte.data.databricks_client import fetch_products, fetch_reviews
+from agente_horizonte.retrieval.document_loader import build_product_documents
+from agente_horizonte.retrieval.preprocessing import tokenize
 
 pytestmark = [
     pytest.mark.integration,
@@ -62,3 +64,20 @@ def test_reviews_read_and_filter_real_records():
         assert results
         for row in results:
             assert fetch_products(product_id=str(row[id_column]), category=str(category), limit=1)
+
+
+def test_catalog_prepares_real_documents():
+    records = fetch_products(limit=10)
+    id_column = os.environ["DATABRICKS_CATALOG_PRODUCT_ID_COLUMN"].strip()
+    table = os.environ["DATABRICKS_CATALOG_TABLE"].strip()
+    documents = build_product_documents(records, source=table, product_id_field=id_column)
+
+    assert documents, "The catalog must produce searchable documents"
+    for document in documents:
+        row = document["source"]["row"]
+        assert row in records
+        assert document["product_id"] == row[id_column]
+        assert document["source"]["table"] == table
+        assert document["type"] == "product"
+        assert document["tokens"] == tokenize(document["text"])
+        assert document["tokens"]

@@ -110,3 +110,71 @@ Validação executada em **16/11/2026**, com Python 3.12.14 e SQL Connector 4.9.
 Referências: [SQL Connector for Python](https://docs.databricks.com/gcp/en/dev-tools/python-sql-connector),
 [STATEMENT_TIMEOUT](https://docs.databricks.com/gcp/en/sql/language-manual/parameters/statement_timeout)
 e [limitações da Free Edition](https://docs.databricks.com/gcp/en/getting-started/free-edition-limitations).
+
+## IA-02: preparação para recuperação lexical
+
+As funções em `retrieval/document_loader.py` recebem os registros já consultados,
+sem acesso à rede. O catálogo usa `nome`, `modelo`, `categoria` e `grupo`, colunas
+verificadas no Databricks em 16/11/2026. Preço, custo e popularidade permanecem na
+referência de origem e não são utilizados como texto de recuperação.
+
+```python
+import os
+
+from agente_horizonte.data.databricks_client import fetch_products
+from agente_horizonte.retrieval.document_loader import build_product_documents
+from agente_horizonte.retrieval.preprocessing import tokenize
+
+documents = build_product_documents(
+    fetch_products(limit=1000),
+    source=os.environ["DATABRICKS_CATALOG_TABLE"].strip(),
+    product_id_field=os.environ["DATABRICKS_CATALOG_PRODUCT_ID_COLUMN"].strip(),
+)
+corpus = [document["tokens"] for document in documents]
+query_tokens = tokenize("Tênis azul")
+```
+
+Cada documento contém `product_id`, `type` (`product` ou `review`), `text`, `tokens`
+e `source`. A origem guarda o nome da tabela e uma cópia da linha original, incluindo
+SKU, identificadores de avaliação/pedido e demais campos disponíveis. Identificadores
+e valores originais não são normalizados; os registros de entrada não são alterados.
+O corpus é uma `list[list[str]]` pronta para BM25: sua posição corresponde à posição
+do documento e permite recuperar a origem de cada resultado. O índice e a busca BM25
+não fazem parte desta issue.
+
+`normalize_text` e `tokenize` aplicam minúsculas, removem acentos e transformam
+pontuação, sublinhados e espaços consecutivos em separadores. Preservam números,
+repetições e palavras como “não”. Use `tokenize` também nas consultas. Textos nulos,
+vazios ou compostos somente de pontuação produzem `[]`; documentos sem tokens ou
+sem identificador textual válido são omitidos. Campos não textuais não viram palavras.
+
+Reviews ainda não possuem tabela ou contrato. `build_review_documents` exige os
+nomes das colunas de produto (`product_id_field`), avaliação (`review_id_field`) e
+texto (`text_fields`), além da tabela de origem (`source`). Os nomes usados nos testes
+são ilustrativos. Após a definição do contrato, os documentos retornados podem ser
+concatenados aos documentos de produto antes de construir o corpus.
+
+Reviews com apenas nota são omitidos; um título textual é suficiente. Não há join nem
+inferência de SKU pelo pedido. Vínculos ausentes, vazios ou com múltiplos SKUs são
+descartados. Se uma avaliação aparecer vinculada a SKUs diferentes no mesmo lote,
+todas as suas linhas são descartadas, mesmo quando uma delas não contém comentário.
+A verificação de conflitos considera somente o lote recebido: a fonte precisa fornecer
+vínculos inequívocos e o lote completo de avaliações antes de eventual paginação.
+Identificadores de reviews e produtos devem ser strings, como o SKU do catálogo atual.
+
+Os testes unitários cobrem normalização, entradas vazias/nulas, conteúdo e origem dos
+documentos, reviews sem texto, vínculos ambíguos e alinhamento do corpus. Para validar
+a preparação com o catálogo real, habilite `RUN_DATABRICKS_INTEGRATION=1` e execute:
+
+```powershell
+uv run --env-file .env pytest tests/integration/test_databricks.py::test_catalog_prepares_real_documents --show-capture=no
+```
+
+A validação de reviews reais depende da entrega da tabela e do contrato pela equipe
+de Dados; os testes locais utilizam somente registros em memória.
+
+Validação da IA-02 em **16/11/2026**: **92 testes unitários passaram** (44 novos);
+os três testes de integração foram ignorados na execução padrão. Executado
+separadamente, o teste de preparação com o catálogo real **passou**. `ruff check .`
+e a formatação dos arquivos desta issue passaram. A checagem global de formatação
+aponta pendências preexistentes em `config.py` e `data/databricks_client.py`, preservados.
