@@ -1,0 +1,123 @@
+.header {
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--color-line);
+  padding-block: var(--space-4);
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-muted);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+  min-height: var(--control-h-sm);
+  transition: color 0.15s ease;
+}
+
+.backLink:hover {
+  color: var(--color-ink);
+}
+
+.logoLink {
+  text-decoration: none;
+  color: var(--color-ink);
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.14em;
+  color: var(--color-ink);
+}
+
+.spacer {
+  width: 90px;
+  display: none;
+}
+
+.stepsNav {
+  width: 100%;
+}
+
+.stepsList {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-muted);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+}
+
+.stepBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-xs);
+}
+
+.active {
+  color: var(--color-ink);
+  font-weight: var(--fw-semibold);
+}
+
+.active .stepBadge {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.completed {
+  color: var(--color-ink);
+}
+
+.completed .stepBadge {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+@media (min-width: 640px) {
+  .spacer {
+    display: block;
+  }
+
+  .stepItem {
+    font-size: var(--fs-sm);
+    gap: var(--space-3);
+  }
+
+  .stepsList {
+    gap: var(--space-8);
+  }
+}

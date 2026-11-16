@@ -3,8 +3,8 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 16/11/2026 (implementação das telas de Favoritos e Carrinho com CartItem, OrderSummary e skeletons)
-**Fase atual:** 3. Estrutura das telas (Home, Catálogo, Produto, Favoritos e Carrinho prontos; pendente Checkout, Perfil, Pedidos e ChatWidget da Fase 2)
+**Última atualização:** 16/11/2026 (implementação das telas de Checkout e Meus pedidos com AddressOption, PaymentOptions, OrderCard, AccountNav e skeletons)
+**Fase atual:** 3. Estrutura das telas (Home, Catálogo, Produto, Favoritos, Carrinho, Checkout e Pedidos prontos; pendente Perfil e ChatWidget da Fase 2)
 
 ## Bloqueios externos
 
@@ -14,7 +14,7 @@
 ## Em andamento
 
 - Fase 2 (UI): `ChatWidget` (só a interface, sem resposta real).
-- Fase 3 (UI): Checkout simulado (`/checkout`).
+- Fase 3 (UI): Perfil com endereços (`/perfil`).
 - Design: `Breadcrumb` em `components/ui/`.
 
 ## Roteiro por fases
@@ -52,9 +52,9 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - [x] Produto (cor, tamanho, comentários, semelhantes)
 - [x] Favoritos
 - [x] Carrinho
-- [ ] Checkout simulado
+- [x] Checkout simulado
 - [ ] Perfil com endereços
-- [ ] Meus pedidos
+- [x] Meus pedidos
 
 ### Fase 4. Ligar à API (BLOQUEADA até dataset e back-end)
 
@@ -96,6 +96,9 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - `Carrinho.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando o Carrinho usar o hook de dados (Fase 4).
 - `Carrinho.jsx` define `carrinho = { itens: [], subtotal: 0, frete: 0, total: 0 }` como prop padrão e recebe `onAlterarQuantidade` e `onRemover` como props; conectar ao `CartContext` na Fase 4.
 - `OrderSummary.jsx` recebe `total` por prop e nunca calcula no front; na Fase 4 os totais virão calculados diretamente da API (`/api/carrinho`).
+- `Checkout.jsx` usa props `enderecos = []`, `carrinho` e `estadoInicial` para testes de visualização; integrar com `useEnderecos` e `CartContext` na Fase 4.
+- `Checkout.jsx` recebe `onFinalizar` por prop; conectar à rota `/api/carrinho/finalizar` na Fase 4.
+- `Pedidos.jsx` usa a prop `pedidos = []` e `estadoInicial` para testes de visualização; integrar com `usePedidos` na Fase 4.
 
 ## Registro de sessões
 
@@ -117,3 +120,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 15/11 | Auditoria e alinhamento de tokens em `src/components/ui/Badge` (`neutro` com `color: var(--color-muted)`), conferência de `ColorSwatch`/`QuantityStepper` e registro de pedidos ao UI/Revisor | `fix(ui): ajusta token de texto no Badge e audita componentes base` | UI: corrigir acordeão em Produto e ajustar tokens inexistentes |
 | 16/11 | Correção de variáveis CSS inexistentes em `ReviewCard`, `ProductGallery`, `ProductReviews` e `Produto`; remoção de texto fixo de materiais em `Produto.jsx` (D-19) | `fix(ui): remove texto fixo de materiais e substitui variáveis inexistentes por valores diretos` | UI: tela de Favoritos (`/favoritos`) ou `ChatWidget` |
 | 16/11 | Implementada estrutura das telas Favoritos (`/favoritos`) e Carrinho (`/carrinho`), criando `CartItem`, `OrderSummary`, `FavoritosSkeleton`, `CarrinhoSkeleton`, com suporte a estados, acessibilidade e handlers por props | `feat(ui): implementa estrutura das telas de Favoritos e Carrinho` | UI: Checkout simulado (`/checkout`) ou `ChatWidget` |
+| 16/11 | Implementada estrutura das telas Checkout (`/checkout`) e Meus pedidos (`/pedidos`), com AddressOption, PaymentOptions, OrderCard, AccountNav, CheckoutHeader, CheckoutSuccess e skeletons | `feat(ui): implementa estrutura das telas de Checkout e Pedidos` | UI: tela de Perfil com endereços (`/perfil`) ou `ChatWidget` |
