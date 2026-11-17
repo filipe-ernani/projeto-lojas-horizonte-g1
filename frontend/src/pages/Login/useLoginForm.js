@@ -12,14 +12,14 @@ import { validarCamposAuth } from "./loginValidation";
  * Hook customizado para encapsular toda a lógica de estado, validação e autenticação da tela de Login.
  * Reduz a complexidade ciclomática e cognitiva do componente de visualização.
  */
-export function useLoginForm() {
+export function useLoginForm(modoInicial = MODOS.ENTRAR) {
   const { loginEmailSenha, loginGoogle, cadastrar, recuperarSenha } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const isMountedRef = useRef(true);
 
   // Estados dos campos
-  const [modo, setModo] = useState(MODOS.ENTRAR);
+  const [modo, setModo] = useState(modoInicial);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");

@@ -5,19 +5,15 @@ import { useAuth } from "@/context/AuthContext";
 import IconButton from "@/components/ui/IconButton/IconButton";
 import styles from "./Header.module.css";
 
-const LINKS_NAV = [
+const LINKS_NAV_CENTRAL = [
   { para: "/", rotulo: "Início" },
   { para: "/catalogo", rotulo: "Catálogo" },
-  { para: "/favoritos", rotulo: "Favoritos" },
 ];
 
 export default function Header() {
-  const { usuario } = useAuth();
+  const { usuario, carregando } = useAuth();
   const navigate = useNavigate();
   const [termoBusca, setTermoBusca] = useState("");
-
-  const rotaConta = usuario ? "/perfil" : "/login";
-  const rotuloConta = usuario ? "Minha conta" : "Entrar";
 
   function aoBuscar(evento) {
     evento.preventDefault();
@@ -27,6 +23,118 @@ export default function Header() {
       return;
     }
     navigate("/catalogo");
+  }
+
+  function aoClicarLinkMobile(evento) {
+    const details = evento.currentTarget.closest("details");
+    if (details) {
+      details.removeAttribute("open");
+    }
+  }
+
+  function renderAcoesDireita() {
+    if (carregando) {
+      return <div className={styles.actionsLoading} aria-hidden="true" />;
+    }
+
+    if (!usuario) {
+      return (
+        <div className={styles.authLinks}>
+          <Link to="/login" className={styles.btnSecondary}>
+            Entrar
+          </Link>
+          <Link to="/login?modo=cadastrar" className={styles.btnPrimary}>
+            Cadastre-se
+          </Link>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <IconButton icone={Heart} rotulo="Favoritos" para="/favoritos" />
+        <IconButton
+          icone={ShoppingBag}
+          rotulo="Cesta de compras"
+          para="/carrinho"
+        />
+        <IconButton icone={User} rotulo="Minha conta" para="/perfil" />
+      </>
+    );
+  }
+
+  function renderLinksMobile() {
+    return (
+      <>
+        {LINKS_NAV_CENTRAL.map((item) => (
+          <NavLink
+            key={item.para}
+            to={item.para}
+            onClick={aoClicarLinkMobile}
+            className={({ isActive }) =>
+              `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
+            }
+          >
+            {item.rotulo}
+          </NavLink>
+        ))}
+
+        {!carregando && !usuario && (
+          <>
+            <NavLink
+              to="/login"
+              onClick={aoClicarLinkMobile}
+              className={({ isActive }) =>
+                `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
+              }
+            >
+              Entrar
+            </NavLink>
+            <NavLink
+              to="/login?modo=cadastrar"
+              onClick={aoClicarLinkMobile}
+              className={({ isActive }) =>
+                `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
+              }
+            >
+              Cadastre-se
+            </NavLink>
+          </>
+        )}
+
+        {!carregando && usuario && (
+          <>
+            <NavLink
+              to="/favoritos"
+              onClick={aoClicarLinkMobile}
+              className={({ isActive }) =>
+                `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
+              }
+            >
+              Favoritos
+            </NavLink>
+            <NavLink
+              to="/carrinho"
+              onClick={aoClicarLinkMobile}
+              className={({ isActive }) =>
+                `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
+              }
+            >
+              Cesta
+            </NavLink>
+            <NavLink
+              to="/perfil"
+              onClick={aoClicarLinkMobile}
+              className={({ isActive }) =>
+                `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
+              }
+            >
+              Minha conta
+            </NavLink>
+          </>
+        )}
+      </>
+    );
   }
 
   return (
@@ -39,17 +147,7 @@ export default function Header() {
                 <Menu size={22} strokeWidth={1.8} />
               </summary>
               <nav className={styles.mobileNav} aria-label="Menu principal">
-                {LINKS_NAV.map((item) => (
-                  <NavLink
-                    key={item.para}
-                    to={item.para}
-                    className={({ isActive }) =>
-                      `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
-                    }
-                  >
-                    {item.rotulo}
-                  </NavLink>
-                ))}
+                {renderLinksMobile()}
               </nav>
             </details>
 
@@ -58,7 +156,7 @@ export default function Header() {
             </Link>
 
             <nav className={styles.desktopNav} aria-label="Menu principal">
-              {LINKS_NAV.map((item) => (
+              {LINKS_NAV_CENTRAL.map((item) => (
                 <NavLink
                   key={item.para}
                   to={item.para}
@@ -93,25 +191,7 @@ export default function Header() {
             />
           </form>
 
-          <div className={styles.actions}>
-            <IconButton
-              icone={Heart}
-              rotulo="Favoritos"
-              para="/favoritos"
-            />
-
-            <IconButton
-              icone={ShoppingBag}
-              rotulo="Cesta de compras"
-              para="/carrinho"
-            />
-
-            <IconButton
-              icone={User}
-              rotulo={rotuloConta}
-              para={rotaConta}
-            />
-          </div>
+          <div className={styles.actions}>{renderAcoesDireita()}</div>
         </div>
 
         <form

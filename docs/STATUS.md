@@ -3,8 +3,8 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 16/11/2026 (Refatoração de qualidade SonarQube: modularização do Login.jsx, extração do useLoginForm, eliminação de operadores ternários aninhados e redução de complexidade ciclomática em pages e components)
-**Fase atual:** 3. Estrutura das telas (Home, Catálogo, Produto, Favoritos, Carrinho, Checkout e Pedidos prontos; pendente Perfil e ChatWidget da Fase 2)
+**Última atualização:** 16/11/2026 (simplificação do Header desktop/mobile com navegação enxuta, botões Entrar/Cadastre-se para deslogado, ícones para logado e suporte a query param modo no Login)
+**Fase atual:** 3. Estrutura das telas (Home, Catálogo, Produto, Favoritos, Carrinho, Checkout, Pedidos e Perfil prontos; pendente apenas ChatWidget da Fase 2)
 
 ## Bloqueios externos
 
@@ -53,7 +53,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - [x] Favoritos
 - [x] Carrinho
 - [x] Checkout simulado
-- [ ] Perfil com endereços
+- [x] Perfil com endereços
 - [x] Meus pedidos
 
 ### Fase 4. Ligar à API (BLOQUEADA até dataset e back-end)
@@ -71,6 +71,8 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
+- Pedido ao Design: atualizar a especificação do Header em `docs/DESIGN.md` conforme decisão D-20 (navegação central com "Início" e "Catálogo"; usuário deslogado vê botões "Entrar" e "Cadastre-se"; ícones de favoritos, cesta e conta visíveis apenas para usuário logado).
+- Pedido ao Design: fazer com que o componente base `Button` (`src/components/ui/Button/Button.jsx`) aceite a prop `para` (renderizando `<Link to={para}>` do React Router quando informada), permitindo navegação direta sem aninhar botão dentro de link e sem duplicar estilos de botão em CSS Modules.
 - *(Resolvido em 16/11)* Removido acordeão fixo "Materiais e composição" de `Produto.jsx` (regra D-19) e mantido texto institucional neutro de entrega e devoluções.
 - *(Resolvido em 16/11)* Substituídas variáveis CSS inexistentes em `ReviewCard`, `ProductGallery`, `ProductReviews` e `Produto` por valores diretos (`line-height` e `transition`). Varredura em todo o `src/` resultou em 0 variáveis indefinidas.
 - *(Resolvido em 15/11)* Correção e alinhamento de tokens do `Badge` em `components/ui/` (`neutro`, `escuro`, `perigo`), com verificação de `ColorSwatch` e `QuantityStepper`.
@@ -99,6 +101,9 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - `Checkout.jsx` usa props `enderecos = []`, `carrinho` e `estadoInicial` para testes de visualização; integrar com `useEnderecos` e `CartContext` na Fase 4.
 - `Checkout.jsx` recebe `onFinalizar` por prop; conectar à rota `/api/carrinho/finalizar` na Fase 4.
 - `Pedidos.jsx` usa a prop `pedidos = []` e `estadoInicial` para testes de visualização; integrar com `usePedidos` na Fase 4.
+- `Perfil.jsx` usa props `perfil = { nome: "", email: "", telefone: "" }`, `enderecos = []` e `estadoInicial` para testes de visualização; integrar com hooks de usuário e endereços na Fase 4.
+- `PerfilDadosSection.jsx` recebe `onSalvarPerfil` por prop; conectar à rota `/api/usuarios/perfil` (PUT) na Fase 4.
+- `PerfilEnderecosSection.jsx` e `PerfilEnderecoForm.jsx` recebem `onSalvarEndereco` e `onExcluirEndereco` por props; conectar aos endpoints `/api/enderecos` na Fase 4.
 
 ## Registro de sessões
 
@@ -121,3 +126,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 16/11 | Correção de variáveis CSS inexistentes em `ReviewCard`, `ProductGallery`, `ProductReviews` e `Produto`; remoção de texto fixo de materiais em `Produto.jsx` (D-19) | `fix(ui): remove texto fixo de materiais e substitui variáveis inexistentes por valores diretos` | UI: tela de Favoritos (`/favoritos`) ou `ChatWidget` |
 | 16/11 | Implementada estrutura das telas Favoritos (`/favoritos`) e Carrinho (`/carrinho`), criando `CartItem`, `OrderSummary`, `FavoritosSkeleton`, `CarrinhoSkeleton`, com suporte a estados, acessibilidade e handlers por props | `feat(ui): implementa estrutura das telas de Favoritos e Carrinho` | UI: Checkout simulado (`/checkout`) ou `ChatWidget` |
 | 16/11 | Implementada estrutura das telas Checkout (`/checkout`) e Meus pedidos (`/pedidos`), com AddressOption, PaymentOptions, OrderCard, AccountNav, CheckoutHeader, CheckoutSuccess e skeletons | `feat(ui): implementa estrutura das telas de Checkout e Pedidos` | UI: tela de Perfil com endereços (`/perfil`) ou `ChatWidget` |
+| 16/11 | Simplificação do Header (desktop e mobile) conforme D-20 (Início e Catálogo; Entrar/Cadastre-se deslogado; favoritos/cesta/conta logado), sem flash ao recarregar, e suporte a parâmetro de URL modo no Login | `feat(ui): adapta Header ao estado de login e inicializa modo no Login via URL` | UI: `ChatWidget` ou validação com Caio |

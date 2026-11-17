@@ -1,0 +1,65 @@
+.skeletonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+}
+
+.sectionSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-paper);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-line);
+}
+
+.titleSkeleton {
+  width: 160px;
+  height: 24px;
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+}
+
+.subtitleSkeleton {
+  width: 280px;
+  max-width: 100%;
+  height: 16px;
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+}
+
+.fieldSkeleton {
+  width: 100%;
+  height: var(--control-h);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+}
+
+.buttonSkeleton {
+  width: 180px;
+  height: var(--control-h-sm);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-2);
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+.cardSkeleton {
+  width: 100%;
+  height: 140px;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+}
+
+@media (min-width: 1024px) {
+  .cardsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

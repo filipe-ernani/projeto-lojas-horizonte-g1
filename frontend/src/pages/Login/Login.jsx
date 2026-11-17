@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/ui/Button/Button";
 import LoginBanner from "./LoginBanner";
@@ -15,8 +15,16 @@ import styles from "./Login.module.css";
  * Estrutura modularizada com separação de responsabilidades para conformidade com SonarQube.
  */
 export default function Login() {
+  const [searchParams] = useSearchParams();
+  const modoQuery = searchParams.get("modo");
+  const modoInicial = [MODOS.ENTRAR, MODOS.CADASTRAR, MODOS.RECUPERAR].includes(
+    modoQuery,
+  )
+    ? modoQuery
+    : MODOS.ENTRAR;
+
   const { usuario, carregando: authCarregando } = useAuth();
-  const form = useLoginForm();
+  const form = useLoginForm(modoInicial);
 
   if (authCarregando) {
     return (

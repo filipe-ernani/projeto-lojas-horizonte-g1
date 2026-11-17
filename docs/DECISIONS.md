@@ -23,3 +23,4 @@
 | D-17 | 14/11 | Ao fim de cada tarefa o agente entrega **sugestão de commit** (formato `tipo(escopo): resumo`); quem commita é o Caio | Registro do que foi feito e evidência no GitHub para o PMO |
 | D-19 | 14/11 | **Sem dados mockados.** O front entrega estrutura, componentes, rotas, login e estados (carregando, erro, vazio); os dados vêm da API real quando o dataset e o back-end existirem. O back-end fica para depois | Pedido do Caio: esperar o dataset do outro integrante |
 | D-18 | 14/11 | Arquivos sensíveis sempre no `.gitignore` antes de qualquer commit; `git status` obrigatório antes de sugerir commit | Evitar vazamento de chaves |
+| D-20 | 16/11 | Header: navegação só com Início e Catálogo; deslogado vê Entrar e Cadastre-se; ícones de favoritos, cesta e conta só para usuário logado | Simplificação da navegação (o coração já leva a /favoritos) e adaptação da interface ao estado de autenticação |
