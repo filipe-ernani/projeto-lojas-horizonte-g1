@@ -24,3 +24,4 @@
 | D-19 | 14/11 | **Sem dados mockados.** O front entrega estrutura, componentes, rotas, login e estados (carregando, erro, vazio); os dados vêm da API real quando o dataset e o back-end existirem. O back-end fica para depois | Pedido do Caio: esperar o dataset do outro integrante |
 | D-18 | 14/11 | Arquivos sensíveis sempre no `.gitignore` antes de qualquer commit; `git status` obrigatório antes de sugerir commit | Evitar vazamento de chaves |
 | D-20 | 16/11 | Header: navegação só com Início e Catálogo; deslogado vê Entrar e Cadastre-se; ícones de favoritos, cesta e conta só para usuário logado | Simplificação da navegação (o coração já leva a /favoritos) e adaptação da interface ao estado de autenticação |
+| D-21 | 17/11 | Estoque fora do escopo do MVP (fica na arquitetura de escalabilidade conceitual). Tamanhos, cores e descrições são gerados no seed e marcados como SIMULADO. | Pedido do Caio: reduzir complexidade. |

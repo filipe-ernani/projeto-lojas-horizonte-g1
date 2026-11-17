@@ -9,13 +9,15 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 
 ## Formatos
 
+> **Catálogo e dados de produtos:** o catálogo de produtos vem de `data/catalogo.csv` (200 produtos, 9 categorias: Feminino, Masculino, Infantil, Calçados, Moda íntima e praia, Acessórios, Esporte, Beleza, Casa). Tamanhos, cores e descrições são derivados no script de seed (`npm run seed:simulado`), marcados com origem `SIMULADO`. O campo de estoque está fora do escopo do MVP (D-21).
+
 ```js
 // Produto
-{ id: 12, nome: "Jaqueta Acolchoada Oversized", descricao: "…", categoria: "Jaquetas",
-  preco: 520, imagemUrl: null,            // null => placeholder
-  tamanhos: ["PP","P","M","G","GG"],      // calçados: ["34","35",…,"44"]
-  cores: [{ nome: "Preto", hex: "#000000" }],
-  notaMedia: 4.9, qtdAvaliacoes: 108, estoque: 14 }
+{ id: 12, sku: "HZ-FEM-001", nome: "Short Feminino Viscose Marrom", descricao: "…", categoria: "Feminino",
+  preco: 26.90, imagemUrl: null,            // null => placeholder
+  tamanhos: ["PP","P","M","G","GG"],        // calçados: ["34"…"44"]; Acessórios/Casa/Beleza: ["Único"]
+  cores: [{ nome: "Marrom", hex: "#8B4513" }], // Beleza: [] (sem cor)
+  notaMedia: 4.9, qtdAvaliacoes: 108 }
 
 // Avaliação
 { id: 1, produtoId: 12, autor: "Júlia", nota: 5, comentario: "…", data: "2026-11-12" }
@@ -62,7 +64,7 @@ O preço e o total são **sempre calculados pelo servidor**; o front só exibe.
 
 ## Erros
 
-Resposta de erro: `{ erro: "mensagem curta em português" }` com status HTTP adequado (`400`, `401`, `404`, `409` para estoque insuficiente, `500`). O front mostra a mensagem do campo `erro` quando existir.
+Resposta de erro: `{ erro: "mensagem curta em português" }` com status HTTP adequado (`400`, `401`, `404`, `500`). O front mostra a mensagem do campo `erro` quando existir.
 
 ## Sem mock
 
