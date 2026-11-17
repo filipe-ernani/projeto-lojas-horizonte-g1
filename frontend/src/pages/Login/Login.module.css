@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--color-paper);
 }
 
@@ -17,9 +18,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: var(--space-6) var(--gutter);
+  padding: var(--space-8) var(--gutter);
   width: 100%;
 }
 
@@ -28,6 +27,8 @@
   max-width: 440px;
   display: flex;
   flex-direction: column;
+  margin-inline: auto;
+  margin-block: auto;
 }
 
 /* Cabeçalho mobile */
@@ -324,6 +325,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  min-height: 100dvh;
   padding: var(--space-6);
   background: var(--color-paper);
 }
@@ -350,7 +352,7 @@
 /* Breakpoint Tablet (>= 640px) */
 @media (min-width: 640px) {
   .formSection {
-    padding: var(--space-10) var(--gutter);
+    padding: var(--space-8) var(--gutter);
   }
 }
 
@@ -359,18 +361,22 @@
   .page {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
   }
 
   .bannerSection {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     background: var(--color-ink);
     color: var(--color-paper);
     padding: var(--space-12) var(--space-10);
-    position: relative;
     user-select: none;
   }
 
@@ -431,8 +437,13 @@
   }
 
   .formSection {
+    min-height: 100vh;
+    min-height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
     overflow-y: auto;
-    padding: var(--space-12) var(--space-8);
+    overflow-x: hidden;
+    padding: var(--space-8);
   }
 
   /* Oculta o header mobile redundante no desktop */
