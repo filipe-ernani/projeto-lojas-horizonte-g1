@@ -30,12 +30,12 @@
 }
 
 .primary {
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: var(--color-brand);
+  color: var(--color-brand-contrast);
 }
 
 .primary:hover:not(:disabled) {
-  opacity: 0.88;
+  opacity: 0.9;
 }
 
 .outline {

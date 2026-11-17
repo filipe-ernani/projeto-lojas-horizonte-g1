@@ -9,12 +9,14 @@ const MAPA_VARIANTES = {
   perigo: styles.perigo,
   danger: styles.perigo,
   cancel: styles.perigo,
+  novo: styles.novo,
+  new: styles.novo,
 };
 
 /**
  * Badge conforme docs/DESIGN.md:
  * Selo pílula pequena (28 px) de texto.
- * Variantes: neutro (cinza/borda), escuro (preto/branco) e perigo (borda e texto vermelho).
+ * Variantes: neutro (cinza/borda), escuro (preto/branco), perigo (borda e texto vermelho) e novo (terracota).
  */
 export default function Badge({
   texto,

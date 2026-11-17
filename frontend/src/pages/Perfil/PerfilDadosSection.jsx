@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import Field from "@/components/ui/Field/Field";
 import Button from "@/components/ui/Button/Button";
 import styles from "./PerfilDadosSection.module.css";
@@ -6,16 +7,29 @@ import styles from "./PerfilDadosSection.module.css";
 /**
  * Seção de dados pessoais do usuário (/perfil):
  * - Nome e telefone editáveis.
- * - E-mail somente leitura (Field readOnly).
+ * - E-mail desativado (disabled + readOnly) com placeholder do usuário.
+ * - Placeholders de nome e telefone atualizados dinamicamente após salvar.
  * - Validação simples (nome obrigatório).
  * - Mensagens de sucesso e erro após salvar.
  */
 export default function PerfilDadosSection({
-  perfil = { nome: "", email: "", telefone: "" },
+  perfil,
   onSalvarPerfil,
 }) {
-  const [nome, setNome] = useState(perfil?.nome || "");
-  const [telefone, setTelefone] = useState(perfil?.telefone || "");
+  const { usuario } = useAuth();
+
+  const emailUsuario = perfil?.email || usuario?.email || "";
+  const nomeInicial = perfil?.nome || usuario?.displayName || "";
+  const telefoneInicial = perfil?.telefone || usuario?.phoneNumber || "";
+
+  const [nome, setNome] = useState(nomeInicial);
+  const [telefone, setTelefone] = useState(telefoneInicial);
+  const [placeholderNome, setPlaceholderNome] = useState(
+    nomeInicial || "Seu nome completo",
+  );
+  const [placeholderTelefone, setPlaceholderTelefone] = useState(
+    telefoneInicial || "(11) 99999-9999",
+  );
   const [erroNome, setErroNome] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const [mensagemErro, setMensagemErro] = useState(null);
@@ -36,12 +50,20 @@ export default function PerfilDadosSection({
     setSalvando(true);
 
     try {
+      const telefoneLimpo = telefone.trim();
       if (typeof onSalvarPerfil === "function") {
         await onSalvarPerfil({
           nome: nomeLimpo,
-          telefone: telefone.trim(),
+          telefone: telefoneLimpo,
         });
       }
+
+      // Atualiza os placeholders com os dados salvos
+      setPlaceholderNome(nomeLimpo);
+      if (telefoneLimpo) {
+        setPlaceholderTelefone(telefoneLimpo);
+      }
+
       setMensagemSucesso("Dados atualizados com sucesso!");
     } catch (err) {
       setMensagemErro(
@@ -85,7 +107,7 @@ export default function PerfilDadosSection({
             if (erroNome) setErroNome(null);
           }}
           erro={erroNome}
-          placeholder="Seu nome completo"
+          placeholder={placeholderNome}
           disabled={salvando}
           required
         />
@@ -94,7 +116,9 @@ export default function PerfilDadosSection({
           id="perfil-email"
           label="E-mail"
           type="email"
-          value={perfil?.email || ""}
+          value={emailUsuario}
+          placeholder={emailUsuario || "seu@email.com"}
+          disabled
           readOnly
           ajuda="O endereço de e-mail é vinculado à sua conta e não pode ser editado."
         />
@@ -105,7 +129,7 @@ export default function PerfilDadosSection({
           type="tel"
           value={telefone}
           onChange={(e) => setTelefone(e.target.value)}
-          placeholder="(11) 99999-9999"
+          placeholder={placeholderTelefone}
           disabled={salvando}
         />
 

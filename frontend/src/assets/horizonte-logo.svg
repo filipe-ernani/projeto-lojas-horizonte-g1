@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 36" fill="none" role="img" aria-label="Horizonte">
+  <style>
+    .semicircle-top { fill: var(--color-accent, #C9795D); }
+    .semicircle-bottom { fill: var(--color-brand, #6B4E3D); }
+    .logo-text {
+      fill: var(--color-ink, currentColor);
+      font-family: 'Jost', system-ui, -apple-system, sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+    }
+  </style>
+  <path class="semicircle-top" d="M 4 16.5 A 14 14 0 0 1 32 16.5 Z" />
+  <path class="semicircle-bottom" d="M 32 19.5 A 14 14 0 0 1 4 19.5 Z" />
+  <text class="logo-text" x="44" y="25">HORIZONTE</text>
+</svg>

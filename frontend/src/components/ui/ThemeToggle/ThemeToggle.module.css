@@ -1,0 +1,46 @@
+.toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-h-sm);
+  height: var(--control-h-sm);
+  min-width: var(--control-h-sm);
+  min-height: var(--control-h-sm);
+  padding: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.toggle:hover:not(:disabled) {
+  background: var(--color-surface);
+  border-color: var(--color-ink);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.toggle:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: currentColor;
+  transition: transform 0.2s ease;
+}
+
+.toggle:active:not(:disabled) .icon {
+  transform: rotate(20deg);
+}

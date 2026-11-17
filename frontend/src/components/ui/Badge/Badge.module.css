@@ -28,3 +28,9 @@
   color: var(--color-danger-text);
   border: 1px solid var(--color-danger);
 }
+
+.novo {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  border: 1px solid transparent;
+}
