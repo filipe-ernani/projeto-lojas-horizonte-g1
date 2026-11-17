@@ -36,6 +36,8 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D17 | Premissas do gerador do ERP (lojas, volume, estoque e sujeira plantada) | Proposta |
 | D18 | Regras de qualidade da silver do ERP | Aceita |
 | D19 | Recomendação de produtos como recurso de IA | Aceita |
+| D20 | Unificação dos canais na silver (fato e dimensões) | Aceita |
+
 ---
 
 ## D01 · Databricks Free Edition como ambiente do MVP
@@ -252,3 +254,17 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
   - As recomendações calculadas no Databricks voltam para a API como uma tabela pronta (`sku → skus recomendados`).
 - **Substitui:** a escolha da previsão como recurso principal (seção 1.3 do CONTEXTO). A D03 continua válida para o marketplace.
 - **Responsável:** Emanuel
+
+## D20 · Unificação dos canais na silver (fato e dimensões)
+
+- **Data:** 2026-11-17
+- **Status:** Aceita
+- **Decisão:** a silver unificada segue o modelo estrela. A `fato_vendas` empilha (`UNION ALL`) as vendas de cada canal, uma linha por item, com as colunas `canal, data, data_hora, pedido_id, loja_id, cliente_id, produto_id, categoria, grupo, quantidade, receita, custo, custo_estimado, valido`. Dimensões: `dim_categoria`, `dim_canal`, `dim_loja`, `dim_data`. Notebook `10_silver_unificada`; os números 08 e 09 ficam reservados para o site, para a numeração seguir a ordem de execução.
+- **Regras:**
+  - `valido` resume as regras de cada canal (ERP: D18; marketplace: `valido AND incluir AND periodo_completo`). Nada é removido (D07).
+  - Receita do marketplace sem frete: frete não é venda de produto.
+  - Custo do marketplace estimado pela margem da categoria (`custo_estimado = true`). A margem é calculada do próprio catálogo (`1 − custo ÷ preço`) e é idêntica à do `parametros.yaml` (conferido): nenhum número novo no código.
+  - `cliente_id`: nulo no ERP (cupom sem identificação), `customer_unique_id` no marketplace (D11). Preparado para a recomendação (D19), que usa o cliente do site.
+  - `dim_data` vai do primeiro dia com venda válida até 31/12 do ano da última venda, para incluir a Black Friday de 2026. Black Friday por regra (sexta-feira de novembro entre os dias 23 e 29), sem data fixa no código.
+- **Resultado:** loja física com 401.335 linhas, 399.736 válidas, 403.365 unidades e R$ 30.795.090,78; marketplace com 112.650 linhas, 42.758 válidas (= unidades) e R$ 5.250.663,26. Nenhuma venda válida sem grupo. Calendário de 09/01/2025 (primeira venda válida) a 31/12/2026: 722 dias, Black Fridays em 28/11/2025 e 27/11/2026.
+- **Pendente:** o site entra como mais um bloco do `UNION ALL`, sem mudar as colunas.
