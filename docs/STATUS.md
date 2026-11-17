@@ -3,8 +3,8 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 17/11/2026 (estrutura da tela de Perfil com endereços, seções de dados pessoais e locais de entrega, validações e estados)
-**Fase atual:** 3. Estrutura das telas (concluída: Home, Catálogo, Produto, Favoritos, Carrinho, Checkout, Pedidos e Perfil prontos; pendente apenas ChatWidget da Fase 2)
+**Última atualização:** 17/11/2026 (interface acessível do ChatWidget montada no Layout para usuário logado, com foco gerenciado, sessaoId em memória e tratamento de erros sem respostas mockadas)
+**Fase atual:** 3. Estrutura das telas (Fases 0, 1, 2 e 3 concluídas no front-end; pendente apenas Breadcrumb em Design e bloqueios de dataset/back-end para a Fase 4)
 
 ## Bloqueios externos
 
@@ -13,7 +13,6 @@
 
 ## Em andamento
 
-- Fase 2 (UI): `ChatWidget` (só a interface, sem resposta real).
 - Design: `Breadcrumb` em `components/ui/`.
 
 ## Roteiro por fases
@@ -40,7 +39,7 @@ Marque `[x]` quando a tarefa passar na definição de pronto (ver `AGENTS.md`).
 - [x] UI: Header e Footer
 - [x] UI: rotas e `PrivateRoute`
 - [x] UI: tela de Login
-- [ ] UI: `ChatWidget` (só a interface, sem resposta real)
+- [x] UI: `ChatWidget` (só a interface, sem resposta real)
 
 ### Fase 3. Estrutura das telas (UI, sem dados)
 
@@ -70,7 +69,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
-- De Design para UI: ProductImage aceita cor e categoria; passar produto.cores[0].hex e produto.categoria no ProductCard e no ProductGallery.
+- _(Resolvido em 17/11)_ Integrado suporte a cor e categoria no `ProductCard` e `ProductGallery` conforme pedido de Design; `ProductImage` atualiza a cor dinamicamente ao selecionar no `ColorSwatch`.
 - Pedido ao Design: atualizar a especificação do Header em `docs/DESIGN.md` conforme decisão D-20 (navegação central com "Início" e "Catálogo"; usuário deslogado vê botões "Entrar" e "Cadastre-se"; ícones de favoritos, cesta e conta visíveis apenas para usuário logado).
 - Pedido ao Design: fazer com que o componente base `Button` (`src/components/ui/Button/Button.jsx`) aceite a prop `para` (renderizando `<Link to={para}>` do React Router quando informada), permitindo navegação direta sem aninhar botão dentro de link e sem duplicar estilos de botão em CSS Modules.
 - _(Resolvido em 16/11)_ Removido acordeão fixo "Materiais e composição" de `Produto.jsx` (regra D-19) e mantido texto institucional neutro de entrega e devoluções.
@@ -104,6 +103,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - `Perfil.jsx` usa props `perfil = { nome: "", email: "", telefone: "" }`, `enderecos = []` e `estadoInicial` para testes de visualização; integrar com hooks de usuário e endereços na Fase 4.
 - `PerfilDadosSection.jsx` recebe `onSalvarPerfil` por prop; conectar à rota `/api/usuarios/perfil` (PUT) na Fase 4.
 - `PerfilEnderecosSection.jsx` e `PerfilEnderecoForm.jsx` recebem `onSalvarEndereco` e `onExcluirEndereco` por props; conectar aos endpoints `/api/enderecos` na Fase 4.
+- `ChatWidget.jsx` está montado no `Layout` para usuário logado com `sessaoId` em memória; o envio real (`onEnviar`) será conectado à rota `POST /api/chat` na Fase 4 (atualmente exibe estado de indisponibilidade com retry).
 
 ## Registro de sessões
 
@@ -131,3 +131,5 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 17/11 | Auditoria de valores fixos de `docs/API.md` em `src/` (CheckoutSuccess exibe 'Pedido realizado' sem número) e modularização do Checkout com `CheckoutEndereco` e `CheckoutPagamento` (<200 linhas) | `refactor(checkout): modulariza secoes e adapta tela de sucesso sem numero` | UI: `ChatWidget` da Fase 2 |
 | 17/11 | Estrutura da tela de Perfil com endereços (`/perfil`): Meus dados (nome/telefone editáveis, email readOnly), Meus endereços (AddressCard, badge padrão, ações), formulário com validações de CEP e UF, estados e sem mocks | `feat(ui): implementa estrutura da tela de Perfil com enderecos` | UI: `ChatWidget` da Fase 2 |
 | 17/11 | Aprimoramento do placeholder de `ProductImage` em `components/ui/` com ícones por categoria, fundo derivado da cor (`color-mix`) e cálculo automático de contraste | `feat(design): aprimora placeholder de ProductImage com cor, categoria e contraste` | UI: integrar `cor` e `categoria` no ProductCard e ProductGallery |
+| 17/11 | Integração de cor e categoria em `ProductCard` e `ProductGallery` (com sincronização no `ColorSwatch`) e ajuste da regra D-07 em `Produto` (tamanho único e produtos sem cor) | `feat(ui): integra cor e categoria no ProductCard e ProductGallery e ajusta regra D-07` | UI: `ChatWidget` da Fase 2 |
+| 17/11 | Interface do `ChatWidget` (botão flutuante 60px, painel acessível com Esc/Tab trap, sessaoId em memória, boas-vindas e estados sem respostas fictícias) montada no `Layout` para usuário logado | `feat(ui): implementa interface acessivel do ChatWidget no Layout` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |

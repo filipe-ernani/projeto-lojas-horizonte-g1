@@ -5,11 +5,14 @@ import styles from "./ProductGallery.module.css";
 /**
  * Galeria de imagens do produto conforme docs/DESIGN.md:
  * Imagem principal na proporção 4:5 e lista de miniaturas clicáveis.
+ * Repassa cor ativa e categoria para enriquecer o placeholder do ProductImage.
  */
 export default function ProductGallery({
   imagemUrl = null,
   imagens = [],
   nome = "Produto",
+  cor,
+  categoria,
 }) {
   const listaImagens =
     Array.isArray(imagens) && imagens.length > 0
@@ -28,6 +31,8 @@ export default function ProductGallery({
         <ProductImage
           imagemUrl={imagemAtiva}
           alt={`Foto principal de ${nome}`}
+          cor={cor}
+          categoria={categoria}
           className={styles.mainImage}
         />
       </div>
@@ -52,6 +57,8 @@ export default function ProductGallery({
                 <ProductImage
                   imagemUrl={img}
                   alt={`Miniatura ${index + 1}`}
+                  cor={cor}
+                  categoria={categoria}
                   className={styles.thumbnailImage}
                 />
               </button>

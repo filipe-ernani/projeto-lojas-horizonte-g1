@@ -9,7 +9,7 @@ import styles from "./ProductCard.module.css";
  * Card de produto conforme docs/DESIGN.md:
  * Imagem 4:5 com FavoriteButton posicionado sobre a imagem (irmão do Link).
  * Abaixo: linha de preço em negrito + RatingPill, nome (15 px) e categoria (muted 14 px).
- * Acessibilidade: FavoriteButton e ações extras ficam fora do Link para evitar aninhamento interativo.
+ * Passa cor (primeira cor disponível) e categoria para enriquecer o placeholder do ProductImage.
  */
 export default function ProductCard({
   produto,
@@ -21,8 +21,9 @@ export default function ProductCard({
     return null;
   }
 
-  const { id, nome, categoria, preco, imagemUrl, notaMedia } = produto;
+  const { id, nome, categoria, preco, imagemUrl, notaMedia, cores } = produto;
   const precoFormatado = formatCurrency(preco);
+  const corHex = cores?.[0]?.hex;
 
   function handleFavoritar(evento) {
     if (evento) {
@@ -42,7 +43,12 @@ export default function ProductCard({
         aria-label={`${nome}, ${categoria}, por ${precoFormatado}`}
       >
         <div className={styles.imageContainer}>
-          <ProductImage imagemUrl={imagemUrl} alt={nome} />
+          <ProductImage
+            imagemUrl={imagemUrl}
+            alt={nome}
+            cor={corHex}
+            categoria={categoria}
+          />
         </div>
 
         <div className={styles.content}>

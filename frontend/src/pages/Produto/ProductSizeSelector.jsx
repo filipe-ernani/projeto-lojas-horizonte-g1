@@ -3,6 +3,7 @@ import styles from "./Produto.module.css";
 
 /**
  * Seletor de tamanhos ou numerações de calçados de produto.
+ * Se houver apenas 1 opção (ex: ["Único"]), exibe texto sem seletor conforme regra D-07.
  */
 export default function ProductSizeSelector({
   tamanhos = [],
@@ -12,6 +13,18 @@ export default function ProductSizeSelector({
 }) {
   if (!Array.isArray(tamanhos) || tamanhos.length === 0) {
     return null;
+  }
+
+  // Se tamanhos tiver apenas 1 opção (ex: ["Único"]), exibe como tamanho fixo sem seletor
+  if (tamanhos.length === 1) {
+    return (
+      <div className={styles.selectorGroup}>
+        <div className={styles.selectorLegend}>
+          <span className={styles.selectorTitle}>Tamanho:</span>{" "}
+          <span className={styles.selectedLabel}>Tamanho único</span>
+        </div>
+      </div>
+    );
   }
 
   const tituloLegenda = saoCalcados ? "Número (calçado)" : "Tamanho";

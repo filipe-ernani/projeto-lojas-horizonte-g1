@@ -1,0 +1,90 @@
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background-color: var(--color-paper);
+}
+
+.welcomeBox {
+  padding: var(--space-4);
+  background-color: var(--color-card);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-line);
+  text-align: center;
+  margin: auto 0;
+}
+
+.welcomeText {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.messageRow {
+  display: flex;
+  width: 100%;
+}
+
+.userRow {
+  justify-content: flex-end;
+}
+
+.assistantRow {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: 82%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.userBubble {
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+  border-radius: var(--radius-md) var(--radius-md) 4px var(--radius-md);
+}
+
+.assistantBubble {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  border-radius: var(--radius-md) var(--radius-md) var(--radius-md) 4px;
+}
+
+.bubbleText {
+  margin: 0;
+}
+
+.typingText {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--color-card);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+}
+
+.errorText {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--color-danger-text);
+  line-height: 1.4;
+}
+
+.retryBtn {
+  align-self: flex-start;
+}
