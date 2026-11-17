@@ -41,6 +41,8 @@ export default function Perfil({
       );
     }
 
+    const enderecosExibicao = estado === "vazio" ? [] : enderecos;
+
     return (
       <div className={styles.sectionsContainer}>
         <PerfilDadosSection
@@ -49,7 +51,7 @@ export default function Perfil({
           onSalvarPerfil={onSalvarPerfil}
         />
         <PerfilEnderecosSection
-          enderecos={enderecos}
+          enderecos={enderecosExibicao}
           onSalvarEndereco={onSalvarEndereco}
           onExcluirEndereco={onExcluirEndereco}
         />

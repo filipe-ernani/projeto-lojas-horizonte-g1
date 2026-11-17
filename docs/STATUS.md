@@ -3,8 +3,8 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 17/11/2026 (varredura de valores fixos de docs/API.md em src/, adaptação do CheckoutSuccess sem número e modularização de CheckoutEndereco e CheckoutPagamento)
-**Fase atual:** 3. Estrutura das telas (Home, Catálogo, Produto, Favoritos, Carrinho, Checkout, Pedidos e Perfil prontos; pendente apenas ChatWidget da Fase 2)
+**Última atualização:** 17/11/2026 (estrutura da tela de Perfil com endereços, seções de dados pessoais e locais de entrega, validações e estados)
+**Fase atual:** 3. Estrutura das telas (concluída: Home, Catálogo, Produto, Favoritos, Carrinho, Checkout, Pedidos e Perfil prontos; pendente apenas ChatWidget da Fase 2)
 
 ## Bloqueios externos
 
@@ -14,7 +14,6 @@
 ## Em andamento
 
 - Fase 2 (UI): `ChatWidget` (só a interface, sem resposta real).
-- Fase 3 (UI): Perfil com endereços (`/perfil`).
 - Design: `Breadcrumb` em `components/ui/`.
 
 ## Roteiro por fases
@@ -129,3 +128,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 16/11 | Simplificação do Header (desktop e mobile) conforme D-20 (Início e Catálogo; Entrar/Cadastre-se deslogado; favoritos/cesta/conta logado), sem flash ao recarregar, e suporte a parâmetro de URL modo no Login                          | `feat(ui): adapta Header ao estado de login e inicializa modo no Login via URL`                  | UI: `ChatWidget` ou validação com Caio                                               |
 | 17/11 | Correção de layout e rolagem no Login (`/login`) com `min-height: 100dvh`, `margin-block: auto` no card e rolagem vertical sem corte de topo em janelas baixas (1366x720) | `fix(ui): corrige rolagem e centralização do formulário no Login` | UI: `ChatWidget` da Fase 2 |
 | 17/11 | Auditoria de valores fixos de `docs/API.md` em `src/` (CheckoutSuccess exibe 'Pedido realizado' sem número) e modularização do Checkout com `CheckoutEndereco` e `CheckoutPagamento` (<200 linhas) | `refactor(checkout): modulariza secoes e adapta tela de sucesso sem numero` | UI: `ChatWidget` da Fase 2 |
+| 17/11 | Estrutura da tela de Perfil com endereços (`/perfil`): Meus dados (nome/telefone editáveis, email readOnly), Meus endereços (AddressCard, badge padrão, ações), formulário com validações de CEP e UF, estados e sem mocks | `feat(ui): implementa estrutura da tela de Perfil com enderecos` | UI: `ChatWidget` da Fase 2 |
