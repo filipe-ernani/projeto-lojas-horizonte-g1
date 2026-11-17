@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -9,14 +9,15 @@ import {
 import { validarCamposAuth } from "./loginValidation";
 
 /**
- * Hook customizado para encapsular toda a lógica de estado, validação e autenticação da tela de Login.
- * Reduz a complexidade ciclomática e cognitiva do componente de visualização.
+ * Hook customizado para encapsular a lógica de estado, validação e autenticação da tela de Login.
+ * - Sem isMountedRef (obsoleto no React 18).
+ * - Ações por modo e redirecionamento extraídos em funções pequenas e modulares.
+ * - Promessas de autenticação e navegação tratadas com await sem void.
  */
 export function useLoginForm(modoInicial = MODOS.ENTRAR) {
   const { loginEmailSenha, loginGoogle, cadastrar, recuperarSenha } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const isMountedRef = useRef(true);
 
   // Estados dos campos
   const [modo, setModo] = useState(modoInicial);
@@ -35,16 +36,9 @@ export function useLoginForm(modoInicial = MODOS.ENTRAR) {
   const [sucessoRecuperacao, setSucessoRecuperacao] = useState(null);
   const [enviando, setEnviando] = useState(false);
 
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  function redirecionarPosLogin() {
+  async function redirecionarPosLogin() {
     const destino = obterDestinoRedirecionamento(location.state?.from);
-    navigate(destino, { replace: true });
+    await navigate(destino, { replace: true });
   }
 
   function mudarModo(novoModo) {
@@ -64,30 +58,34 @@ export function useLoginForm(modoInicial = MODOS.ENTRAR) {
     }
   }
 
-  async function executarAcaoAutenticacao() {
+  async function executarEntrar(emailLimpo, senhaAtual) {
+    await loginEmailSenha(emailLimpo, senhaAtual);
+    await redirecionarPosLogin();
+  }
+
+  async function executarCadastrar(emailLimpo, senhaAtual, nomeAtual) {
+    const nomeLimpo = nomeAtual.trim() || undefined;
+    await cadastrar(emailLimpo, senhaAtual, nomeLimpo);
+    await redirecionarPosLogin();
+  }
+
+  async function executarRecuperar(emailLimpo) {
+    await recuperarSenha(emailLimpo);
+    setSucessoRecuperacao(MENSAGEM_SUCESSO_RECUPERACAO);
+  }
+
+  async function executarAcaoPorModo() {
     const emailLimpo = email.trim();
-
-    const acoes = {
-      [MODOS.ENTRAR]: async () => {
-        await loginEmailSenha(emailLimpo, senha);
-        redirecionarPosLogin();
-      },
-      [MODOS.CADASTRAR]: async () => {
-        const nomeLimpo = nome.trim() || undefined;
-        await cadastrar(emailLimpo, senha, nomeLimpo);
-        redirecionarPosLogin();
-      },
-      [MODOS.RECUPERAR]: async () => {
-        await recuperarSenha(emailLimpo);
-        if (isMountedRef.current) {
-          setSucessoRecuperacao(MENSAGEM_SUCESSO_RECUPERACAO);
-        }
-      },
-    };
-
-    const acao = acoes[modo];
-    if (acao) {
-      await acao();
+    if (modo === MODOS.ENTRAR) {
+      await executarEntrar(emailLimpo, senha);
+      return;
+    }
+    if (modo === MODOS.CADASTRAR) {
+      await executarCadastrar(emailLimpo, senha, nome);
+      return;
+    }
+    if (modo === MODOS.RECUPERAR) {
+      await executarRecuperar(emailLimpo);
     }
   }
 
@@ -112,17 +110,13 @@ export function useLoginForm(modoInicial = MODOS.ENTRAR) {
     setEnviando(true);
 
     try {
-      await executarAcaoAutenticacao();
+      await executarAcaoPorModo();
     } catch (erro) {
-      if (isMountedRef.current) {
-        setErroGeral(
-          erro.message || "Não foi possível concluir a ação. Tente novamente.",
-        );
-      }
+      setErroGeral(
+        erro?.message || "Não foi possível concluir a ação. Tente novamente.",
+      );
     } finally {
-      if (isMountedRef.current) {
-        setEnviando(false);
-      }
+      setEnviando(false);
     }
   }
 
@@ -133,18 +127,13 @@ export function useLoginForm(modoInicial = MODOS.ENTRAR) {
 
     try {
       await loginGoogle();
-      redirecionarPosLogin();
+      await redirecionarPosLogin();
     } catch (erro) {
-      if (isMountedRef.current) {
-        setErroGeral(
-          erro.message ||
-            "Não foi possível entrar com o Google. Tente novamente.",
-        );
-      }
+      setErroGeral(
+        erro?.message || "Não foi possível entrar com o Google. Tente novamente.",
+      );
     } finally {
-      if (isMountedRef.current) {
-        setEnviando(false);
-      }
+      setEnviando(false);
     }
   }
 

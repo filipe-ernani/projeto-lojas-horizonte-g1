@@ -4,7 +4,7 @@ import styles from "./Login.module.css";
 /**
  * Campo de senha reutilizável com botão de alternância de visibilidade e suporte a acessibilidade.
  */
-export default function LoginPasswordField({
+export default function PasswordField({
   id,
   label,
   value,
@@ -22,7 +22,9 @@ export default function LoginPasswordField({
     error ? styles.inputError : ""
   }`.trim();
 
-  const toggleLabel = mostrarSenha ? `Ocultar ${label.toLowerCase()}` : `Mostrar ${label.toLowerCase()}`;
+  const toggleLabel = mostrarSenha
+    ? `Ocultar ${typeof label === "string" ? label.toLowerCase() : "senha"}`
+    : `Mostrar ${typeof label === "string" ? label.toLowerCase() : "senha"}`;
 
   return (
     <div className={styles.fieldGroup}>

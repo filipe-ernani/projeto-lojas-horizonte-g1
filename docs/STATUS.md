@@ -3,7 +3,7 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 17/11/2026 (interface acessível do ChatWidget montada no Layout para usuário logado, com foco gerenciado, sessaoId em memória e tratamento de erros sem respostas mockadas)
+**Última atualização:** 17/11/2026 (refatoração de Login.jsx com Field de ui/, PasswordField local, remoção de isMountedRef e tratamento de promessas do navigate)
 **Fase atual:** 3. Estrutura das telas (Fases 0, 1, 2 e 3 concluídas no front-end; pendente apenas Breadcrumb em Design e bloqueios de dataset/back-end para a Fase 4)
 
 ## Bloqueios externos
@@ -69,6 +69,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
+- Pedido ao Design: adicionar suporte a botão de mostrar/ocultar senha no componente base `Field` (`src/components/ui/Field/Field.jsx`) para eliminar a necessidade de `PasswordField` local na tela de Login.
 - _(Resolvido em 17/11)_ Integrado suporte a cor e categoria no `ProductCard` e `ProductGallery` conforme pedido de Design; `ProductImage` atualiza a cor dinamicamente ao selecionar no `ColorSwatch`.
 - Pedido ao Design: atualizar a especificação do Header em `docs/DESIGN.md` conforme decisão D-20 (navegação central com "Início" e "Catálogo"; usuário deslogado vê botões "Entrar" e "Cadastre-se"; ícones de favoritos, cesta e conta visíveis apenas para usuário logado).
 - Pedido ao Design: fazer com que o componente base `Button` (`src/components/ui/Button/Button.jsx`) aceite a prop `para` (renderizando `<Link to={para}>` do React Router quando informada), permitindo navegação direta sem aninhar botão dentro de link e sem duplicar estilos de botão em CSS Modules.
@@ -133,3 +134,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 17/11 | Aprimoramento do placeholder de `ProductImage` em `components/ui/` com ícones por categoria, fundo derivado da cor (`color-mix`) e cálculo automático de contraste | `feat(design): aprimora placeholder de ProductImage com cor, categoria e contraste` | UI: integrar `cor` e `categoria` no ProductCard e ProductGallery |
 | 17/11 | Integração de cor e categoria em `ProductCard` e `ProductGallery` (com sincronização no `ColorSwatch`) e ajuste da regra D-07 em `Produto` (tamanho único e produtos sem cor) | `feat(ui): integra cor e categoria no ProductCard e ProductGallery e ajusta regra D-07` | UI: `ChatWidget` da Fase 2 |
 | 17/11 | Interface do `ChatWidget` (botão flutuante 60px, painel acessível com Esc/Tab trap, sessaoId em memória, boas-vindas e estados sem respostas fictícias) montada no `Layout` para usuário logado | `feat(ui): implementa interface acessivel do ChatWidget no Layout` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |
+| 17/11 | Refatoração de `Login.jsx` (<200 linhas) com `Field` de `ui/`, `PasswordField` local, remoção de `isMountedRef` (obsoleto no React 18) e tratamento assíncrono de promessas de navegação | `refactor(login): simplifica Login com Field, PasswordField local e trata promessas de navegacao` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |

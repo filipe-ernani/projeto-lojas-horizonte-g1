@@ -1,18 +1,23 @@
 import { Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/ui/Button/Button";
+import Field from "@/components/ui/Field/Field";
 import LoginBanner from "./LoginBanner";
 import LoginHeader from "./LoginHeader";
-import LoginPasswordField from "./LoginPasswordField";
+import PasswordField from "./PasswordField";
 import LoginSocial from "./LoginSocial";
 import LoginFooter from "./LoginFooter";
+import LoginFeedback from "./LoginFeedback";
 import { useLoginForm } from "./useLoginForm";
 import { CONFIG_MODOS, MODOS } from "./loginConstants";
 import styles from "./Login.module.css";
 
 /**
- * Página de Autenticação (/login) conforme docs/DESIGN.md e regras D-01/D-03.
- * Estrutura modularizada com separação de responsabilidades para conformidade com SonarQube.
+ * Página de Autenticação (/login) conforme docs/DESIGN.md e regras D-01/D-03:
+ * - 3 modos (entrar, cadastrar, recuperar) via parâmetro URL modo ou abas.
+ * - Utiliza o componente base Field de ui/ para nome e e-mail.
+ * - Utiliza o PasswordField local para campos de senha com alternância de visibilidade.
+ * - Redirecionamento e autenticação desacoplados no useLoginForm.
  */
 export default function Login() {
   const [searchParams] = useSearchParams();
@@ -46,7 +51,9 @@ export default function Login() {
   const configModo = CONFIG_MODOS[modo];
   const ehCadastro = modo === MODOS.CADASTRAR;
   const ehRecuperacao = modo === MODOS.RECUPERAR;
-  const botaoTexto = enviando ? configModo.botaoCarregando : configModo.botaoSubmit;
+  const botaoTexto = enviando
+    ? configModo.botaoCarregando
+    : configModo.botaoSubmit;
 
   return (
     <main className={styles.page}>
@@ -59,25 +66,10 @@ export default function Login() {
         <div className={styles.formCard}>
           <LoginHeader modo={modo} />
 
-          {form.erroGeral && (
-            <div
-              className={styles.alertError}
-              role="alert"
-              aria-live="assertive"
-            >
-              {form.erroGeral}
-            </div>
-          )}
-
-          {form.sucessoRecuperacao && (
-            <div
-              className={styles.alertSuccess}
-              role="status"
-              aria-live="polite"
-            >
-              {form.sucessoRecuperacao}
-            </div>
-          )}
+          <LoginFeedback
+            erro={form.erroGeral}
+            sucesso={form.sucessoRecuperacao}
+          />
 
           <form
             className={styles.form}
@@ -85,57 +77,42 @@ export default function Login() {
             noValidate
             aria-label={configModo.ariaLabelForm}
           >
-            {ehCadastro && (
-              <div className={styles.fieldGroup}>
-                <label htmlFor="login-nome" className={styles.label}>
-                  Nome completo{" "}
-                  <span className={styles.optional}>(opcional)</span>
-                </label>
-                <input
-                  id="login-nome"
-                  type="text"
-                  autoComplete="name"
-                  placeholder="Seu nome"
-                  value={form.nome}
-                  onChange={(e) => form.setNome(e.target.value)}
-                  disabled={enviando}
-                  className={styles.input}
-                />
-              </div>
-            )}
-
-            <div className={styles.fieldGroup}>
-              <label htmlFor="login-email" className={styles.label}>
-                E-mail
-              </label>
-              <input
-                id="login-email"
-                type="email"
-                autoComplete="email"
-                placeholder="seu@email.com"
-                value={form.email}
-                onChange={(e) => {
-                  form.setEmail(e.target.value);
-                  form.limparErroCampo("email");
-                }}
+            {ehCadastro ? (
+              <Field
+                id="login-nome"
+                label={
+                  <>
+                    Nome completo{" "}
+                    <span className={styles.optional}>(opcional)</span>
+                  </>
+                }
+                type="text"
+                autoComplete="name"
+                placeholder="Seu nome"
+                value={form.nome}
+                onChange={(e) => form.setNome(e.target.value)}
                 disabled={enviando}
-                aria-invalid={Boolean(erros.email)}
-                aria-describedby={erros.email ? "erro-login-email" : undefined}
-                className={`${styles.input} ${erros.email ? styles.inputError : ""}`.trim()}
               />
-              {erros.email && (
-                <span
-                  id="erro-login-email"
-                  className={styles.fieldError}
-                  role="alert"
-                >
-                  {erros.email}
-                </span>
-              )}
-            </div>
+            ) : null}
 
-            {!ehRecuperacao && (
-              <LoginPasswordField
+            <Field
+              id="login-email"
+              label="E-mail"
+              type="email"
+              autoComplete="email"
+              placeholder="seu@email.com"
+              value={form.email}
+              onChange={(e) => {
+                form.setEmail(e.target.value);
+                form.limparErroCampo("email");
+              }}
+              erro={erros.email}
+              disabled={enviando}
+              required
+            />
+
+            {!ehRecuperacao ? (
+              <PasswordField
                 id="login-senha"
                 label="Senha"
                 value={form.senha}
@@ -143,7 +120,9 @@ export default function Login() {
                   form.setSenha(e.target.value);
                   form.limparErroCampo("senha");
                 }}
-                placeholder={ehCadastro ? "Mínimo de 6 caracteres" : "Sua senha"}
+                placeholder={
+                  ehCadastro ? "Mínimo de 6 caracteres" : "Sua senha"
+                }
                 autoComplete={ehCadastro ? "new-password" : "current-password"}
                 error={erros.senha}
                 errorId="erro-login-senha"
@@ -163,10 +142,10 @@ export default function Login() {
                   ) : null
                 }
               />
-            )}
+            ) : null}
 
-            {ehCadastro && (
-              <LoginPasswordField
+            {ehCadastro ? (
+              <PasswordField
                 id="login-confirmacao"
                 label="Confirmar senha"
                 value={form.confirmacaoSenha}
@@ -184,7 +163,7 @@ export default function Login() {
                   form.setMostrarConfirmacaoSenha((prev) => !prev)
                 }
               />
-            )}
+            ) : null}
 
             <Button
               type="submit"
@@ -198,12 +177,12 @@ export default function Login() {
             </Button>
           </form>
 
-          {!ehRecuperacao && (
+          {!ehRecuperacao ? (
             <LoginSocial
               disabled={enviando}
               onLoginGoogle={form.handleLoginGoogle}
             />
-          )}
+          ) : null}
 
           <LoginFooter
             modo={modo}
