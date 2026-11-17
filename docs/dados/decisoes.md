@@ -34,7 +34,7 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D15 | Padrão de dia da semana próprio para as lojas físicas | Proposta |
 | D16 | Grupo Casa vendido só nos canais online | Proposta |
 | D17 | Premissas do gerador do ERP (lojas, volume, estoque e sujeira plantada) | Proposta |
-
+| D18 | Regras de qualidade da silver do ERP | Aceita |
 ---
 
 ## D01 · Databricks Free Edition como ambiente do MVP
@@ -227,3 +227,13 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
   - Não há devoluções, trocas nem transferência de estoque entre lojas.
   - O custo é fixo, vindo do catálogo.
   - A única promoção é a Black Friday.
+
+## D18 · Regras de qualidade da silver do ERP
+
+- **Data:** 2026-11-16
+- **Status:** Aceita
+- **Decisão:** cada problema das vendas do ERP tem uma marcação própria (`sku_nulo`, `sku_sem_cadastro`, `quantidade_negativa`, `duplicada`), e `valido` é verdadeiro quando não há nenhum. Nada é removido (D07).
+- **Duplicadas:** a primeira ocorrência de um grupo de linhas idênticas vale; as demais são marcadas (`ROW_NUMBER()` sobre todas as colunas). Como as cópias são idênticas, a escolha não altera o resultado.
+- **Quantidade negativa:** tratada como erro, não como devolução, porque o ERP não registra devoluções (D17). Em produção, devolução seria outro tipo de documento.
+- **Custo:** `custo_total = quantidade × custo` do `erp_produtos`, porque o ERP é o cadastro mestre de produtos (D12).
+- **Resultado:** 401.335 linhas; 400 SKU nulo, 0 SKU sem cadastro, 401 quantidade negativa, 801 duplicadas; 399.736 válidas (3 linhas têm dois problemas). Receita válida de R$ 30.795.090,78 e ticket médio de R$ 136,78, iguais ao resumo do gerador.
