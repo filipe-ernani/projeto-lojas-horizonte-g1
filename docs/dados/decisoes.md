@@ -1,0 +1,239 @@
+# Decisões de engenharia de dados
+
+Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o que foi decidido, por quê e quais alternativas foram descartadas.
+
+**Responsável:** Diego Alessandro (Engenharia de Dados)
+**Como usar:** cada decisão tem um número (`D01`, `D02`...). Uma decisão nunca é apagada; se mudar, a original recebe o status *Substituída* e uma nova decisão é registrada.
+
+| Status | Significado |
+|---|---|
+| Aceita | Em uso no pipeline |
+| Proposta | Implementada ou planejada, aguardando validação do squad |
+| Substituída | Trocada por outra decisão (indicada no texto) |
+
+---
+
+## Resumo
+
+| ID | Decisão | Status |
+|---|---|---|
+| D01 | Databricks Free Edition como ambiente do MVP | Aceita |
+| D02 | Arquitetura desenhada no GCP; MVP executado no Databricks | Aceita |
+| D03 | Olist como fonte do canal marketplace, com o mix real (opção A) | Proposta |
+| D04 | De-para de categorias: 15 das 73 categorias no mix da Horizonte | Aceita |
+| D05 | Bronze guarda tudo como texto, com colunas de auditoria | Aceita |
+| D06 | Bronze em SQL (`read_files`) em vez de PySpark | Aceita |
+| D07 | Silver marca as linhas em vez de removê-las | Aceita |
+| D08 | Regra de pedido válido | Aceita |
+| D09 | Janela útil do Olist: jan/2017 a ago/2018 | Aceita |
+| D10 | Deslocamento de datas de 418 semanas | Aceita |
+| D11 | Cliente identificado por `customer_unique_id` | Aceita |
+| D12 | Unificação dos canais por categoria, sem SKU único | Aceita |
+| D13 | Catálogo sintético de 200 SKUs, com preços calibrados pelo Olist | Proposta |
+| D14 | Sazonalidade como índice relativo, não contagem bruta | Aceita |
+| D15 | Padrão de dia da semana próprio para as lojas físicas | Proposta |
+| D16 | Grupo Casa vendido só nos canais online | Proposta |
+| D17 | Premissas do gerador do ERP (lojas, volume, estoque e sujeira plantada) | Proposta |
+| D18 | Regras de qualidade da silver do ERP | Aceita |
+---
+
+## D01 · Databricks Free Edition como ambiente do MVP
+
+- **Data:** 2026-11-13
+- **Status:** Aceita
+- **Contexto:** o desafio cita o Databricks Community Edition, que foi aposentado em 01/01/2026.
+- **Decisão:** usar o Databricks Free Edition, seu substituto oficial (serverless, Unity Catalog, dashboards AI/BI).
+- **Impacto:** compute apenas serverless; acesso restrito à internet a partir do workspace; limite de 500 tabelas e de 5 tarefas de job simultâneas. Arquivos ficam em Volumes do Unity Catalog, não no DBFS.
+
+## D02 · Arquitetura desenhada no GCP; MVP executado no Databricks
+
+- **Data:** 2026-11-12
+- **Status:** Aceita
+- **Contexto:** a regra do desafio pede a arquitetura ideal no GCP e a execução prática no Databricks ou localmente.
+- **Decisão:** o MVP espelha o desenho do GCP, com nomes equivalentes:
+
+  | GCP | Databricks (MVP) |
+  |---|---|
+  | Projeto `lojas-horizonte` | Catálogo `horizonte` |
+  | Datasets `bronze`, `silver`, `gold` | Schemas `bronze`, `silver`, `gold` |
+  | Bucket de landing no Cloud Storage | Volume `bronze.landing` |
+  | Transformações no Dataform | Notebooks SQL |
+
+- **Impacto:** as transformações são escritas em SQL, com versão BigQuery equivalente em `sql/bigquery/`.
+
+## D03 · Olist como fonte do canal marketplace, com o mix real (opção A)
+
+- **Data:** 2026-11-14
+- **Status:** Proposta (validar com Emanuel e Henry)
+- **Contexto:** o Olist quase não tem roupas: 611 itens de roupa e calçado em 112.650 (0,5%). Não há volume para prever demanda por categoria de roupa.
+- **Decisão:** usar o Olist como ele é, mantendo só as categorias plausíveis para uma rede de moda. No marketplace, a Horizonte vende principalmente acessórios, beleza, casa e esporte; roupas aparecem nos canais site e lojas físicas (dados sintéticos).
+- **Alternativa descartada:** reatribuir produtos fora do mix (eletrônicos, móveis) a categorias de roupa. Manteria 100% do volume, mas criaria uma relação falsa entre produto e categoria e enfraqueceria o argumento de dados reais.
+- **Impacto:** a previsão de demanda passa a ser **por grupo** (Vestuário, Acessórios, Beleza, Casa, Esporte), de preferência treinada só com o marketplace real.
+
+## D04 · De-para de categorias
+
+- **Data:** 2026-11-13
+- **Status:** Aceita
+- **Decisão:** tabela de correspondência mantida à mão em `data/referencia/de_para_categorias.csv`, com uma justificativa por categoria. Critério: a categoria entra se uma rede de moda brasileira vende esse tipo de produto.
+- **Resultado:** 15 das 73 categorias entram no mix, somando 43.034 itens (38% do Olist).
+- **Alternativas avaliadas e não incluídas:** `moveis_decoracao`, `utilidades_domesticas` e `bebes` têm volume relevante, mas enfraqueceriam a narrativa de loja de moda.
+
+## D05 · Bronze guarda tudo como texto, com colunas de auditoria
+
+- **Data:** 2026-11-13
+- **Status:** Aceita
+- **Decisão:** os CSVs são lidos sem inferência de tipos, e cada linha recebe `_arquivo_origem` e `_ingerido_em`.
+- **Motivo:** a bronze é uma cópia fiel da fonte. Problemas de formato não quebram a carga e são tratados na silver. As colunas de auditoria são a base da linhagem.
+
+## D06 · Bronze em SQL em vez de PySpark
+
+- **Data:** 2026-11-14
+- **Status:** Aceita (substitui a primeira versão em PySpark)
+- **Decisão:** ingestão com `read_files` em SQL.
+- **Motivo:** a consulta fica estruturalmente igual à versão BigQuery (tabela externa + `CREATE TABLE AS SELECT`), o que torna o paralelo GCP × MVP evidente. O pipeline inteiro fica numa linguagem só.
+
+## D07 · Silver marca as linhas em vez de removê-las
+
+- **Data:** 2026-11-14
+- **Status:** Aceita
+- **Decisão:** a silver não apaga nenhuma linha. Cada item recebe três marcações: `valido` (venda real), `incluir` (produto do mix) e `periodo_completo` (data confiável). O filtro acontece só na gold.
+- **Motivo:** rastreabilidade (dá para medir o efeito de cada regra) e flexibilidade (mudar uma regra não exige recarregar dados).
+
+## D08 · Regra de pedido válido
+
+- **Data:** 2026-11-13
+- **Status:** Aceita
+- **Decisão:** pedido válido = status diferente de `canceled` e `unavailable` **e** com pelo menos um item.
+- **Motivo:** os demais status (`shipped`, `invoiced`, `processing`...) são vendas em andamento, contadas na data da compra. Existem 775 pedidos sem itens; 8 deles não são cancelados nem indisponíveis e também são excluídos. Atenção: 461 pedidos cancelados têm itens, por isso a exclusão é feita pelo status, não apenas pelo join.
+- **Resultado:** 98.199 pedidos válidos de 99.441.
+
+## D09 · Janela útil do Olist
+
+- **Data:** 2026-11-13
+- **Status:** Aceita
+- **Decisão:** só entram na gold compras de 01/01/2017 a 31/08/2018 (datas originais).
+- **Motivo:** set–dez/2016 e set–out/2018 somam só 349 pedidos, e nov/2016 não tem nenhum. Esses meses seriam lidos pelo modelo como quedas de venda.
+
+## D10 · Deslocamento de datas de 418 semanas
+
+- **Data:** 2026-11-13
+- **Status:** Aceita
+- **Decisão:** somar 2.926 dias (418 semanas) às datas do Olist.
+- **Motivo:** alinha a Black Friday de 24/11/2017 com a de 28/11/2025 e mantém o dia da semana. O histórico do marketplace passa a ir de 05/01/2025 a 04/09/2026, e a próxima Black Friday (27/11/2026) fica no futuro, o que permite demonstrar a previsão.
+- **Impacto:** o marketplace não tem dados entre setembro de 2026 e hoje. O dashboard deve indicar a data de corte.
+
+## D11 · Cliente identificado por `customer_unique_id`
+
+- **Data:** 2026-11-13
+- **Status:** Aceita
+- **Motivo:** no Olist, `customer_id` é gerado por pedido (a tabela de clientes tem exatamente uma linha por pedido). O cliente real é o `customer_unique_id`.
+
+## D12 · Unificação dos canais por categoria, sem SKU único
+
+- **Data:** 2026-11-14
+- **Status:** Aceita
+- **Contexto:** ERP e site usam o catálogo da Horizonte; o Olist tem códigos de produto próprios, sem nome e sem o SKU do vendedor.
+- **Decisão:** os três canais se juntam pela categoria, grupo, canal e data. A coluna de produto guarda o código de origem de cada canal, para rastreabilidade.
+- **Alternativa descartada:** atribuir um SKU do catálogo a cada produto do Olist. Criaria uma relação inventada e um conflito entre o preço real do Olist e o preço do catálogo.
+- **Limitação assumida:** não há ranking de produtos somando os três canais; o ranking é por canal.
+- **Em produção:** o ERP seria o cadastro mestre de produtos, e os pedidos do marketplace chegariam com o SKU do vendedor.
+
+## D13 · Catálogo sintético calibrado pelo Olist
+
+- **Data:** 2026-11-14
+- **Status:** Proposta (validar colunas com o Caio)
+- **Decisão:** catálogo de 200 SKUs de moda (`data/referencia/catalogo.csv`), gerado por `data/geradores/gera_catalogo.py`, compartilhado pelos geradores do ERP e do site e pela API.
+- **Regra de preço:** preço-base do tipo de produto × fator do material, posicionado na faixa de preço do Olist para a categoria (notebook `04_calibracao_catalogo`). A cor não muda o preço.
+- **Custo:** preço × (1 − margem). As margens são premissas do squad, em `data/geradores/parametros.yaml`, porque o Olist não tem custo.
+- **Limitação:** as faixas de Feminino (47 itens no Olist) e Infantil (8 itens) têm referência fraca.
+
+## D14 · Sazonalidade como índice relativo
+
+- **Data:** 2026-11-15
+- **Status:** Aceita
+- **Contexto:** o volume do Olist cresceu cerca de 13 vezes no período (crescimento da plataforma, não sazonalidade).
+- **Decisão:** cada dia é dividido pela tendência local (mediana móvel de 29 dias), gerando um índice: 1,0 é um dia normal; a Black Friday tem índice 5,9. Script: `data/geradores/prepara_sazonalidade.py`.
+- **Ajustes:** dias após 25/08/2026 descartados (corte de extração do dataset); queda entre 25/05 e 05/06/2026 marcada como possível efeito da greve dos caminhoneiros de maio de 2018 (datas originais).
+- **Impacto:** os geradores usam o formato da curva sem herdar o crescimento do Olist. Para datas além de 25/08/2026, usam o índice do mesmo dia da semana 52 semanas antes.
+
+## D15 · Padrão de dia da semana próprio para as lojas físicas
+
+- **Data:** 2026-11-15
+- **Status:** Proposta
+- **Contexto:** no online (Olist), o sábado é o dia mais fraco (índice 0,75). Em loja física, é o mais forte.
+- **Decisão:** o gerador do ERP remove o efeito de dia da semana do Olist e aplica um padrão próprio, definido em `parametros.yaml`:
+
+  | seg | ter | qua | qui | sex | sáb | dom |
+  |---|---|---|---|---|---|---|
+  | 0,80 | 0,85 | 0,90 | 0,95 | 1,15 | 1,45 | 0,90 |
+
+  O site mantém o padrão do Olist, por ser canal online.
+
+## D16 · Grupo Casa vendido só nos canais online
+
+- **Data:** 2026-11-15
+- **Status:** Proposta (validar com o squad; afeta o site do Caio e o dashboard do Henry)
+- **Contexto:** o catálogo tem 8 SKUs de Casa (almofada, toalha, manta, cortina, jogo de cama). No marketplace, Casa tem volume real relevante (11.553 itens no Olist), mas são produtos volumosos e fora do núcleo de moda, que disputariam espaço de loja com o vestuário.
+- **Decisão:** as lojas físicas não vendem o grupo Casa. Ele aparece só no site e no marketplace, como extensão de sortimento do online. Parâmetro em `parametros.yaml`: `grupos_fora_da_loja_fisica: [Casa]` (com `[]`, as lojas passam a vender tudo).
+- **Alternativa descartada:** vender o catálogo inteiro em todas as lojas. Seria mais simples, mas não mostraria a diferença de sortimento entre canais, comum no varejo multicanal.
+- **Impacto:**
+  - O sortimento das lojas físicas parte de 192 SKUs (200 menos os 8 de Casa).
+  - No dashboard, Casa tem receita zero nas lojas físicas por desenho, não por falha de dados.
+  - O giro de estoque de Casa só existe no site.
+  - A previsão de demanda de Casa usa apenas histórico online.
+
+## D17 · Premissas do gerador do ERP
+
+- **Data:** 2026-11-15
+- **Status:** Proposta (validar com o squad)
+- **Contexto:** não existe ERP real. O canal loja física precisa de dados plausíveis, reproduzíveis e com problemas conhecidos para as checagens de qualidade. Script: `data/geradores/gera_erp.py`. Todos os números estão na seção `erp` do `parametros.yaml`.
+- **Lojas:** 12 no Sudeste (7 em SP, 2 no RJ, 3 em MG). O porte define o volume e o sortimento:
+
+  | Porte | Lojas | Itens num dia normal | Sortimento | SKUs |
+  |---|---|---|---|---|
+  | G | L01 Paulista, L08 Rio Centro, L10 Belo Horizonte | 80 | 100% | 192 |
+  | M | L02, L03, L04, L05, L11 | 50 | 85% | 163 |
+  | P | L06, L07, L09, L12 | 30 | 70% | 134 |
+
+  Os SKUs mais populares têm mais chance de entrar no sortimento das lojas menores.
+- **Período:** 01/02/2025 a 15/11/2026 (653 dias). Janeiro de 2025 fica de fora porque o índice de sazonalidade é instável no início do Olist. A data final é fixa para o resultado ser reproduzível. Datas após 25/08/2026 usam o índice do mesmo dia 52 semanas antes (D14).
+- **Volume diário:** itens do porte × índice de sazonalidade sem o efeito de dia da semana do online × fator de dia da semana da loja física (D15). O índice é limitado entre 0,4 e 8,0 para evitar dias extremos.
+- **Escolha dos produtos:** popularidade do SKU (lognormal do catálogo) × peso do grupo (Vestuário 1,0; Acessórios 0,8; Beleza 0,7; Esporte 0,6).
+- **Cupom fiscal:** média de 1,8 item por cupom. Horário entre 10h e 22h, com pico às 17h.
+- **Preço:** preço de tabela do catálogo. Black Friday 2025: 25% de desconto de 28/11 a 01/12. O desconto muda só o preço; o aumento de volume vem do índice de sazonalidade.
+- **Estoque:** simulado dia a dia, por loja e SKU, com base na demanda média do SKU na loja:
+  - estoque máximo de 30 dias de venda;
+  - novo pedido quando o estoque cai a 10 dias de venda;
+  - reposição chega 5 dias depois do pedido.
+
+  A loja só vende o que tem: a demanda sem estoque é perdida (não vira pedido pendente). A política não antecipa picos, e esse é o problema que a previsão de demanda resolve.
+- **Sujeira plantada** nas vendas, para as checagens de qualidade encontrarem:
+
+  | Problema | Taxa | Linhas no arquivo |
+  |---|---|---|
+  | Linha duplicada (cópia exata) | 0,2% | 801 |
+  | SKU nulo | 0,1% | 400 |
+  | Quantidade negativa (e valor negativo) | 0,1% | 401 |
+
+  Uma linha pode ter mais de um problema: uma das duplicadas é cópia de uma linha com quantidade negativa, por isso são 401 negativas para 400 plantadas.
+- **Resultado** (seed 42; arquivos idênticos a cada execução, conferido por checksum):
+  - `erp_vendas.csv.gz`: 401.335 linhas e 225.410 cupons.
+  - Receita sem a sujeira: R$ 30,8 mi. Ticket médio: R$ 136,78.
+  - Mediana de 585 itens por dia; 4.200 na Black Friday (28/11/2025).
+  - `erp_estoque_diario.csv.gz`: 1.258.331 linhas (loja × SKU × dia).
+  - Ruptura (combinações loja × SKU com estoque final zero): mediana de 1,3% ao dia, subindo para 23,4% em 01/12/2025 e voltando a 2% só em 04/12.
+- **Limitações assumidas:**
+  - Todas as lojas seguem a mesma curva de sazonalidade (sem eventos locais).
+  - Não há devoluções, trocas nem transferência de estoque entre lojas.
+  - O custo é fixo, vindo do catálogo.
+  - A única promoção é a Black Friday.
+
+## D18 · Regras de qualidade da silver do ERP
+
+- **Data:** 2026-11-16
+- **Status:** Aceita
+- **Decisão:** cada problema das vendas do ERP tem uma marcação própria (`sku_nulo`, `sku_sem_cadastro`, `quantidade_negativa`, `duplicada`), e `valido` é verdadeiro quando não há nenhum. Nada é removido (D07).
+- **Duplicadas:** a primeira ocorrência de um grupo de linhas idênticas vale; as demais são marcadas (`ROW_NUMBER()` sobre todas as colunas). Como as cópias são idênticas, a escolha não altera o resultado.
+- **Quantidade negativa:** tratada como erro, não como devolução, porque o ERP não registra devoluções (D17). Em produção, devolução seria outro tipo de documento.
+- **Custo:** `custo_total = quantidade × custo` do `erp_produtos`, porque o ERP é o cadastro mestre de produtos (D12).
+- **Resultado:** 401.335 linhas; 400 SKU nulo, 0 SKU sem cadastro, 401 quantidade negativa, 801 duplicadas; 399.736 válidas (3 linhas têm dois problemas). Receita válida de R$ 30.795.090,78 e ticket médio de R$ 136,78, iguais ao resumo do gerador.
