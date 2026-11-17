@@ -80,7 +80,7 @@ Escreva o CSS base para mobile e acrescente `@media (min-width: 640px)` e `@medi
 ## 3. Ícones e imagens
 
 - Ícones: `lucide-react`, traço 1.8, 20 a 24 px. Mapa: favoritos `Heart`, cesta `ShoppingBag`, perfil `User`, busca `Search`, filtros `SlidersHorizontal`, nota `Star`, chat `MessageCircle`, enviar `Send`, fechar `X`, mais/menos `Plus`/`Minus`, voltar `ChevronLeft`, abrir seção `ChevronDown`, remover `Trash2`.
-- Imagem de produto: proporção **4:5**, fundo `--color-card`, raio 16. Sem imagem: placeholder com ícone de camiseta cinza (`ProductImage`).
+- Imagem de produto: proporção **4:5**, fundo `--color-card`, raio 16. Sem imagem: placeholder estilizado com ícone por categoria (Feminino/Masculino/Infantil = `Shirt`, Calçados = `Footprints`, Acessórios = `Watch`, Esporte = `Dumbbell`, Beleza = `Sparkles`, Casa = `House`, Moda praia = `Waves`), fundo derivado da cor do produto (`color-mix`) e contraste automático no ícone (`ProductImage`).
 - Sem marcas reais, sem fotos de pessoas reais, sem hotlink de imagens externas.
 
 ## 4. Componentes base (`src/components/ui/`, dono: agente Design)

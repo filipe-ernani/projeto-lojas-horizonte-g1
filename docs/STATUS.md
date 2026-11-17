@@ -70,6 +70,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
+- De Design para UI: ProductImage aceita cor e categoria; passar produto.cores[0].hex e produto.categoria no ProductCard e no ProductGallery.
 - Pedido ao Design: atualizar a especificação do Header em `docs/DESIGN.md` conforme decisão D-20 (navegação central com "Início" e "Catálogo"; usuário deslogado vê botões "Entrar" e "Cadastre-se"; ícones de favoritos, cesta e conta visíveis apenas para usuário logado).
 - Pedido ao Design: fazer com que o componente base `Button` (`src/components/ui/Button/Button.jsx`) aceite a prop `para` (renderizando `<Link to={para}>` do React Router quando informada), permitindo navegação direta sem aninhar botão dentro de link e sem duplicar estilos de botão em CSS Modules.
 - _(Resolvido em 16/11)_ Removido acordeão fixo "Materiais e composição" de `Produto.jsx` (regra D-19) e mantido texto institucional neutro de entrega e devoluções.
@@ -129,3 +130,4 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 17/11 | Correção de layout e rolagem no Login (`/login`) com `min-height: 100dvh`, `margin-block: auto` no card e rolagem vertical sem corte de topo em janelas baixas (1366x720) | `fix(ui): corrige rolagem e centralização do formulário no Login` | UI: `ChatWidget` da Fase 2 |
 | 17/11 | Auditoria de valores fixos de `docs/API.md` em `src/` (CheckoutSuccess exibe 'Pedido realizado' sem número) e modularização do Checkout com `CheckoutEndereco` e `CheckoutPagamento` (<200 linhas) | `refactor(checkout): modulariza secoes e adapta tela de sucesso sem numero` | UI: `ChatWidget` da Fase 2 |
 | 17/11 | Estrutura da tela de Perfil com endereços (`/perfil`): Meus dados (nome/telefone editáveis, email readOnly), Meus endereços (AddressCard, badge padrão, ações), formulário com validações de CEP e UF, estados e sem mocks | `feat(ui): implementa estrutura da tela de Perfil com enderecos` | UI: `ChatWidget` da Fase 2 |
+| 17/11 | Aprimoramento do placeholder de `ProductImage` em `components/ui/` com ícones por categoria, fundo derivado da cor (`color-mix`) e cálculo automático de contraste | `feat(design): aprimora placeholder de ProductImage com cor, categoria e contraste` | UI: integrar `cor` e `categoria` no ProductCard e ProductGallery |

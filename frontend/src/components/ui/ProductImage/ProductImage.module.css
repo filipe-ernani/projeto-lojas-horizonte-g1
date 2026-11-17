@@ -29,9 +29,15 @@
   align-items: center;
   justify-content: center;
   background: var(--color-card);
+  transition: background-color 0.25s ease;
 }
 
 .placeholderIcon {
   color: var(--color-muted);
   opacity: 0.55;
+  transition: transform 0.25s ease, color 0.25s ease, opacity 0.25s ease;
+}
+
+.wrapper:hover .placeholderIcon {
+  transform: scale(1.05);
 }
