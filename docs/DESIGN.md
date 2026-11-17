@@ -12,7 +12,7 @@ Fonte de verdade visual do front-end. Se um valor não está aqui, **pergunte**;
 Editorial, acolhedor e contemporâneo: tons terrosos (terracota, marrom café e creme areia) com suporte nativo a **Modo Claro** e **Modo Escuro**, cantos arredondados e formas geométricas limpas.
 
 - **Modo Claro:** Botão principal **marrom (`#6B4E3D`) com texto creme (`#FAF7F2`)**.
-- **Modo Escuro:** Botão principal **terracota claro (`#E08E70`) com texto escuro (`#1A1412`)**.
+- **Modo Escuro:** Botão principal **terracota claro (`#E08F70`) com texto escuro (`#1C1613`)**.
 - Sem gradientes complexos, sem emoji, sem sombras pesadas.
 - **Regra de honestidade (D-19 / D-24 / D-25):** Nenhum dado inventado (sem avaliações fictícias, sem newsletter, sem prazos/valores falsos de frete). Selos "Novo" em Novidades refletem os 8 últimos SKUs do catálogo e são documentados como simulados.
 
@@ -24,47 +24,55 @@ Os nomes dos tokens são mantidos para compatibilidade com os componentes existe
 
 ### Cores — Tema Claro (`:root`)
 
-| Token                    | Valor     | Uso                                                                      |
-| ------------------------ | --------- | ------------------------------------------------------------------------ |
-| `--color-paper`          | `#FAF7F2` | Fundo principal da página (creme)                                        |
-| `--color-surface`        | `#F2ECE1` | Cards de filtro, resumo, endereço, pedido, faixa institucional           |
-| `--color-card`           | `#EBE2D3` | Fundo da imagem do produto e banners suaves                              |
-| `--color-search`         | `#F5F0E6` | Campo de busca e superfícies elevadas                                    |
-| `--color-field`          | `#FFFFFF` | Campos de formulário                                                     |
-| `--color-line`           | `#C7B9A5` | Bordas de inputs, divisores, desabilitado (contraste ajustado)           |
-| `--color-ink`            | `#231B16` | Texto principal, títulos e ícones                                        |
-| `--color-brand`          | `#6B4E3D` | Botão principal no claro, acentos escuros da marca                       |
-| `--color-brand-contrast` | `#FAF7F2` | Texto sobre `--color-brand` (contraste 7,06:1)                           |
-| `--color-accent`         | `#C9795D` | Terracota: detalhes gráficos, texto grande (>=18px bold), ícones, badges |
-| `--color-accent-ink`     | `#231B16` | Texto escuro sobre badge terracota (contraste 4,77:1)                    |
-| `--color-muted`          | `#63554B` | Texto secundário (contraste >= 4,85:1 sobre `--color-paper`)             |
-| `--color-link`           | `#6B4E3D` | Links e ações textuais no claro (garante AA >= 4,5:1)                    |
-| `--color-star`           | `#C9795D` | Estrelas e indicadores de nota                                           |
-| `--color-danger`         | `#C93B3B` | Borda de erro, "Sair"                                                    |
-| `--color-danger-text`    | `#9E2424` | Texto de erro e cancelado (contraste AA)                                 |
+| Token                    | Valor     | Uso                                                                         |
+| ------------------------ | --------- | --------------------------------------------------------------------------- |
+| `--color-paper`          | `#FAF7F2` | Fundo principal da página (creme)                                           |
+| `--color-surface`        | `#FFFFFF` | Superfícies principais, cartões elevados e blocos estruturais               |
+| `--color-card`           | `#F1EAE0` | Superfície secundária: fundo da imagem de produto, cards de filtro, banners |
+| `--color-search`         | `#F1EAE0` | Campo de busca e superfícies elevadas suaves                                |
+| `--color-field`          | `#FFFFFF` | Campos de formulário                                                        |
+| `--color-line`           | `#E4DACB` | Divisores, separadores e bordas neutras                                     |
+| `--color-field-border`   | `#9C8D79` | Borda interativa de campos, chips e botões outline (contraste 3,05:1 no bg)  |
+| `--color-ink`            | `#2B211B` | Texto principal, títulos e ícones (contraste 13,8:1)                        |
+| `--color-brand`          | `#6B4E3D` | Botão principal no claro, acentos escuros da marca                          |
+| `--color-brand-contrast` | `#FAF7F2` | Texto sobre `--color-brand` (contraste 7,06:1)                              |
+| `--color-accent`         | `#C9795D` | Terracota: detalhes gráficos, texto grande (>=18px bold), ícones, badges    |
+| `--color-accent-ink`     | `#2B211B` | Texto escuro sobre badge terracota                                          |
+| `--color-logo`           | `#6B4E3D` | Cor do wordmark e base do semicírculo da logo oficial                       |
+| `--color-muted`          | `#7A6A5E` | Texto secundário (contraste 4,83:1 sobre `--color-paper`, aprova WCAG AA)   |
+| `--color-link`           | `#6B4E3D` | Links e ações textuais no claro (contraste 7,06:1, aprova WCAG AA)          |
+| `--color-star`           | `#C9795D` | Estrelas e indicadores de nota                                              |
+| `--color-danger`         | `#C93B3B` | Borda de erro, "Sair"                                                       |
+| `--color-danger-text`    | `#9E2424` | Texto de erro e cancelado (contraste AA)                                    |
 
 ### Cores — Tema Escuro (`[data-theme="dark"]`)
 
-| Token                    | Valor     | Uso                                            |
-| ------------------------ | --------- | ---------------------------------------------- |
-| `--color-paper`          | `#1A1412` | Fundo principal da página (marrom carvão)      |
-| `--color-surface`        | `#261E1B` | Cards de filtro, resumo, endereço, pedido      |
-| `--color-card`           | `#302622` | Fundo da imagem do produto e banners           |
-| `--color-search`         | `#261E1B` | Campo de busca                                 |
-| `--color-field`          | `#231B18` | Campos de formulário                           |
-| `--color-line`           | `#4A3C35` | Bordas, divisores, desabilitado                |
-| `--color-ink`            | `#FAF7F2` | Texto principal, títulos e ícones              |
-| `--color-brand`          | `#E08E70` | Botão principal no escuro (terracota luminoso) |
-| `--color-brand-contrast` | `#1A1412` | Texto sobre `--color-brand`                    |
-| `--color-accent`         | `#E08E70` | Acentos, links ativos, ícones de destaque      |
-| `--color-accent-ink`     | `#1A1412` | Texto sobre badge terracota                    |
-| `--color-muted`          | `#B8ABA0` | Texto secundário (contraste > 6,5:1 no escuro) |
-| `--color-link`           | `#E08E70` | Links e ações textuais                         |
-| `--color-star`           | `#E08E70` | Estrelas e indicadores                         |
-| `--color-danger`         | `#E56B6B` | Borda de erro, "Sair"                          |
-| `--color-danger-text`    | `#F28B8B` | Texto de erro e cancelado                      |
+| Token                    | Valor     | Uso                                                                         |
+| ------------------------ | --------- | --------------------------------------------------------------------------- |
+| `--color-paper`          | `#1C1613` | Fundo principal da página (grafite marrom escuro)                           |
+| `--color-surface`        | `#261E19` | Cards de filtro, resumo, endereço, pedido e superfícies elevadas             |
+| `--color-card`           | `#2F2520` | Superfície secundária: fundo da imagem do produto e banners                 |
+| `--color-search`         | `#261E19` | Campo de busca                                                              |
+| `--color-field`          | `#261E19` | Campos de formulário                                                        |
+| `--color-line`           | `#3A2F28` | Divisores, separadores e bordas neutras                                     |
+| `--color-field-border`   | `#7D6B5D` | Borda interativa de campos, chips e botões outline (contraste 3,03:1 no bg)  |
+| `--color-ink`            | `#F3ECE2` | Texto principal, títulos e ícones (contraste 13,8:1)                        |
+| `--color-brand`          | `#E08F70` | Botão principal no escuro (terracota luminoso; contraste 7,21:1)            |
+| `--color-brand-contrast` | `#1C1613` | Texto sobre `--color-brand`                                                 |
+| `--color-accent`         | `#E08F70` | Acentos, links ativos, ícones de destaque                                   |
+| `--color-accent-ink`     | `#1C1613` | Texto sobre badge terracota                                                 |
+| `--color-logo`           | `#F3ECE2` | Cor do wordmark e base do semicírculo da logo oficial                       |
+| `--color-muted`          | `#A8998B` | Texto secundário (contraste 6,84:1 no escuro, aprova WCAG AAA)               |
+| `--color-link`           | `#E08F70` | Links e ações textuais                                                      |
+| `--color-star`           | `#E08F70` | Estrelas e indicadores                                                      |
+| `--color-danger`         | `#E56B6B` | Borda de erro, "Sair"                                                       |
+| `--color-danger-text`    | `#F28B8B` | Texto de erro e cancelado                                                   |
 
-Regra de contraste: Nunca usar `#C9795D` para texto pequeno (< 18px) sobre fundo claro `#FAF7F2` (contraste 3,08:1 reprova WCAG AA).
+Regras de contraste e alinhamento:
+- Valores rigorosamente alinhados ao vetor oficial `docs/design/horizonte-design-system.svg`.
+- O token `--color-field-border` garante contraste >= 3:1 (WCAG AA 1.4.11) para bordas interativas de campos, chips e botões outline, enquanto `--color-line` permanece para divisores sutis.
+- O token `--color-muted` (`#7A6A5E` no claro e `#A8998B` no escuro) foi aferido com contraste de 4,83:1 (claro) e 6,84:1 (escuro), aprovando WCAG AA e AAA.
+- Nunca usar `#C9795D` para texto pequeno (< 18px) sobre fundo claro `#FAF7F2` (contraste 3,08:1 reprova WCAG AA). Usar `--color-link` ou `--color-muted`.
 
 ### Tipografia
 

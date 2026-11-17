@@ -1,18 +1,24 @@
 import { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Heart, Menu, Search, ShoppingBag, User } from "lucide-react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Heart, Search, ShoppingBag, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import IconButton from "@/components/ui/IconButton/IconButton";
+import ThemeToggle from "@/components/ui/ThemeToggle/ThemeToggle";
+import Logo from "@/components/ui/Logo/Logo";
+import HeaderMobileMenu from "./HeaderMobileMenu";
 import styles from "./Header.module.css";
 
-const LINKS_NAV_CENTRAL = [
+const LINKS_NAV = [
   { para: "/", rotulo: "Início" },
-  { para: "/catalogo", rotulo: "Catálogo" },
+  { para: "/#novidades", rotulo: "Novidades", ehSecao: true },
+  { para: "/catalogo?categoria=Masculino", rotulo: "Masculino" },
+  { para: "/catalogo?categoria=Feminino", rotulo: "Feminino" },
 ];
 
-export default function Header() {
+export default function Header({ totalItensCesta }) {
   const { usuario, carregando } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [termoBusca, setTermoBusca] = useState("");
 
   function aoBuscar(evento) {
@@ -25,115 +31,45 @@ export default function Header() {
     navigate("/catalogo");
   }
 
-  function aoClicarLinkMobile(evento) {
-    const details = evento.currentTarget.closest("details");
-    if (details) {
-      details.removeAttribute("open");
+  function aoClicarLink(evento, item) {
+    if (item.ehSecao && location.pathname === "/") {
+      evento.preventDefault();
+      const el = document.getElementById("novidades");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
     }
   }
 
   function renderAcoesDireita() {
-    if (carregando) {
-      return <div className={styles.actionsLoading} aria-hidden="true" />;
-    }
-
-    if (!usuario) {
-      return (
-        <div className={styles.authLinks}>
-          <Link to="/login" className={styles.btnSecondary}>
-            Entrar
-          </Link>
-          <Link to="/login?modo=cadastrar" className={styles.btnPrimary}>
-            Cadastre-se
-          </Link>
-        </div>
-      );
-    }
-
     return (
-      <>
-        <IconButton icone={Heart} rotulo="Favoritos" para="/favoritos" />
-        <IconButton
-          icone={ShoppingBag}
-          rotulo="Cesta de compras"
-          para="/carrinho"
-        />
-        <IconButton icone={User} rotulo="Minha conta" para="/perfil" />
-      </>
-    );
-  }
+      <div className={styles.actions}>
+        <ThemeToggle />
 
-  function renderLinksMobile() {
-    return (
-      <>
-        {LINKS_NAV_CENTRAL.map((item) => (
-          <NavLink
-            key={item.para}
-            to={item.para}
-            onClick={aoClicarLinkMobile}
-            className={({ isActive }) =>
-              `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
-            }
-          >
-            {item.rotulo}
-          </NavLink>
-        ))}
-
-        {!carregando && !usuario && (
-          <>
-            <NavLink
-              to="/login"
-              onClick={aoClicarLinkMobile}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
-              }
-            >
+        {carregando ? (
+          <div className={styles.actionsLoading} aria-hidden="true" />
+        ) : !usuario ? (
+          <div className={styles.authLinks}>
+            <Link to="/login" className={styles.btnSecondary}>
               Entrar
-            </NavLink>
-            <NavLink
-              to="/login?modo=cadastrar"
-              onClick={aoClicarLinkMobile}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
-              }
-            >
+            </Link>
+            <Link to="/login?modo=cadastrar" className={styles.btnPrimary}>
               Cadastre-se
-            </NavLink>
-          </>
-        )}
-
-        {!carregando && usuario && (
+            </Link>
+          </div>
+        ) : (
           <>
-            <NavLink
-              to="/favoritos"
-              onClick={aoClicarLinkMobile}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
-              }
-            >
-              Favoritos
-            </NavLink>
-            <NavLink
-              to="/carrinho"
-              onClick={aoClicarLinkMobile}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
-              }
-            >
-              Cesta
-            </NavLink>
-            <NavLink
-              to="/perfil"
-              onClick={aoClicarLinkMobile}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
-              }
-            >
-              Minha conta
-            </NavLink>
+            <IconButton icone={Heart} rotulo="Favoritos" para="/favoritos" />
+            <IconButton
+              icone={ShoppingBag}
+              rotulo="Cesta de compras"
+              para="/carrinho"
+              contador={totalItensCesta}
+            />
+            <IconButton icone={User} rotulo="Minha conta" para="/perfil" />
           </>
         )}
-      </>
+      </div>
     );
   }
 
@@ -142,26 +78,25 @@ export default function Header() {
       <div className={`container ${styles.inner}`}>
         <div className={styles.topRow}>
           <div className={styles.leftGroup}>
-            <details className={styles.mobileMenu}>
-              <summary className={styles.menuTrigger} aria-label="Abrir menu">
-                <Menu size={22} strokeWidth={1.8} />
-              </summary>
-              <nav className={styles.mobileNav} aria-label="Menu principal">
-                {renderLinksMobile()}
-              </nav>
-            </details>
+            <HeaderMobileMenu
+              links={LINKS_NAV}
+              usuario={usuario}
+              carregando={carregando}
+              aoClicarLink={aoClicarLink}
+            />
 
-            <Link to="/" className={styles.logo}>
-              HORIZONTE
+            <Link to="/" className={styles.logoLink} aria-label="Horizonte - Início">
+              <Logo className={styles.logoImg} />
             </Link>
 
             <nav className={styles.desktopNav} aria-label="Menu principal">
-              {LINKS_NAV_CENTRAL.map((item) => (
+              {LINKS_NAV.map((item) => (
                 <NavLink
                   key={item.para}
                   to={item.para}
+                  onClick={(e) => aoClicarLink(e, item)}
                   className={({ isActive }) =>
-                    `${styles.navLink} ${isActive ? styles.navLinkActive : ""}`
+                    `${styles.navLink} ${isActive && !item.ehSecao ? styles.navLinkActive : ""}`
                   }
                 >
                   {item.rotulo}
@@ -184,14 +119,14 @@ export default function Header() {
             <input
               type="search"
               value={termoBusca}
-              onChange={(evento) => setTermoBusca(evento.target.value)}
+              onChange={(e) => setTermoBusca(e.target.value)}
               placeholder="Buscar produtos"
               aria-label="Buscar produtos"
               className={styles.searchInput}
             />
           </form>
 
-          <div className={styles.actions}>{renderAcoesDireita()}</div>
+          {renderAcoesDireita()}
         </div>
 
         <form
@@ -208,7 +143,7 @@ export default function Header() {
           <input
             type="search"
             value={termoBusca}
-            onChange={(evento) => setTermoBusca(evento.target.value)}
+            onChange={(e) => setTermoBusca(e.target.value)}
             placeholder="Buscar produtos"
             aria-label="Buscar produtos"
             className={styles.searchInput}

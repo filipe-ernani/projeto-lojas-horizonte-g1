@@ -1,16 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 36" fill="none" role="img" aria-label="Horizonte">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 120" fill="none" role="img" aria-label="Horizonte">
   <style>
     .semicircle-top { fill: var(--color-accent, #C9795D); }
-    .semicircle-bottom { fill: var(--color-brand, #6B4E3D); }
-    .logo-text {
-      fill: var(--color-ink, currentColor);
-      font-family: 'Jost', system-ui, -apple-system, sans-serif;
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-    }
+    .semicircle-bottom { fill: var(--color-logo, #6B4E3D); }
+    .logo-text { fill: var(--color-logo, #6B4E3D); }
+    .logo-stroke { stroke: var(--color-logo, #6B4E3D); }
   </style>
-  <path class="semicircle-top" d="M 4 16.5 A 14 14 0 0 1 32 16.5 Z" />
-  <path class="semicircle-bottom" d="M 32 19.5 A 14 14 0 0 1 4 19.5 Z" />
-  <text class="logo-text" x="44" y="25">HORIZONTE</text>
+  <g id="logo-icon">
+    <path class="semicircle-top" d="M0.65 58A50 50 0 1 1 99.35 58Z"/>
+    <path class="semicircle-bottom" transform="translate(10)" d="M2.3 65A50 50 0 0 0 97.7 65Z"/>
+  </g>
+  <g id="logo-wordmark" transform="translate(146 29) scale(0.42)">
+    <g transform="translate(0)">
+      <rect class="logo-text" width="9" height="100"/>
+      <rect class="logo-text" x="61" width="9" height="100"/>
+      <rect class="logo-text" y="45.5" width="70" height="9"/>
+    </g>
+    <g transform="translate(92)">
+      <circle class="logo-stroke" cx="50" cy="50" r="45.5" fill="none" stroke-width="9"/>
+    </g>
+    <g transform="translate(214)">
+      <rect class="logo-text" width="9" height="100"/>
+      <path class="logo-stroke" d="M4.5 4.5H42a23 23 0 0 1 0 46H4.5" fill="none" stroke-width="9"/>
+      <path class="logo-text" d="M36 50.5H49L70 100H57Z"/>
+    </g>
+    <g transform="translate(306)">
+      <rect class="logo-text" width="9" height="100"/>
+    </g>
+    <g transform="translate(337)">
+      <path class="logo-text" d="M0 0H68V9.5L18 90.5H68V100H0V90.5H8L58 9.5H0Z"/>
+    </g>
+    <g transform="translate(427)">
+      <circle class="logo-stroke" cx="50" cy="50" r="45.5" fill="none" stroke-width="9"/>
+    </g>
+    <g transform="translate(549)">
+      <rect class="logo-text" width="9" height="100"/>
+      <rect class="logo-text" x="61" width="9" height="100"/>
+      <path class="logo-text" d="M0 0H10.5L70 100H59.5Z"/>
+    </g>
+    <g transform="translate(641)">
+      <rect class="logo-text" width="70" height="9"/>
+      <rect class="logo-text" x="30.5" width="9" height="100"/>
+    </g>
+    <g transform="translate(733)">
+      <rect class="logo-text" width="9" height="100"/>
+      <rect class="logo-text" width="62" height="9"/>
+      <rect class="logo-text" y="45.5" width="54" height="9"/>
+      <rect class="logo-text" y="91" width="62" height="9"/>
+    </g>
+  </g>
 </svg>

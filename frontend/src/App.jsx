@@ -10,6 +10,10 @@ import Carrinho from "@/pages/Carrinho/Carrinho";
 import Checkout from "@/pages/Checkout/Checkout";
 import Perfil from "@/pages/Perfil/Perfil";
 import Pedidos from "@/pages/Pedidos/Pedidos";
+import Institucional from "@/pages/Institucional/Institucional";
+import Privacidade from "@/pages/Privacidade/Privacidade";
+import Termos from "@/pages/Termos/Termos";
+import Cookies from "@/pages/Cookies/Cookies";
 
 function App() {
   return (
@@ -20,6 +24,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/catalogo" element={<Catalogo />} />
         <Route path="/produto/:id" element={<Produto />} />
+        <Route path="/institucional" element={<Institucional />} />
+        <Route path="/privacidade" element={<Privacidade />} />
+        <Route path="/termos" element={<Termos />} />
+        <Route path="/cookies" element={<Cookies />} />
 
         <Route element={<PrivateRoute />}>
           <Route path="/favoritos" element={<Favoritos />} />

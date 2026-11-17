@@ -17,7 +17,7 @@
   height: var(--control-h);
   padding-inline: var(--space-4);
   background: var(--color-field);
-  border: 1px solid var(--color-line);
+  border: 1px solid var(--color-field-border);
   border-radius: var(--radius-md);
   color: var(--color-ink);
   font-family: inherit;

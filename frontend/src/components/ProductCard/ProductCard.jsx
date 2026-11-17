@@ -2,12 +2,14 @@ import { Link } from "react-router-dom";
 import { formatCurrency } from "@/utils/formatCurrency";
 import ProductImage from "@/components/ui/ProductImage/ProductImage";
 import RatingPill from "@/components/ui/RatingPill/RatingPill";
+import Badge from "@/components/ui/Badge/Badge";
 import FavoriteButton from "./FavoriteButton";
 import styles from "./ProductCard.module.css";
 
 /**
  * Card de produto conforme docs/DESIGN.md:
  * Imagem 4:5 com FavoriteButton posicionado sobre a imagem (irmão do Link).
+ * Selo "Novo" opcional (Badge) no canto superior esquerdo.
  * Abaixo: linha de preço em negrito + RatingPill, nome (15 px) e categoria (muted 14 px).
  * Passa cor (primeira cor disponível) e categoria para enriquecer o placeholder do ProductImage.
  */
@@ -16,6 +18,7 @@ export default function ProductCard({
   isFavorito = false,
   onFavoritar,
   acoes,
+  seloNovo = false,
 }) {
   if (!produto) {
     return null;
@@ -43,6 +46,11 @@ export default function ProductCard({
         aria-label={`${nome}, ${categoria}, por ${precoFormatado}`}
       >
         <div className={styles.imageContainer}>
+          {seloNovo && (
+            <div className={styles.badgeWrapper}>
+              <Badge variante="novo">Novo</Badge>
+            </div>
+          )}
           <ProductImage
             imagemUrl={imagemUrl}
             alt={nome}

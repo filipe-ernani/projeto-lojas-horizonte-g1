@@ -41,7 +41,7 @@
 .outline {
   background: var(--color-paper);
   color: var(--color-ink);
-  border-color: var(--color-line);
+  border-color: var(--color-field-border);
 }
 
 .outline:hover:not(:disabled) {

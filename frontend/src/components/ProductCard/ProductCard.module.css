@@ -25,6 +25,14 @@
   z-index: 2;
 }
 
+.badgeWrapper {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 2;
+  pointer-events: none;
+}
+
 .content {
   display: flex;
   flex-direction: column;

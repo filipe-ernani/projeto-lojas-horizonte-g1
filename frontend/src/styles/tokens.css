@@ -4,15 +4,16 @@
    tablet >= 640px, desktop >= 1024px. */
 
 :root {
-  /* Cores — Tema Claro (Decisão D-24) */
+  /* Cores — Tema Claro (Decisão D-24 / Alinhado ao horizonte-design-system.svg) */
   --color-paper: #FAF7F2;
-  --color-surface: #F2ECE1;
-  --color-card: #EBE2D3;
-  --color-search: #F5F0E6;
+  --color-surface: #FFFFFF;
+  --color-card: #F1EAE0;
+  --color-search: #F1EAE0;
   --color-field: #FFFFFF;
-  --color-line: #C7B9A5;
-  --color-ink: #231B16;
-  --color-muted: #63554B;
+  --color-line: #E4DACB;
+  --color-field-border: #9C8D79;
+  --color-ink: #2B211B;
+  --color-muted: #7A6A5E;
   --color-link: #6B4E3D;
   --color-star: #C9795D;
   --color-danger: #C93B3B;
@@ -22,7 +23,8 @@
   --color-brand: #6B4E3D;
   --color-brand-contrast: #FAF7F2;
   --color-accent: #C9795D;
-  --color-accent-ink: #231B16;
+  --color-accent-ink: #2B211B;
+  --color-logo: #6B4E3D;
 
   /* Tipografia */
   --font-sans: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -72,25 +74,27 @@
 }
 
 [data-theme="dark"] {
-  /* Cores — Tema Escuro (Decisão D-24) */
-  --color-paper: #1A1412;
-  --color-surface: #261E1B;
-  --color-card: #302622;
-  --color-search: #261E1B;
-  --color-field: #231B18;
-  --color-line: #4A3C35;
-  --color-ink: #FAF7F2;
-  --color-muted: #B8ABA0;
-  --color-link: #E08E70;
-  --color-star: #E08E70;
+  /* Cores — Tema Escuro (Decisão D-24 / Alinhado ao horizonte-design-system.svg) */
+  --color-paper: #1C1613;
+  --color-surface: #261E19;
+  --color-card: #2F2520;
+  --color-search: #261E19;
+  --color-field: #261E19;
+  --color-line: #3A2F28;
+  --color-field-border: #7D6B5D;
+  --color-ink: #F3ECE2;
+  --color-muted: #A8998B;
+  --color-link: #E08F70;
+  --color-star: #E08F70;
   --color-danger: #E56B6B;
   --color-danger-text: #F28B8B;
 
   /* Tokens semânticos da marca */
-  --color-brand: #E08E70;
-  --color-brand-contrast: #1A1412;
-  --color-accent: #E08E70;
-  --color-accent-ink: #1A1412;
+  --color-brand: #E08F70;
+  --color-brand-contrast: #1C1613;
+  --color-accent: #E08F70;
+  --color-accent-ink: #1C1613;
+  --color-logo: #F3ECE2;
 }
 
 @media (min-width: 640px) {
