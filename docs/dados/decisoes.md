@@ -35,6 +35,7 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D16 | Grupo Casa vendido só nos canais online | Proposta |
 | D17 | Premissas do gerador do ERP (lojas, volume, estoque e sujeira plantada) | Proposta |
 | D18 | Regras de qualidade da silver do ERP | Aceita |
+| D19 | Recomendação de produtos como recurso de IA | Aceita |
 ---
 
 ## D01 · Databricks Free Edition como ambiente do MVP
@@ -237,3 +238,17 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 - **Quantidade negativa:** tratada como erro, não como devolução, porque o ERP não registra devoluções (D17). Em produção, devolução seria outro tipo de documento.
 - **Custo:** `custo_total = quantidade × custo` do `erp_produtos`, porque o ERP é o cadastro mestre de produtos (D12).
 - **Resultado:** 401.335 linhas; 400 SKU nulo, 0 SKU sem cadastro, 401 quantidade negativa, 801 duplicadas; 399.736 válidas (3 linhas têm dois problemas). Receita válida de R$ 30.795.090,78 e ticket médio de R$ 136,78, iguais ao resumo do gerador.
+
+## D19 · Recomendação de produtos como recurso de IA
+
+- **Data:** 2026-11-17
+- **Status:** Aceita (decisão do squad)
+- **Contexto:** o enunciado pede um recurso de IA, recomendação de produtos **ou** previsão de demanda. A primeira escolha foi a previsão.
+- **Decisão:** o recurso de IA passa a ser a **recomendação de produtos**. A previsão de demanda fica em aberto (opcional, se sobrar tempo).
+- **Motivo:** responde à dor 4 do cliente ("nenhuma personalização ou recomendação de produtos"), que a previsão deixava sem resposta.
+- **Impacto nos dados:**
+  - O Olist e o ERP não sustentam a recomendação (clientes que compram uma vez; itens de cupom sorteados de forma independente). O histórico vem do **gerador do site**, com clientes recorrentes e afinidades entre produtos definidas no `parametros.yaml`. O modelo encontra padrões que o gerador plantou, e isso é dito na apresentação.
+  - Avaliações sintéticas, ligadas a pedidos do site, num arquivo próprio.
+  - As recomendações calculadas no Databricks voltam para a API como uma tabela pronta (`sku → skus recomendados`).
+- **Substitui:** a escolha da previsão como recurso principal (seção 1.3 do CONTEXTO). A D03 continua válida para o marketplace.
+- **Responsável:** Emanuel
