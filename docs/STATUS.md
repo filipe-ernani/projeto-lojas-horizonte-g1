@@ -3,7 +3,7 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 17/11/2026 (Correções da revisão D-24: tokens alinhados ao horizonte-design-system.svg, --color-field-border em Field/Chip/Button outline, --color-logo, componente Logo em ui/, inicialização do tema inline no <head> do index.html para eliminação de FOUC)
+**Última atualização:** 17/11/2026 (Correções visuais e de texto da Home e Layout: Logo em Header 40px e Footer 36px com .container unificado, Hero com arte geométrica contida e destaque "horizonte.", Banner Editorial alinhado, Faixa de pilares honestos com link de privacidade, scroll-margin-top em #novidades, categorias via useCategorias com mapa de ícones e sem mocks D-19, EmptyState de Favoritos com ícone Heart, favicon em public/favicon.svg)
 **Fase atual:** 3. Estrutura das telas (Fases 0, 1, 2 e 3 concluídas no front-end; rotas legais integradas; aguardando dataset/back-end para Fase 4)
 
 ## Bloqueios externos

@@ -1,37 +1,42 @@
-import { CheckCircle2, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Lock, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 import styles from "./BenefitsBanner.module.css";
 
 const PILARES = [
   {
-    id: "seguranca",
+    id: "compra-transparente",
     icone: ShieldCheck,
-    titulo: "Compra segura",
-    descricao: "Transações protegidas e privacidade garantida em todas as etapas.",
+    titulo: "Compra transparente",
+    descricao: "Ambiente demonstrativo: nenhum pagamento real é feito.",
   },
   {
-    id: "atendimento",
+    id: "atendimento-inteligente",
     icone: MessageCircle,
     titulo: "Atendimento inteligente",
-    descricao: "Assistente virtual e canal dedicado para tirar suas dúvidas com agilidade.",
+    descricao: "Assistente virtual para tirar dúvidas sobre os produtos.",
   },
   {
-    id: "curadoria",
+    id: "curadoria-moda",
     icone: Sparkles,
     titulo: "Curadoria de moda",
-    descricao: "Peças contemporâneas selecionadas com foco em conforto, caimento e estilo atemporal.",
+    descricao: "Seleção de peças casuais e essenciais.",
   },
   {
-    id: "qualidade",
-    icone: CheckCircle2,
-    titulo: "Qualidade e transparência",
-    descricao: "Especificações claras de materiais e compromisso com o acabamento de cada peça.",
+    id: "privacidade",
+    icone: Lock,
+    titulo: "Privacidade",
+    descricao: (
+      <>
+        Saiba como tratamos seus dados na{" "}
+        <Link to="/privacidade" className={styles.privacyLink}>
+          Política de Privacidade
+        </Link>
+        .
+      </>
+    ),
   },
 ];
 
-/**
- * Faixa institucional com os pilares da loja conforme docs/DESIGN.md e D-24:
- * Sem prazos ou valores inventados (honestidade e foco no valor real).
- */
 export default function BenefitsBanner() {
   return (
     <section className={styles.container} aria-label="Pilares da Lojas Horizonte">
@@ -41,10 +46,10 @@ export default function BenefitsBanner() {
           return (
             <article key={item.id} className={styles.card}>
               <div className={styles.iconWrapper}>
-                <Icone className={styles.icon} size={24} strokeWidth={1.8} aria-hidden="true" />
+                <Icone className={styles.icon} size={22} strokeWidth={1.8} aria-hidden="true" />
               </div>
               <div className={styles.info}>
-                <h3 className={styles.title}>{item.titulo}</h3>
+                <h3 className={styles.title} title={item.titulo}>{item.titulo}</h3>
                 <p className={styles.description}>{item.descricao}</p>
               </div>
             </article>

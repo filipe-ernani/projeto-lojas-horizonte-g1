@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Heart } from "lucide-react";
 import ProductGrid from "@/components/ProductGrid/ProductGrid";
 import Button from "@/components/ui/Button/Button";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
@@ -72,6 +73,7 @@ export default function Favoritos({
 
       {!temProdutos ? (
         <EmptyState
+          icone={Heart}
           titulo="Você ainda não favoritou nada"
           mensagem="Explore nosso catálogo e salve seus produtos preferidos para encontrá-los facilmente depois."
           textoAcao="Explorar catálogo"

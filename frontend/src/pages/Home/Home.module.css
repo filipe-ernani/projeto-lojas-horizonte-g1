@@ -12,6 +12,10 @@
   width: 100%;
 }
 
+.novidadesSection {
+  scroll-margin-top: calc(var(--header-h) + 16px);
+}
+
 .sectionHeader {
   display: flex;
   align-items: center;

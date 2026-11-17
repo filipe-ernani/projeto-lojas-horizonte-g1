@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import useCategorias from "@/hooks/useCategorias";
 import CategoryList from "@/components/CategoryList/CategoryList";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
@@ -10,28 +11,26 @@ import EditorialBanner from "./EditorialBanner";
 import HomeSkeleton from "./HomeSkeleton";
 import styles from "./Home.module.css";
 
-const CATEGORIAS_REAIS = [
-  "Feminino",
-  "Masculino",
-  "Infantil",
-  "Calçados",
-  "Acessórios",
-  "Esporte",
-  "Beleza",
-  "Casa",
-  "Moda íntima e praia",
-];
-
 export default function Home({
-  categorias,
+  categorias: categoriasProp,
   produtos = [],
   estadoInicial = "normal",
 }) {
   const [estado, setEstado] = useState(estadoInicial);
   const location = useLocation();
 
-  const listaCategorias =
-    categorias && categorias.length > 0 ? categorias : CATEGORIAS_REAIS;
+  // Hook de categorias real via API (sem mock hardcoded, D-19)
+  const {
+    categorias: categoriasApi,
+    carregando: carregandoCategorias,
+    erro: erroCategorias,
+    recarregar: recarregarCategorias,
+  } = useCategorias();
+
+  // Se categorias foram injetadas via props (ex.: em testes), usa-as; caso contrário, usa a API
+  const listaCategorias = categoriasProp !== undefined ? categoriasProp : categoriasApi;
+  const estaCarregandoCategorias = categoriasProp === undefined && carregandoCategorias;
+  const erroNasCategorias = categoriasProp === undefined ? erroCategorias : null;
 
   // Decisão D-25: Os 8 últimos SKUs do catálogo recebem o selo "Novo"
   const novidades = produtos.slice(-8);
@@ -76,12 +75,15 @@ export default function Home({
 
       <CategoryList
         categorias={listaCategorias}
+        carregando={estaCarregandoCategorias}
+        erro={erroNasCategorias}
+        onRecarregar={recarregarCategorias}
         titulo="Explore por categoria"
       />
 
       <section
         id="novidades"
-        className={styles.section}
+        className={`${styles.section} ${styles.novidadesSection}`.trim()}
         aria-labelledby="novidades-heading"
       >
         <div className={styles.sectionHeader}>

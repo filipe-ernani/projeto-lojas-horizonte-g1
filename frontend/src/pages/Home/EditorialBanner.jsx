@@ -7,13 +7,12 @@ export default function EditorialBanner() {
   return (
     <section className={styles.banner} aria-labelledby="editorial-heading">
       <div className={styles.content}>
-        <span className={styles.tag}>Nova Coleção</span>
+        <span className={styles.tag}>NOVA COLEÇÃO</span>
         <h2 id="editorial-heading" className={styles.title}>
-          Minimalismo e elegância para todas as ocasiões
+          Do nascer ao pôr do sol.
         </h2>
         <p className={styles.description}>
-          Conheça peças versáteis que combinam entre si, desenhadas para
-          acompanhar a sua rotina com caimento impecável e tecidos resistentes.
+          Peças que combinam entre si para acompanhar a sua rotina.
         </p>
         <Link to="/catalogo" className={styles.link}>
           <Button size="lg" className={styles.button}>

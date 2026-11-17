@@ -1,19 +1,83 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Layers } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  Footprints,
+  Home,
+  Layers,
+  Shirt,
+  Smile,
+  Sparkles,
+  Sun,
+  Watch,
+} from "lucide-react";
+import Button from "@/components/ui/Button/Button";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
 import styles from "./CategoryList.module.css";
 
-/**
- * Lista de categorias em destaque conforme docs/DESIGN.md:
- * Círculos de 140 px (mobile-first com scroll suave ou grid),
- * nome da categoria abaixo e links levando a /catalogo?categoria=Nome.
- */
+const MAPA_ICONES = {
+  Feminino: Sparkles,
+  Masculino: Shirt,
+  Infantil: Smile,
+  Calçados: Footprints,
+  Acessórios: Watch,
+  Esporte: Activity,
+  Beleza: Sparkles,
+  Casa: Home,
+  "Moda íntima e praia": Sun,
+};
+
+function obterIcone(categoria = "") {
+  return MAPA_ICONES[categoria] || Layers;
+}
+
 export default function CategoryList({
   categorias = [],
-  titulo = "Categorias em destaque",
+  carregando = false,
+  erro = null,
+  onRecarregar,
+  titulo = "Explore por categoria",
   linkVerTodos = "/catalogo",
   className = "",
 }) {
+  if (carregando) {
+    return (
+      <section className={`${styles.section} ${className}`.trim()} aria-busy="true">
+        <div className={styles.header}>
+          <h2 className={styles.title}>{titulo}</h2>
+        </div>
+        <div className={styles.track}>
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className={styles.item}>
+              <div className={`${styles.circle} ${styles.skeletonCircle}`} />
+              <div className={styles.skeletonText} />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (erro) {
+    return (
+      <section className={`${styles.section} ${className}`.trim()}>
+        <div className={styles.header}>
+          <h2 className={styles.title}>{titulo}</h2>
+        </div>
+        <div className={styles.errorState}>
+          <p className={styles.errorText}>
+            Não foi possível carregar as categorias no momento.
+          </p>
+          {onRecarregar ? (
+            <Button variant="outline" size="sm" onClick={onRecarregar}>
+              Tentar de novo
+            </Button>
+          ) : null}
+        </div>
+      </section>
+    );
+  }
+
   if (!categorias || categorias.length === 0) {
     return (
       <section className={`${styles.section} ${className}`.trim()}>
@@ -22,7 +86,7 @@ export default function CategoryList({
         </div>
         <EmptyState
           titulo="Nenhuma categoria disponível"
-          mensagem="As categorias em destaque aparecerão assim que a API estiver conectada."
+          mensagem="As categorias aparecerão assim que forem cadastradas no catálogo."
           textoAcao="Ver catálogo completo"
           para={linkVerTodos}
         />
@@ -48,18 +112,21 @@ export default function CategoryList({
       </div>
 
       <div className={styles.track}>
-        {categorias.map((categoria) => (
-          <Link
-            key={categoria}
-            to={`/catalogo?categoria=${encodeURIComponent(categoria)}`}
-            className={styles.item}
-          >
-            <div className={styles.circle}>
-              <Layers className={styles.icon} size={32} strokeWidth={1.8} />
-            </div>
-            <span className={styles.categoryName}>{categoria}</span>
-          </Link>
-        ))}
+        {categorias.map((categoria) => {
+          const Icone = obterIcone(categoria);
+          return (
+            <Link
+              key={categoria}
+              to={`/catalogo?categoria=${encodeURIComponent(categoria)}`}
+              className={styles.item}
+            >
+              <div className={styles.circle}>
+                <Icone className={styles.icon} size={32} strokeWidth={1.8} />
+              </div>
+              <span className={styles.categoryName}>{categoria}</span>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

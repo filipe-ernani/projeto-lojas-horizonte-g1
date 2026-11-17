@@ -22,7 +22,7 @@
   font-weight: var(--fw-semibold);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-brand);
 }
 
 .title {

@@ -32,9 +32,9 @@
 }
 
 .logoImg {
-  height: 28px;
+  height: 40px;
   width: auto;
-  max-width: 160px;
+  max-width: 180px;
   object-fit: contain;
 }
 

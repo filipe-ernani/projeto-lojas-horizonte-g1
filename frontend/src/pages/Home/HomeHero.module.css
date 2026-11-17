@@ -8,7 +8,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  overflow: hidden;
 }
 
 .content {
@@ -42,6 +41,10 @@
   margin: 0;
 }
 
+.accentText {
+  color: var(--color-accent);
+}
+
 .subtitle {
   font-size: var(--fs-md);
   line-height: 1.6;
@@ -69,7 +72,7 @@
 .outlineBtn {
   background: var(--color-paper);
   color: var(--color-ink);
-  border-color: var(--color-line);
+  border-color: var(--color-field-border);
 }
 
 .artWrapper {
@@ -85,6 +88,7 @@
   width: 100%;
   height: auto;
   max-height: 220px;
+  display: block;
 }
 
 @media (min-width: 768px) {
@@ -100,22 +104,8 @@
     font-size: 2.75rem;
   }
 
-  .subtitle {
-    font-size: var(--fs-lg);
-  }
-
   .artWrapper {
-    max-width: 360px;
     margin: 0;
-  }
-}
-
-@media (min-width: 1024px) {
-  .hero {
-    padding: var(--space-16) var(--space-12);
-  }
-
-  .title {
-    font-size: var(--fs-4xl);
+    flex-shrink: 0;
   }
 }
