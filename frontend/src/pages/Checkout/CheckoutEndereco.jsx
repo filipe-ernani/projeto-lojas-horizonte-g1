@@ -2,14 +2,14 @@ import { Link } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import AddressOption from "@/components/AddressOption/AddressOption";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
-import styles from "./CheckoutAddressSection.module.css";
+import styles from "./CheckoutEndereco.module.css";
 
 /**
  * Seção de endereço de entrega do Checkout:
  * Exibe a lista de endereços para seleção por Radio e link para gerenciar no perfil.
  * Exibe EmptyState caso não haja endereços cadastrados.
  */
-export default function CheckoutAddressSection({
+export default function CheckoutEndereco({
   enderecos = [],
   enderecoSelecionado,
   onSelecionar,

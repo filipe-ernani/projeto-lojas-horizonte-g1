@@ -11,7 +11,7 @@ import styles from "./CheckoutSuccess.module.css";
  */
 export default function CheckoutSuccess({
   pedidoId,
-  formaPagamento = "PIX",
+  formaPagamento,
 }) {
   const navigate = useNavigate();
 
@@ -21,7 +21,9 @@ export default function CheckoutSuccess({
     BOLETO: "Boleto bancário",
   };
 
-  const formaTexto = rotulosPagamento[formaPagamento] || formaPagamento;
+  const formaTexto = formaPagamento
+    ? rotulosPagamento[formaPagamento] || formaPagamento
+    : null;
 
   return (
     <div className={styles.container} role="region" aria-label="Confirmação de pedido">
@@ -30,7 +32,9 @@ export default function CheckoutSuccess({
           <CheckCircle2 size={56} strokeWidth={1.8} className={styles.icon} aria-hidden="true" />
         </div>
 
-        <h1 className={styles.title}>Pedido realizado com sucesso!</h1>
+        <h1 className={styles.title}>
+          {pedidoId ? "Pedido realizado com sucesso!" : "Pedido realizado"}
+        </h1>
         {pedidoId ? (
           <p className={styles.subtitle}>
             Número do pedido: <strong className={styles.orderNumber}>#{pedidoId}</strong>

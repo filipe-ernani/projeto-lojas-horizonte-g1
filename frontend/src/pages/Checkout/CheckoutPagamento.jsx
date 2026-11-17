@@ -1,11 +1,11 @@
 import PaymentOptions from "@/components/PaymentOptions/PaymentOptions";
-import styles from "./CheckoutPaymentSection.module.css";
+import styles from "./CheckoutPagamento.module.css";
 
 /**
  * Seção de forma de pagamento do Checkout:
  * Exibe título e as opções de pagamento simuladas (Pix, Cartão, Boleto).
  */
-export default function CheckoutPaymentSection({
+export default function CheckoutPagamento({
   formaPagamento,
   onSelecionar,
 }) {

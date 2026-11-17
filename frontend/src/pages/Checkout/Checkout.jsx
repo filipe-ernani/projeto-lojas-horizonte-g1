@@ -3,8 +3,8 @@ import { ShoppingBag } from "lucide-react";
 import OrderSummary from "@/components/OrderSummary/OrderSummary";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
 import CheckoutHeader from "./CheckoutHeader";
-import CheckoutAddressSection from "./CheckoutAddressSection";
-import CheckoutPaymentSection from "./CheckoutPaymentSection";
+import CheckoutEndereco from "./CheckoutEndereco";
+import CheckoutPagamento from "./CheckoutPagamento";
 import CheckoutSuccess from "./CheckoutSuccess";
 import CheckoutSkeleton from "./CheckoutSkeleton";
 import styles from "./Checkout.module.css";
@@ -154,13 +154,13 @@ export default function Checkout({
 
         <div className={styles.layout}>
           <div className={styles.formsColumn}>
-            <CheckoutAddressSection
+            <CheckoutEndereco
               enderecos={enderecos}
               enderecoSelecionado={enderecoSelecionado}
               onSelecionar={setEnderecoSelecionado}
             />
 
-            <CheckoutPaymentSection
+            <CheckoutPagamento
               formaPagamento={formaPagamento}
               onSelecionar={setFormaPagamento}
             />

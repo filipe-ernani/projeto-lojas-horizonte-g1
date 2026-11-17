@@ -8,9 +8,9 @@
  * Todos os registros gerados possuem a coluna `origem: SIMULADO`.
  */
 
-const fs = require("fs");
-const path = require("path");
-const crypto = require("crypto");
+const fs = require("node:fs");
+const path = require("node:path");
+const crypto = require("node:crypto");
 
 // 1. Configurações de cores e tamanhos
 const MAPA_CORES_HEX = {
@@ -70,8 +70,8 @@ const SEMENTE = obterParametro("SEMENTE", 42);
 function criarPRNG(semente) {
   let s = Number(semente) >>> 0;
   return function () {
-    s |= 0;
-    s = (s + 0x6d2b79f5) | 0;
+    s = Math.trunc(s);
+    s = Math.trunc(s + 0x6d2b79f5);
     let t = Math.imul(s ^ (s >>> 15), 1 | s);
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
@@ -97,7 +97,9 @@ const dirSaida = path.join(raizProjeto, "data", "saida");
 // Verificação estrita de catálogo
 if (!fs.existsSync(caminhoCatalogo)) {
   console.error(`ERRO: Arquivo ${caminhoCatalogo} não encontrado.`);
-  console.error("Conforme as regras, o script NÃO inventa produtos. Abortando.");
+  console.error(
+    "Conforme as regras, o script NÃO inventa produtos. Abortando.",
+  );
   process.exit(1);
 }
 
@@ -164,9 +166,9 @@ for (let i = 1; i < linhasCatalogo.length; i++) {
   const modelo = colunas[2].trim();
   const categoria = colunas[3].trim();
   const grupo = colunas[4].trim();
-  const preco = parseFloat(colunas[5].trim());
-  const custo = parseFloat(colunas[6].trim());
-  const popularidade = parseFloat(colunas[7].trim());
+  const preco = Number.parseFloat(colunas[5].trim());
+  const custo = Number.parseFloat(colunas[6].trim());
+  const popularidade = Number.parseFloat(colunas[7].trim());
 
   produtos.push({
     sku,
@@ -201,12 +203,14 @@ function sortearProduto(prng) {
       return produtos[i];
     }
   }
-  return produtos[produtos.length - 1];
+  return produtos.at(-1);
 }
 
 // 8. Execução da simulação
 console.log("Iniciando geração de dados simulados de BI...");
-console.log(`Parâmetros: DIAS=${DIAS}, CARRINHOS=${CARRINHOS}, TAXA_CONVERSAO=${TAXA_CONVERSAO}, TAXA_CANCELAMENTO=${TAXA_CANCELAMENTO}, SEMENTE=${SEMENTE}`);
+console.log(
+  `Parâmetros: DIAS=${DIAS}, CARRINHOS=${CARRINHOS}, TAXA_CONVERSAO=${TAXA_CONVERSAO}, TAXA_CANCELAMENTO=${TAXA_CANCELAMENTO}, SEMENTE=${SEMENTE}`,
+);
 
 const prng = criarPRNG(SEMENTE);
 const instanteGeracao = new Date();
@@ -256,8 +260,7 @@ const listaItens = [];
 
 for (let i = 0; i < CARRINHOS; i++) {
   const pedidoId = `PED-${String(i + 1).padStart(5, "0")}`;
-  const usuarioHash =
-    bancoUsuarios[Math.floor(prng() * bancoUsuarios.length)];
+  const usuarioHash = bancoUsuarios[Math.floor(prng() * bancoUsuarios.length)];
   const cfg = listaStatusEtapa[i];
   const criadoEm = sortearData(prng, instanteGeracao, DIAS);
 
@@ -277,8 +280,7 @@ for (let i = 0; i < CARRINHOS; i++) {
 
     const quantidade = 1 + Math.floor(prng() * 3);
     const precoUnitario = prod.preco;
-    const tamanho =
-      prod.tamanhos[Math.floor(prng() * prod.tamanhos.length)];
+    const tamanho = prod.tamanhos[Math.floor(prng() * prod.tamanhos.length)];
     const cor = prod.cor; // cor do produto (ou vazio para Beleza)
 
     valorTotalPedido += quantidade * precoUnitario;
@@ -384,11 +386,13 @@ function salvarCSV(nomeArquivo, cabecalhos, linhasObjetos) {
   const caminhoCompleto = path.join(dirSaida, nomeArquivo);
   const cabecalhoLinha = cabecalhos.join(",");
   const corpoLinhas = linhasObjetos.map((obj) =>
-    cabecalhos.map((c) => obj[c] !== undefined ? obj[c] : "").join(","),
+    cabecalhos.map((c) => (obj[c] !== undefined ? obj[c] : "")).join(","),
   );
   const conteudoFinal = [cabecalhoLinha, ...corpoLinhas].join("\n") + "\n";
   fs.writeFileSync(caminhoCompleto, conteudoFinal, "utf-8");
-  console.log(`Arquivo gerado: data/saida/${nomeArquivo} (${linhasObjetos.length} linhas)`);
+  console.log(
+    `Arquivo gerado: data/saida/${nomeArquivo} (${linhasObjetos.length} linhas)`,
+  );
 }
 
 salvarCSV(
@@ -459,7 +463,7 @@ const cancelados = listaPedidos.filter((p) => p.status === "CANCELADO");
 const abandonados = listaCarrinhos.filter((c) => c.abandonado === "true");
 
 const receitaTotalFinalizados = finalizados.reduce(
-  (acc, p) => acc + parseFloat(p.valor_total),
+  (acc, p) => acc + Number.parseFloat(p.valor_total),
   0,
 );
 const ticketMedioFinalizados =
