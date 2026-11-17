@@ -1,4 +1,4 @@
-# Histórico de Status Report Diário - Lojas Horizonte (Grupo 1)
+# Histórico de Status Report Diário - Lojas Horizonte
 
 ## Daily 01 - 13/11/2026 (Kick-off & Planeamento)
 **Status do Projeto:** 🟢 No prazo
