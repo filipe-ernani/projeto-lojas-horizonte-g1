@@ -46,8 +46,8 @@
 }
 
 .userBubble {
-  background-color: var(--color-ink);
-  color: var(--color-paper);
+  background-color: var(--color-brand);
+  color: var(--color-brand-contrast);
   border-radius: var(--radius-md) var(--radius-md) 4px var(--radius-md);
 }
 

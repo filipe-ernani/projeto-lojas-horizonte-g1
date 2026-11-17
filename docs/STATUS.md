@@ -69,7 +69,8 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
-- _(Novo)_ De Design para UI: componente `ThemeToggle` criado e disponível em `src/components/ui/ThemeToggle/ThemeToggle.jsx` para inclusão no `Header`, `Footer` ou menu de conta; logo SVG oficial disponível em `src/assets/horizonte-logo.svg`.
+- _(Novo)_ Pedido ao Design: conferir estado desabilitado de Button primário (`src/components/ui/Button/Button.module.css` seletor `.primary:disabled`); caso a especificação do tema escuro exija que o botão primário desabilitado preserve texto com `--color-brand-contrast` (ex.: com `background: var(--color-brand)` e `opacity: 0.45`), atualizar a regra correspondente em `components/ui/`.
+- _(Resolvido em 17/11)_ De Design para UI: componente `ThemeToggle` criado e disponível em `src/components/ui/ThemeToggle/ThemeToggle.jsx` e logo SVG oficial integrada no Header e Footer.
 - Pedido ao Design: adicionar suporte a botão de mostrar/ocultar senha no componente base `Field` (`src/components/ui/Field/Field.jsx`) para eliminar a necessidade de `PasswordField` local na tela de Login.
 - _(Resolvido em 17/11)_ Integrado suporte a cor e categoria no `ProductCard` e `ProductGallery` conforme pedido de Design; `ProductImage` atualiza a cor dinamicamente ao selecionar no `ColorSwatch`.
 - Pedido ao Design: atualizar a especificação do Header em `docs/DESIGN.md` conforme decisão D-20 (navegação central com "Início" e "Catálogo"; usuário deslogado vê botões "Entrar" e "Cadastre-se"; ícones de favoritos, cesta e conta visíveis apenas para usuário logado).

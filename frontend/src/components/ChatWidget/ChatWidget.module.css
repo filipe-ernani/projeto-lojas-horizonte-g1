@@ -22,14 +22,16 @@
 .floatingButton {
   width: 60px !important;
   height: 60px !important;
-  background-color: var(--color-ink) !important;
-  color: var(--color-paper) !important;
+  background-color: var(--color-brand) !important;
+  color: var(--color-brand-contrast) !important;
   border-radius: 50% !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .floatingButton:hover {
@@ -38,7 +40,7 @@
 }
 
 .floatingButton:focus-visible {
-  outline: 2px solid var(--color-paper);
+  outline: 2px solid var(--color-brand-contrast);
   outline-offset: 2px;
 }
 
@@ -77,14 +79,14 @@
   }
 }
 
-/* Cabeçalho escuro do painel */
+/* Cabeçalho do painel com --color-brand e texto --color-brand-contrast */
 .panelHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: var(--space-3) var(--space-4);
-  background-color: var(--color-ink);
-  color: var(--color-paper);
+  background-color: var(--color-brand);
+  color: var(--color-brand-contrast);
 }
 
 .headerTitleGroup {
@@ -94,18 +96,18 @@
 }
 
 .headerIcon {
-  color: var(--color-paper);
+  color: var(--color-brand-contrast);
 }
 
 .panelTitle {
   margin: 0;
   font-size: var(--fs-md);
   font-weight: var(--fw-semibold);
-  color: var(--color-paper);
+  color: var(--color-brand-contrast);
 }
 
 .closeButton {
-  color: var(--color-paper) !important;
+  color: var(--color-brand-contrast) !important;
   background: transparent !important;
 }
 
@@ -134,8 +136,8 @@
 .sendButton {
   width: 44px !important;
   height: 44px !important;
-  background-color: var(--color-ink) !important;
-  color: var(--color-paper) !important;
+  background-color: var(--color-brand) !important;
+  color: var(--color-brand-contrast) !important;
   border-radius: var(--radius-md) !important;
   flex-shrink: 0;
 }

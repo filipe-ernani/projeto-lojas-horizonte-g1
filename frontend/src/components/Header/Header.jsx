@@ -1,19 +1,13 @@
 import { useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Heart, Search, ShoppingBag, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import IconButton from "@/components/ui/IconButton/IconButton";
 import ThemeToggle from "@/components/ui/ThemeToggle/ThemeToggle";
 import Logo from "@/components/ui/Logo/Logo";
 import HeaderMobileMenu from "./HeaderMobileMenu";
+import { LINKS_NAV, ehItemNavAtivo } from "./headerNavUtils";
 import styles from "./Header.module.css";
-
-const LINKS_NAV = [
-  { para: "/", rotulo: "Início" },
-  { para: "/#novidades", rotulo: "Novidades", ehSecao: true },
-  { para: "/catalogo?categoria=Masculino", rotulo: "Masculino" },
-  { para: "/catalogo?categoria=Feminino", rotulo: "Feminino" },
-];
 
 export default function Header({ totalItensCesta }) {
   const { usuario, carregando } = useAuth();
@@ -83,6 +77,7 @@ export default function Header({ totalItensCesta }) {
               usuario={usuario}
               carregando={carregando}
               aoClicarLink={aoClicarLink}
+              location={location}
             />
 
             <Link to="/" className={styles.logoLink} aria-label="Horizonte - Início">
@@ -90,18 +85,20 @@ export default function Header({ totalItensCesta }) {
             </Link>
 
             <nav className={styles.desktopNav} aria-label="Menu principal">
-              {LINKS_NAV.map((item) => (
-                <NavLink
-                  key={item.para}
-                  to={item.para}
-                  onClick={(e) => aoClicarLink(e, item)}
-                  className={({ isActive }) =>
-                    `${styles.navLink} ${isActive && !item.ehSecao ? styles.navLinkActive : ""}`
-                  }
-                >
-                  {item.rotulo}
-                </NavLink>
-              ))}
+              {LINKS_NAV.map((item) => {
+                const ativo = ehItemNavAtivo(item.para, location);
+                return (
+                  <Link
+                    key={item.para}
+                    to={item.para}
+                    onClick={(e) => aoClicarLink(e, item)}
+                    className={`${styles.navLink} ${ativo ? styles.navLinkActive : ""}`.trim()}
+                    aria-current={ativo ? "page" : undefined}
+                  >
+                    {item.rotulo}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
 
