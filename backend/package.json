@@ -1,14 +1,18 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API do back-end Lojas Horizonte (Node.js, Express e PostgreSQL)",
+  "main": "src/server.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "seed": "node scripts/seed-catalogo.js",
     "seed:simulado": "node scripts/seed-simulado.js"
   },
   "keywords": [],
-  "type": "commonjs",
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^18.0.10",

@@ -12,15 +12,15 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 > **Catálogo e dados de produtos:** o catálogo de produtos vem de `data/catalogo.csv` (200 produtos, 9 categorias: Feminino, Masculino, Infantil, Calçados, Moda íntima e praia, Acessórios, Esporte, Beleza, Casa). Tamanhos, cores e descrições são derivados no script de seed (`npm run seed:simulado`), marcados com origem `SIMULADO`. O campo de estoque está fora do escopo do MVP (D-21).
 
 ```js
-// Produto
-{ id: 12, sku: "HZ-FEM-001", nome: "Short Feminino Viscose Marrom", descricao: "…", categoria: "Feminino",
-  preco: 26.90, imagemUrl: null,            // null => placeholder
+// Produto (D-21 e D-22: id é o sku; estoque fora do escopo; tamanhos, cores e descrição gerados como SIMULADO)
+{ id: "HZ-FEM-001", sku: "HZ-FEM-001", nome: "Short Feminino Viscose Marrom", modelo: "Short Feminino Viscose", descricao: "…", categoria: "Feminino",
+  preco: 26.90, imagemUrl: null,            // null => placeholder nativo
   tamanhos: ["PP","P","M","G","GG"],        // calçados: ["34"…"44"]; Acessórios/Casa/Beleza: ["Único"]
-  cores: [{ nome: "Marrom", hex: "#8B4513" }], // Beleza: [] (sem cor)
-  notaMedia: 4.9, qtdAvaliacoes: 108 }
+  cores: [{ nome: "Marrom", hex: "#6B4E3D" }], // Beleza: [] (sem cor)
+  notaMedia: null, qtdAvaliacoes: 0 }       // sem avaliações fictícias (D-19)
 
-// Avaliação
-{ id: 1, produtoId: 12, autor: "Júlia", nota: 5, comentario: "…", data: "2026-11-12" }
+// Avaliação (resumo neutro quando não houver avaliações reais)
+{ resumo: { notaMedia: null, total: 0, distribuicao: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } }, itens: [] }
 
 // Endereço
 { id: 3, apelido: "Casa", cep: "01000-000", logradouro: "Rua das Flores", numero: "123",
@@ -40,11 +40,11 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 
 | Método | Rota | Acesso | Corpo / parâmetros | Resposta |
 |---|---|---|---|---|
-| GET | `/api/categorias` | público | — | `["Jaquetas", "Camisetas", …]` |
-| GET | `/api/produtos` | público | `categoria`, `busca`, `tamanho`, `precoMin`, `precoMax`, `pagina`, `limite`, `ordenar` (`relevancia`, `menor-preco`, `maior-preco`, `melhor-avaliados`) | `{ itens: Produto[], total, pagina, limite }` |
-| GET | `/api/produtos/:id` | público | — | `Produto` |
-| GET | `/api/produtos/:id/avaliacoes` | público | — | `{ resumo: { notaMedia, total, distribuicao: {5:…,4:…,3:…,2:…,1:…} }, itens: Avaliacao[] }` |
-| GET | `/api/produtos/:id/semelhantes` | público | — | `Produto[]` (até 4) |
+| GET | `/api/categorias` | público | — | `["Acessórios", "Beleza", "Calçados", "Casa", "Esporte", "Feminino", "Infantil", "Masculino", "Moda íntima e praia"]` |
+| GET | `/api/produtos` | público | `categoria`, `busca`, `tamanho`, `precoMin`, `precoMax`, `pagina`, `limite`, `ordenar` (`relevancia`, `menor-preco`, `maior-preco`, `recentes`, `melhor-avaliados`) | `{ itens: Produto[], total, pagina, limite }` |
+| GET | `/api/produtos/:id` | público | `:id = sku` (D-22) | `Produto` |
+| GET | `/api/produtos/:id/avaliacoes` | público | `:id = sku` (D-22) | `{ resumo: { notaMedia: null, total: 0, distribuicao: {5:0,4:0,3:0,2:0,1:0} }, itens: [] }` |
+| GET | `/api/produtos/:id/semelhantes` | público | `:id = sku` (D-22) | `Produto[]` (até 4 da mesma categoria) |
 | GET | `/api/favoritos` | privado | — | `Produto[]` |
 | PUT | `/api/favoritos/:produtoId` | privado | — | `204` |
 | DELETE | `/api/favoritos/:produtoId` | privado | — | `204` |
