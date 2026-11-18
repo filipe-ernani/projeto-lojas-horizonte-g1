@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import useProdutos from "@/hooks/useProdutos";
+import useCategorias from "@/hooks/useCategorias";
 import ProductGrid from "@/components/ProductGrid/ProductGrid";
 import FilterPanel from "@/components/FilterPanel/FilterPanel";
 import Pagination from "@/components/Pagination/Pagination";
@@ -9,23 +11,40 @@ import ActiveFilterChips from "./ActiveFilterChips";
 import CatalogoSkeleton from "./CatalogoSkeleton";
 import styles from "./Catalogo.module.css";
 
+// Tamanhos permitidos no filtro de catálogo (roupas adulto e calçados, conforme D-06/D-21)
+const TAMANHOS_FILTRO = [
+  "PP",
+  "P",
+  "M",
+  "G",
+  "GG",
+  "34",
+  "35",
+  "36",
+  "37",
+  "38",
+  "39",
+  "40",
+  "41",
+  "42",
+  "43",
+  "44",
+];
+
 /**
- * Página de Catálogo (/catalogo) conforme docs/DESIGN.md:
- * - Filtros por categoria, tamanho e faixa de preço (D-06).
- * - Sincronização de filtros na query string via useSearchParams.
- * - Suporte aos estados carregando (skeleton), erro e vazio.
- * - Sem dados mockados: recebe produtos, categorias e tamanhos via props.
+ * Página de Catálogo (/catalogo) conforme docs/DESIGN.md e docs/API.md:
+ * - Filtros lidos e sincronizados via URL (?categoria=, ?busca=, ?tamanho=, ?precoMin=, ?precoMax=, ?pagina=, ?ordenar=).
+ * - Categorias e produtos obtidos diretamente dos hooks de dados reais (sem mocks, D-19).
+ * - Estados: carregando (skeleton com blocos --color-surface), erro (tentar de novo) e vazio (apenas quando lista vier vazia).
  */
 export default function Catalogo({
-  produtos = [],
-  categorias = [],
-  tamanhos = [],
-  total = 0,
-  totalPaginas = 1,
-  estadoInicial = "vazio",
+  produtos: produtosProp,
+  categorias: categoriasProp,
+  tamanhos: tamanhosProp,
+  total: totalProp,
+  totalPaginas: totalPaginasProp,
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [estado, setEstado] = useState(estadoInicial);
   const [filtrosAbertosMobile, setFiltrosAbertosMobile] = useState(false);
 
   // Filtros obtidos da URL (query string)
@@ -35,7 +54,41 @@ export default function Catalogo({
   const precoMin = searchParams.get("precoMin") || "";
   const precoMax = searchParams.get("precoMax") || "";
   const ordenar = searchParams.get("ordenar") || "relevancia";
-  const pagina = Number(searchParams.get("pagina")) || 1;
+  const pagina = Math.max(1, Number(searchParams.get("pagina")) || 1);
+
+  const filtrosQuery = {
+    categoria,
+    busca,
+    tamanho,
+    precoMin,
+    precoMax,
+    pagina,
+    ordenar,
+  };
+
+  const {
+    dados: produtosApi,
+    total: totalApi,
+    limite: limiteApi,
+    carregando,
+    erro,
+    recarregar,
+  } = useProdutos(filtrosQuery);
+
+  const { dados: categoriasApi } = useCategorias();
+
+  const produtos = produtosProp !== undefined ? produtosProp : produtosApi;
+  const categorias =
+    categoriasProp !== undefined ? categoriasProp : categoriasApi;
+  const tamanhos =
+    tamanhosProp !== undefined ? tamanhosProp : TAMANHOS_FILTRO;
+  const total = totalProp !== undefined ? totalProp : totalApi;
+
+  const limite = limiteApi || 12;
+  const totalPaginas =
+    totalPaginasProp !== undefined
+      ? totalPaginasProp
+      : Math.max(1, Math.ceil(total / limite));
 
   const filtrosAtivos = {
     categoria,
@@ -56,7 +109,7 @@ export default function Catalogo({
       }
     });
 
-    // Resetar página para 1 quando qualquer filtro ou busca mudar
+    // Resetar página para 1 quando qualquer filtro ou ordenação mudar
     if (!("pagina" in novosValores)) {
       novos.delete("pagina");
     }
@@ -77,7 +130,11 @@ export default function Catalogo({
   }
 
   function handleLimparFiltros() {
-    setSearchParams(new URLSearchParams());
+    const novos = new URLSearchParams();
+    if (busca) {
+      novos.set("busca", busca);
+    }
+    setSearchParams(novos);
     setFiltrosAbertosMobile(false);
   }
 
@@ -90,7 +147,7 @@ export default function Catalogo({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  if (estado === "carregando") {
+  if (carregando) {
     return (
       <main className={`container ${styles.main}`}>
         <CatalogoSkeleton />
@@ -98,14 +155,14 @@ export default function Catalogo({
     );
   }
 
-  if (estado === "erro") {
+  if (erro) {
     return (
       <main className={`container ${styles.main}`}>
         <EmptyState
-          titulo="Não foi possível carregar os produtos"
-          mensagem="Ocorreu um erro ao carregar o catálogo. Tente novamente em instantes."
+          titulo="Não foi possível carregar o catálogo"
+          mensagem="Não foi possível carregar. Tente novamente."
           textoAcao="Tentar de novo"
-          onAcao={() => setEstado("vazio")}
+          onAcao={recarregar}
         />
       </main>
     );
@@ -114,7 +171,7 @@ export default function Catalogo({
   return (
     <main className={`container ${styles.main}`}>
       <CatalogoHeader
-        totalProdutos={produtos.length || total}
+        totalProdutos={total}
         ordenar={ordenar}
         busca={busca}
         onMudarOrdenacao={handleMudarOrdenacao}

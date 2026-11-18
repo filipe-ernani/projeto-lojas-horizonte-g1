@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import useProduto from "@/hooks/useProduto";
+import useSemelhantes from "@/hooks/useSemelhantes";
+import useAvaliacoes from "@/hooks/useAvaliacoes";
 import RatingPill from "@/components/ui/RatingPill/RatingPill";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
 import { formatCurrency } from "@/utils/formatCurrency";
@@ -16,25 +19,45 @@ import styles from "./Produto.module.css";
 
 /**
  * Página de Detalhes do Produto (/produto/:id) conforme docs/DESIGN.md e docs/API.md:
- * - Galeria de imagens sincronizada com a cor selecionada e categoria.
- * - Regra D-07 ajustada: exige cor só se houver cores, e tamanho só se houver >1 tamanho.
- * - Tamanho único é pré-considerado selecionado e exibido sem seletor.
- * - Sem cores cadastradas, o seletor de cor é omitido.
+ * - Conectada aos hooks useProduto, useSemelhantes e useAvaliacoes (D-22: id = sku).
+ * - Cores e tamanhos vêm do produto.
+ * - Regra D-07 só quando houver opções: se tamanhos for ["Único"], seleciona automaticamente sem pedir escolha.
+ * - Se cores for [], omite o seletor de cor.
+ * - Preço formatado exclusivamente com formatCurrency.
+ * - Descrição vem diretamente da API (sem inventar "materiais").
+ * - Se qtdAvaliacoes for 0 ou notaMedia for null: omite RatingPill e a seção de avaliações.
+ * - Erro 404 exibe EmptyState com "Produto não encontrado" e link para o catálogo.
  */
 export default function Produto({
-  produto = null,
-  avaliacoes = null,
-  produtosSemelhantes = [],
-  estadoInicial = "vazio",
+  produto: produtoProp,
+  avaliacoes: avaliacoesProp,
+  produtosSemelhantes: semelhantesProp,
   onAdicionar,
 }) {
   const { id } = useParams();
-  const [estado, setEstado] = useState(estadoInicial);
+
+  const {
+    dados: produtoApi,
+    carregando: carregandoProduto,
+    erro: erroProduto,
+    recarregar: recarregarProduto,
+  } = useProduto(id);
+
+  const { dados: semelhantesApi } = useSemelhantes(id);
+  const { dados: avaliacoesApi } = useAvaliacoes(id);
+
+  const produto = produtoProp !== undefined ? produtoProp : produtoApi;
+  const produtosSemelhantes =
+    semelhantesProp !== undefined ? semelhantesProp : semelhantesApi;
+  const avaliacoes =
+    avaliacoesProp !== undefined ? avaliacoesProp : avaliacoesApi;
+
   const [corSelecionada, setCorSelecionada] = useState(null);
   const [tamanhoSelecionado, setTamanhoSelecionado] = useState(null);
   const [favorito, setFavorito] = useState(false);
 
-  if (estado === "carregando") {
+  // 1. Estado Carregando
+  if (carregandoProduto) {
     return (
       <main className={`container ${styles.container}`}>
         <ProdutoSkeleton />
@@ -42,20 +65,38 @@ export default function Produto({
     );
   }
 
-  if (estado === "erro") {
+  // 2. Erro 404 (Produto não encontrado)
+  if (
+    erroProduto?.status === 404 ||
+    (!carregandoProduto && !produto && !erroProduto)
+  ) {
     return (
       <main className={`container ${styles.container}`}>
         <EmptyState
-          titulo="Não foi possível carregar o produto"
-          mensagem="Ocorreu um erro ao buscar os dados deste item. Verifique sua conexão e tente novamente."
-          textoAcao="Tentar de novo"
-          onAcao={() => setEstado("vazio")}
+          titulo="Produto não encontrado"
+          mensagem={`O produto solicitado (#${id || "indisponível"}) não foi encontrado ou não está mais disponível em nosso catálogo.`}
+          textoAcao="Voltar ao catálogo"
+          para="/catalogo"
         />
       </main>
     );
   }
 
-  if (estado === "vazio" || !produto) {
+  // 3. Erro de rede ou servidor
+  if (erroProduto) {
+    return (
+      <main className={`container ${styles.container}`}>
+        <EmptyState
+          titulo="Não foi possível carregar o produto"
+          mensagem="Não foi possível carregar. Tente novamente."
+          textoAcao="Tentar de novo"
+          onAcao={recarregarProduto}
+        />
+      </main>
+    );
+  }
+
+  if (!produto) {
     return (
       <main className={`container ${styles.container}`}>
         <EmptyState
@@ -77,8 +118,8 @@ export default function Produto({
     imagens = [],
     cores = [],
     tamanhos = [],
-    notaMedia,
-    qtdAvaliacoes,
+    notaMedia = null,
+    qtdAvaliacoes = 0,
   } = produto;
 
   // Verificação de calçados (tamanhos puramente numéricos)
@@ -87,9 +128,18 @@ export default function Produto({
     tamanhos.length > 0 &&
     tamanhos.every((t) => !Number.isNaN(Number(t)));
 
-  // Regra D-07 ajustada: exige cor só se houver cores, e tamanho só se houver mais de uma opção
-  const precisaCor = Array.isArray(cores) && cores.length > 0;
-  const precisaTamanho = Array.isArray(tamanhos) && tamanhos.length > 1;
+  // Regra D-07 só quando houver opções:
+  // Se tamanhos for ["Único"] ou houver apenas 1 opção, seleciona automaticamente sem pedir escolha
+  const eTamanhoUnico =
+    Array.isArray(tamanhos) &&
+    tamanhos.length === 1 &&
+    (tamanhos[0] === "Único" || tamanhos[0] === "Unico");
+
+  const precisaTamanho =
+    Array.isArray(tamanhos) && tamanhos.length > 1 && !eTamanhoUnico;
+
+  // Se cores for [], omite o seletor de cor
+  const precisaCor = Array.isArray(cores) && cores.length > 1;
 
   const temCor = !precisaCor || Boolean(corSelecionada);
   const temTamanho = !precisaTamanho || Boolean(tamanhoSelecionado);
@@ -98,6 +148,10 @@ export default function Produto({
   const tamanhoEfetivo = precisaTamanho
     ? tamanhoSelecionado
     : tamanhos?.[0] || null;
+
+  const corEfetiva = precisaCor
+    ? corSelecionada
+    : cores?.[0] || null;
 
   const mensagemFalta = obterMensagemFalta({
     precisaCor,
@@ -117,11 +171,15 @@ export default function Produto({
     if (typeof onAdicionar === "function") {
       onAdicionar({
         produto,
-        cor: corSelecionada,
+        cor: corEfetiva,
         tamanho: tamanhoEfetivo,
       });
     }
   }
+
+  // Avaliações: omitir quando qtdAvaliacoes for 0 ou notaMedia for null
+  const temAvaliacoesValidas =
+    notaMedia != null && Number(notaMedia) > 0 && Number(qtdAvaliacoes) > 0;
 
   return (
     <main className={`container ${styles.container}`}>
@@ -148,7 +206,7 @@ export default function Produto({
 
           <h1 className={styles.title}>{nome}</h1>
 
-          {notaMedia != null ? (
+          {temAvaliacoesValidas ? (
             <div className={styles.ratingRow}>
               <RatingPill nota={notaMedia} qtdAvaliacoes={qtdAvaliacoes} />
             </div>
@@ -158,11 +216,13 @@ export default function Produto({
             <span className={styles.price}>{formatCurrency(preco)}</span>
           </div>
 
-          <ProductColorSelector
-            cores={cores}
-            corSelecionada={corSelecionada}
-            onSelecionarCor={setCorSelecionada}
-          />
+          {cores.length > 0 ? (
+            <ProductColorSelector
+              cores={cores}
+              corSelecionada={corSelecionada}
+              onSelecionarCor={setCorSelecionada}
+            />
+          ) : null}
 
           <ProductSizeSelector
             tamanhos={tamanhos}
@@ -188,7 +248,10 @@ export default function Produto({
         </div>
       </div>
 
-      <ProductReviews avaliacoes={avaliacoes} />
+      {temAvaliacoesValidas ? (
+        <ProductReviews avaliacoes={avaliacoes} />
+      ) : null}
+
       <ProductSimilarSection produtos={produtosSemelhantes} />
     </main>
   );

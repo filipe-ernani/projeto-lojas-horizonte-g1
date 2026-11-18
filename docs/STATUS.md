@@ -59,7 +59,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - [x] Confirmar `docs/API.md` com o formato real do dataset e API local
 - [x] Dados (Tarefa 4A): serviços (`services/api.js`, `services/produtosService.js`, `services/mapeadores.js`) e hooks de produtos (`useCategorias`, `useProdutos`, `useNovidades`, `useProduto`, `useSemelhantes`, `useAvaliacoes`)
 - [ ] Dados: `CartContext` e `FavoritesContext`
-- [ ] UI (Tarefa 4A UI): ligar hooks às páginas (Home, Catálogo, Produto)
+- [x] UI (Tarefa 4A UI): ligar hooks às páginas (Home, Catálogo, Produto)
 - [ ] Chat: ligar à rota `/api/chat`
 
 ### Fase 5. Acabamento
@@ -137,6 +137,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 17/11 | Estrutura da tela de Perfil com endereços (`/perfil`): Meus dados (nome/telefone editáveis, email readOnly), Meus endereços (AddressCard, badge padrão, ações), formulário com validações de CEP e UF, estados e sem mocks | `feat(ui): implementa estrutura da tela de Perfil com enderecos` | UI: `ChatWidget` da Fase 2 |
 | 17/11 | Aprimoramento do placeholder de `ProductImage` em `components/ui/` com ícones por categoria, fundo derivado da cor (`color-mix`) e cálculo automático de contraste | `feat(design): aprimora placeholder de ProductImage com cor, categoria e contraste` | UI: integrar `cor` e `categoria` no ProductCard e ProductGallery |
 | 17/11 | Integração de cor e categoria em `ProductCard` e `ProductGallery` (com sincronização no `ColorSwatch`) e ajuste da regra D-07 em `Produto` (tamanho único e produtos sem cor) | `feat(ui): integra cor e categoria no ProductCard e ProductGallery e ajusta regra D-07` | UI: `ChatWidget` da Fase 2 |
+| 18/11 | Conexão da UI do Catálogo, Produto e Home com os hooks reais do agente Dados (Tarefa 4A UI), sincronização com URL, tratamento estrito de 404, novidades e ocultação de RatingPill sem avaliações | `feat(ui): conecta Catalogo, Produto e Home aos hooks da API real (tarefa 4A)` | Fase 4B: CartContext e FavoritesContext |
 | 17/11 | Interface do `ChatWidget` (botão flutuante 60px, painel acessível com Esc/Tab trap, sessaoId em memória, boas-vindas e estados sem respostas fictícias) montada no `Layout` para usuário logado | `feat(ui): implementa interface acessivel do ChatWidget no Layout` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |
 | 17/11 | Refatoração de `Login.jsx` (<200 linhas) com `Field` de `ui/`, `PasswordField` local, remoção de `isMountedRef` (obsoleto no React 18) e tratamento assíncrono de promessas de navegação | `refactor(login): simplifica Login com Field, PasswordField local e trata promessas de navegacao` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |
 | 17/11 | Identidade visual Horizonte (D-24): tipografia Jost, temas claro e escuro em `tokens.css`, logo SVG, `ThemeToggle` acessível e refinamento de `Button`, `Field` e `Badge` | `feat(design): implementa identidade visual com temas claro/escuro, fonte Jost e ThemeToggle` | UI: integrar ThemeToggle e logo SVG no Header |

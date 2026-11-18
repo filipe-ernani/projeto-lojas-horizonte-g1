@@ -1,39 +1,53 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import useCategorias from "@/hooks/useCategorias";
+import useNovidades from "@/hooks/useNovidades";
 import CategoryList from "@/components/CategoryList/CategoryList";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
 import HomeHero from "./HomeHero";
 import BenefitsBanner from "./BenefitsBanner";
 import EditorialBanner from "./EditorialBanner";
-import HomeSkeleton from "./HomeSkeleton";
 import styles from "./Home.module.css";
 
+/**
+ * Página Inicial (Home /) conforme docs/DESIGN.md e docs/API.md:
+ * - Seção #novidades conectada ao hook useNovidades (D-25: 8 SKUs reais da API).
+ * - Suporte completo aos 3 estados na seção de novidades (carregando, erro e vazio).
+ * - Link "Ver catálogo" da seção direciona para /catalogo?ordenar=novidades.
+ */
 export default function Home({
   categorias: categoriasProp,
-  produtos = [],
-  estadoInicial = "normal",
+  produtos: produtosProp,
 }) {
-  const [estado, setEstado] = useState(estadoInicial);
   const location = useLocation();
 
   // Hook de categorias real via API (sem mock hardcoded, D-19)
   const {
-    categorias: categoriasApi,
+    dados: categoriasApi,
     carregando: carregandoCategorias,
     erro: erroCategorias,
     recarregar: recarregarCategorias,
   } = useCategorias();
 
-  // Se categorias foram injetadas via props (ex.: em testes), usa-as; caso contrário, usa a API
-  const listaCategorias = categoriasProp !== undefined ? categoriasProp : categoriasApi;
-  const estaCarregandoCategorias = categoriasProp === undefined && carregandoCategorias;
-  const erroNasCategorias = categoriasProp === undefined ? erroCategorias : null;
+  // Hook de novidades real via API (D-25)
+  const {
+    dados: novidadesApi,
+    carregando: carregandoNovidades,
+    erro: erroNovidades,
+    recarregar: recarregarNovidades,
+  } = useNovidades();
 
-  // Decisão D-25: Os 8 últimos SKUs do catálogo recebem o selo "Novo"
-  const novidades = produtos.slice(-8);
+  const listaCategorias =
+    categoriasProp !== undefined ? categoriasProp : categoriasApi;
+  const estaCarregandoCategorias =
+    categoriasProp === undefined && carregandoCategorias;
+  const erroNasCategorias =
+    categoriasProp === undefined ? erroCategorias : null;
+
+  const novidades =
+    produtosProp !== undefined ? produtosProp.slice(-8) : novidadesApi;
 
   useEffect(() => {
     if (location.hash === "#novidades" || window.location.hash === "#novidades") {
@@ -43,29 +57,6 @@ export default function Home({
       }
     }
   }, [location.hash]);
-
-  if (estado === "carregando") {
-    return (
-      <main className={`container ${styles.main}`}>
-        <HomeSkeleton />
-      </main>
-    );
-  }
-
-  if (estado === "erro") {
-    return (
-      <main className={`container ${styles.main}`}>
-        <HomeHero />
-        <EmptyState
-          titulo="Não foi possível carregar a vitrine"
-          mensagem="Ocorreu um erro ao buscar os dados da loja. Tente novamente em instantes."
-          textoAcao="Tentar de novo"
-          onAcao={() => setEstado("normal")}
-        />
-        <BenefitsBanner />
-      </main>
-    );
-  }
 
   return (
     <main className={`container ${styles.main}`}>
@@ -95,24 +86,53 @@ export default function Home({
               Últimos lançamentos com cortes contemporâneos e tecidos selecionados
             </p>
           </div>
-          <Link to="/catalogo" className={styles.viewAll}>
+          <Link
+            to="/catalogo?ordenar=novidades"
+            className={styles.viewAll}
+            aria-label="Ver catálogo completo ordenado por novidades"
+          >
             <span>Ver catálogo</span>
             <ArrowRight size={16} strokeWidth={1.8} aria-hidden="true" />
           </Link>
         </div>
 
-        {novidades.length > 0 ? (
+        {/* 1. Estado Carregando */}
+        {carregandoNovidades ? (
+          <div className={styles.novidadesGrid} aria-busy="true">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className={styles.skeletonCard}
+                style={{
+                  aspectRatio: "4 / 5",
+                  background: "var(--color-surface)",
+                  borderRadius: "var(--radius-lg)",
+                }}
+              />
+            ))}
+          </div>
+        ) : erroNovidades ? (
+          /* 2. Estado Erro */
+          <EmptyState
+            titulo="Não foi possível carregar as novidades"
+            mensagem="Não foi possível carregar. Tente novamente."
+            textoAcao="Tentar de novo"
+            onAcao={recarregarNovidades}
+          />
+        ) : novidades.length > 0 ? (
+          /* Sucesso */
           <div className={styles.novidadesGrid}>
             {novidades.map((prod) => (
               <ProductCard key={prod.id} produto={prod} seloNovo />
             ))}
           </div>
         ) : (
+          /* 3. Estado Vazio */
           <EmptyState
             titulo="Vitrine em preparação"
             mensagem="Os últimos lançamentos e novidades aparecerão assim que o catálogo for carregado."
             textoAcao="Explorar catálogo completo"
-            para="/catalogo"
+            para="/catalogo?ordenar=novidades"
           />
         )}
       </section>

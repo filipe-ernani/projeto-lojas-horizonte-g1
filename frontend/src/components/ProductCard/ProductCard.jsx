@@ -63,7 +63,7 @@ export default function ProductCard({
         <div className={styles.content}>
           <div className={styles.priceRow}>
             <span className={styles.price}>{precoFormatado}</span>
-            {notaMedia ? <RatingPill nota={notaMedia} /> : null}
+            {notaMedia != null ? <RatingPill nota={notaMedia} /> : null}
           </div>
 
           <h3 className={styles.name}>{nome}</h3>
