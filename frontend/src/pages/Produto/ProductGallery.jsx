@@ -31,6 +31,7 @@ export default function ProductGallery({
         <ProductImage
           imagemUrl={imagemAtiva}
           alt={`Foto principal de ${nome}`}
+          nome={nome}
           cor={cor}
           categoria={categoria}
           className={styles.mainImage}
@@ -57,6 +58,7 @@ export default function ProductGallery({
                 <ProductImage
                   imagemUrl={img}
                   alt={`Miniatura ${index + 1}`}
+                  nome={nome}
                   cor={cor}
                   categoria={categoria}
                   className={styles.thumbnailImage}
