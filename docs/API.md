@@ -41,7 +41,7 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 | Método | Rota | Acesso | Corpo / parâmetros | Resposta |
 |---|---|---|---|---|
 | GET | `/api/categorias` | público | — | `["Acessórios", "Beleza", "Calçados", "Casa", "Esporte", "Feminino", "Infantil", "Masculino", "Moda íntima e praia"]` |
-| GET | `/api/produtos` | público | `categoria`, `busca`, `tamanho`, `precoMin`, `precoMax`, `pagina`, `limite`, `ordenar` (`relevancia`, `menor-preco`, `maior-preco`, `recentes`, `melhor-avaliados`) | `{ itens: Produto[], total, pagina, limite }` |
+| GET | `/api/produtos` | público | `categoria`, `busca`, `tamanho`, `precoMin`, `precoMax`, `pagina`, `limite`, `ordenar` (`relevancia`, `menor-preco`, `maior-preco`, `recentes`, `novidades`, `melhor-avaliados`) | `{ itens: Produto[], total, pagina, limite }` |
 | GET | `/api/produtos/:id` | público | `:id = sku` (D-22) | `Produto` |
 | GET | `/api/produtos/:id/avaliacoes` | público | `:id = sku` (D-22) | `{ resumo: { notaMedia: null, total: 0, distribuicao: {5:0,4:0,3:0,2:0,1:0} }, itens: [] }` |
 | GET | `/api/produtos/:id/semelhantes` | público | `:id = sku` (D-22) | `Produto[]` (até 4 da mesma categoria) |

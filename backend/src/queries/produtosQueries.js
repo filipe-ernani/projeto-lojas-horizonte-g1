@@ -73,14 +73,52 @@ export async function listarProdutosQuery({
 
   const whereClause = condicoes.length > 0 ? `WHERE ${condicoes.join(" AND ")}` : "";
 
-  // Ordenação com consultas parametrizadas seguras
+  // D-25 (Correção): ordenar=novidades retorna o SKU mais recente de CADA categoria
+  if (ordenar === "novidades") {
+    const countQuery = `
+      WITH novidades_cat AS (
+        SELECT DISTINCT ON (categoria) *
+        FROM loja.produtos
+        ${whereClause}
+        ORDER BY categoria, ordem DESC
+      )
+      SELECT count(*)::int as total FROM novidades_cat;
+    `;
+    const countRes = await query(countQuery, params);
+    const total = countRes.rows[0]?.total || 0;
+
+    const dataParams = [...params, numLimite, offset];
+    const dataQuery = `
+      WITH novidades_cat AS (
+        SELECT DISTINCT ON (categoria) *
+        FROM loja.produtos
+        ${whereClause}
+        ORDER BY categoria, ordem DESC
+      )
+      SELECT * FROM novidades_cat
+      ORDER BY ordem DESC, sku ASC
+      LIMIT $${dataParams.length - 1} OFFSET $${dataParams.length};
+    `;
+
+    const dataRes = await query(dataQuery, dataParams);
+    const itens = dataRes.rows.map(formatarProduto);
+
+    return {
+      itens,
+      total,
+      pagina: numPagina,
+      limite: numLimite,
+    };
+  }
+
+  // Ordenações padrão da loja
   let orderClause = "ORDER BY popularidade DESC, sku ASC";
   if (ordenar === "menor-preco") {
     orderClause = "ORDER BY preco ASC, sku ASC";
   } else if (ordenar === "maior-preco") {
     orderClause = "ORDER BY preco DESC, sku ASC";
   } else if (ordenar === "recentes") {
-    orderClause = "ORDER BY ordem DESC, sku ASC"; // D-25
+    orderClause = "ORDER BY ordem DESC, sku ASC";
   } else if (ordenar === "melhor-avaliados") {
     orderClause = "ORDER BY popularidade DESC, sku ASC";
   }
