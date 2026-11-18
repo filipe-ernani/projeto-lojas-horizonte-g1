@@ -26,14 +26,14 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 { id: 3, apelido: "Casa", cep: "01000-000", logradouro: "Rua das Flores", numero: "123",
   complemento: "Apto 45", bairro: "Centro", cidade: "São Paulo", uf: "SP", padrao: true }
 
-// Carrinho
-{ itens: [{ produtoId: 12, nome: "…", preco: 520, imagemUrl: null,
-            tamanho: "M", cor: "Preto", quantidade: 1 }],
-  subtotal: 700, frete: 0, total: 700 }
+// Carrinho (frete fixo simulado D-27; produtoId é o sku)
+{ itens: [{ produtoId: "HZ-FEM-001", nome: "…", preco: 26.9, imagemUrl: null,
+            tamanho: "M", cor: "Marrom", quantidade: 1 }],
+  subtotal: 26.9, frete: 15.0, total: 41.9 }
 
 // Pedido
-{ id: 1042, data: "2026-11-13", status: "FINALIZADO",   // ou "CANCELADO"
-  total: 700, qtdItens: 3, itens: [ /* como no carrinho */ ], enderecoResumo: "São Paulo/SP" }
+{ id: 1042, data: "2026-11-17", status: "FINALIZADO",   // ou "CANCELADO"
+  total: 41.9, qtdItens: 1, itens: [ /* como no carrinho */ ], enderecoResumo: "São Paulo/SP" }
 ```
 
 ## Rotas
@@ -58,9 +58,19 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 | PUT | `/api/carrinho` | privado | `{ itens: [{ produtoId, tamanho, cor, quantidade }], ultimaEtapa }` (`CARRINHO` ou `CHECKOUT_INICIADO`) | `Carrinho` |
 | POST | `/api/carrinho/finalizar` | privado | `{ enderecoId, formaPagamento }` (`PIX`, `CARTAO`, `BOLETO`) | `Pedido` |
 | GET | `/api/pedidos/meus` | privado | — | `Pedido[]` |
+| POST | `/api/pedidos/:id/cancelar` | privado | — | `{ ok: true, id, status: "CANCELADO" }` (409 se já cancelado) |
 | POST | `/api/chat` | privado | `{ mensagem, sessaoId }` | `{ resposta }` |
 
 O preço e o total são **sempre calculados pelo servidor**; o front só exibe.
+
+## Eventos de Analytics (D-23)
+
+Gravados **exclusivamente pelo back-end** em `loja.analytics_eventos` quando o cabeçalho `X-Sessao-Id` (UUID válido) for enviado pelo front-end:
+- `session_start`: gerado na primeira ocorrência da sessão.
+- `view_product`: gerado ao consultar `GET /api/produtos/:id` com sucesso.
+- `add_to_cart`: gerado ao aumentar quantidade de item no carrinho em `PUT /api/carrinho`.
+- `begin_checkout`: gerado ao transicionar `ultimaEtapa` para `CHECKOUT_INICIADO` no carrinho.
+- `purchase`: gerado ao finalizar o pedido em `POST /api/carrinho/finalizar`.
 
 ## Erros
 

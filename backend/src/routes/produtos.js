@@ -4,6 +4,7 @@ import {
   buscarSemelhantesQuery,
   listarProdutosQuery,
 } from "../queries/produtosQueries.js";
+import { gravarEvento } from "../services/analyticsService.js";
 
 const router = Router();
 
@@ -44,6 +45,15 @@ router.get("/produtos/:id", async (req, res, next) => {
 
     if (!produto) {
       return res.status(404).json({ erro: "Produto não encontrado." });
+    }
+
+    if (req.sessaoId) {
+      gravarEvento({
+        evento: "view_product",
+        sessaoId: req.sessaoId,
+        usuarioId: req.usuarioId || null,
+        sku: produto.sku,
+      });
     }
 
     res.json(produto);
