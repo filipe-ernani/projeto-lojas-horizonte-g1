@@ -50,7 +50,7 @@ DIAS=90 CARRINHOS=5000 TAXA_CONVERSAO=0.03 TAXA_CANCELAMENTO=0.05 SEMENTE=42 npm
    - `status`: `FINALIZADO`, `CANCELADO` ou `CARRINHO_ATIVO`
    - `ultima_etapa`: `CARRINHO` ou `CHECKOUT_INICIADO` (vazio para `FINALIZADO` ou `CANCELADO`)
    - `valor_total`: Soma de `quantidade x preco_unitario` dos itens
-   - `forma_pagamento`: `PIX`, `CARTAO`, `BOLETO` (vazio para carrinhos não finalizados)
+   - `forma_pagamento`: `PIX`, `CARTAO_CREDITO`, `CARTAO_DEBITO` (vazio para carrinhos não finalizados)
    - `criado_em`: Data e hora ISO 8601 (com maior densidade nos finais de semana)
    - `atualizado_em`: Data e hora ISO 8601 (em `CANCELADO`, posterior a `criado_em`)
    - `origem`: Sempre `SIMULADO`

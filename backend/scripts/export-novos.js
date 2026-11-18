@@ -15,6 +15,7 @@ dotenv.config();
 const COLUNAS_PEDIDOS = [
   "pedido_id", "usuario_hash", "status", "forma_pagamento",
   "subtotal", "frete", "valor_total", "finalizado_em", "cancelado_em", "updated_at", "origem",
+  "parcelas",
 ];
 
 const COLUNAS_PEDIDO_ITENS = [
@@ -25,6 +26,34 @@ const COLUNAS_EVENTOS = [
   "evento_id", "evento", "ocorrido_em", "sessao_id", "usuario_hash",
   "sku", "quantidade", "valor", "pedido_id", "updated_at", "origem",
 ];
+
+// Relê um trecho anterior à marca para alcançar transações confirmadas com atraso.
+const JANELA_SOBREPOSICAO_MS = 5 * 60 * 1000;
+const TAMANHO_PAGINA = 20000;
+
+function recuarMarca(marca) {
+  return new Date(new Date(marca).getTime() - JANELA_SOBREPOSICAO_MS).toISOString();
+}
+
+// Lê todas as páginas a partir de `desde`, mantendo uma única linha por ID.
+async function buscarLinhas(queryFn, colunaId, desde) {
+  const porId = new Map();
+  let cursor = desde;
+  let ultimaMarca = null;
+
+  for (;;) {
+    const { itens, proximoDesde } = await queryFn(cursor, TAMANHO_PAGINA);
+    for (const item of itens) porId.set(item[colunaId], item);
+    if (proximoDesde) ultimaMarca = proximoDesde;
+    if (itens.length < TAMANHO_PAGINA) break;
+    if (proximoDesde === cursor) {
+      throw new Error(`Mais de ${TAMANHO_PAGINA} linhas no mesmo milissegundo em ${colunaId}.`);
+    }
+    cursor = proximoDesde;
+  }
+
+  return { itens: [...porId.values()], ultimaMarca };
+}
 
 function obterDiretorioExports() {
   const base = process.cwd().endsWith("backend")
@@ -72,30 +101,37 @@ async function exportarNovos() {
   const tarefas = [
     {
       tipo: "pedidos",
+      chaveMarca: "pedidos",
+      colunaId: "pedido_id",
       colunas: COLUNAS_PEDIDOS,
       queryFn: exportarPedidosQuery,
-      marcaAtual: desdeParam || marcas.pedidos,
     },
     {
       tipo: "pedido_itens",
+      chaveMarca: "pedidoItens",
+      colunaId: "item_id",
       colunas: COLUNAS_PEDIDO_ITENS,
       queryFn: exportarPedidoItensQuery,
-      marcaAtual: desdeParam || marcas.pedidoItens,
     },
     {
       tipo: "eventos",
+      chaveMarca: "eventos",
+      colunaId: "evento_id",
       colunas: COLUNAS_EVENTOS,
       queryFn: exportarEventosQuery,
-      marcaAtual: desdeParam || marcas.eventos,
     },
   ];
 
+  marcas.vistos ??= {};
+
   for (const t of tarefas) {
-    const res = await t.queryFn(t.marcaAtual, 20000);
-    // Filtra itens já exportados exatamente na marca anterior
-    const itensNovos = t.marcaAtual && !desdeParam
-      ? res.itens.filter((i) => i.updated_at > t.marcaAtual)
-      : res.itens;
+    const marcaAnterior = marcas[t.chaveMarca];
+    const desde = desdeParam || (marcaAnterior ? recuarMarca(marcaAnterior) : null);
+    const res = await buscarLinhas(t.queryFn, t.colunaId, desde);
+
+    // Uma linha só é repetida se o ID e o updated_at forem os já exportados
+    const vistos = desdeParam ? {} : marcas.vistos[t.chaveMarca] || {};
+    const itensNovos = res.itens.filter((i) => vistos[i[t.colunaId]] !== i.updated_at);
 
     const arquivoSaida = path.join(dirExports, `${t.tipo}_${timestamp}.csv`);
     const csv = converterParaCsv(t.colunas, itensNovos);
@@ -105,8 +141,20 @@ async function exportarNovos() {
       `[${t.tipo}] ${itensNovos.length} novos registros exportados em: ${path.basename(arquivoSaida)}`,
     );
 
-    if (res.proximoDesde) {
-      marcas[t.tipo === "pedido_itens" ? "pedidoItens" : t.tipo] = res.proximoDesde;
+    const novaMarca =
+      marcaAnterior && (!res.ultimaMarca || new Date(marcaAnterior) > new Date(res.ultimaMarca))
+        ? marcaAnterior
+        : res.ultimaMarca;
+
+    if (novaMarca) {
+      marcas[t.chaveMarca] = novaMarca;
+      // Guarda só o que a próxima execução voltará a ler dentro da janela
+      const inicioJanela = new Date(recuarMarca(novaMarca));
+      marcas.vistos[t.chaveMarca] = Object.fromEntries(
+        res.itens
+          .filter((i) => new Date(i.updated_at) >= inicioJanela)
+          .map((i) => [i[t.colunaId], i.updated_at]),
+      );
     }
   }
 

@@ -26,6 +26,101 @@ export async function listarCategoriasQuery() {
   return resultado.rows.map((r) => r.categoria);
 }
 
+const ORDENACOES_VALIDAS = new Set([
+  "relevancia",
+  "menor-preco",
+  "maior-preco",
+  "recentes",
+  "novidades",
+  "melhor-avaliados",
+]);
+const LIMITE_MAXIMO_PAGINA = 48;
+const TAMANHO_MAXIMO_FILTRO = 100;
+
+function filtroVazio(valor) {
+  return valor === undefined || valor === null || valor === "";
+}
+
+function lerInteiroPositivo(valor, padrao) {
+  if (filtroVazio(valor)) return padrao;
+  if (typeof valor !== "string" || !/^\d+$/.test(valor)) return null;
+  const numero = Number(valor);
+  return Number.isSafeInteger(numero) && numero >= 1 ? numero : null;
+}
+
+function lerPreco(valor) {
+  if (filtroVazio(valor)) return undefined;
+  if (typeof valor !== "string" || !/^\d+(\.\d+)?$/.test(valor)) return null;
+  const numero = Number(valor);
+  return Number.isFinite(numero) ? numero : null;
+}
+
+/**
+ * Valida os filtros de GET /api/produtos.
+ * Devolve { erro } quando algum filtro é inválido, ou { dados } normalizados.
+ */
+export function validarFiltrosProdutos(filtros = {}) {
+  const { categoria, busca, tamanho, ordenar } = filtros;
+
+  for (const [nome, valor] of Object.entries({ categoria, busca, tamanho })) {
+    if (filtroVazio(valor)) continue;
+    if (
+      typeof valor !== "string" ||
+      valor.includes("\0") ||
+      valor.length > TAMANHO_MAXIMO_FILTRO
+    ) {
+      return { erro: `Filtro '${nome}' inválido.` };
+    }
+  }
+
+  const pagina = lerInteiroPositivo(filtros.pagina, 1);
+  if (pagina === null) {
+    return { erro: "Filtro 'pagina' inválido. Use um número inteiro a partir de 1." };
+  }
+
+  const limite = lerInteiroPositivo(filtros.limite, 12);
+  if (limite === null) {
+    return { erro: "Filtro 'limite' inválido. Use um número inteiro a partir de 1." };
+  }
+  const limiteFinal = Math.min(LIMITE_MAXIMO_PAGINA, limite);
+
+  if (!Number.isSafeInteger((pagina - 1) * limiteFinal)) {
+    return { erro: "Filtro 'pagina' inválido. Use um número menor." };
+  }
+
+  const precoMin = lerPreco(filtros.precoMin);
+  if (precoMin === null) {
+    return { erro: "Filtro 'precoMin' inválido. Use um número maior ou igual a zero." };
+  }
+
+  const precoMax = lerPreco(filtros.precoMax);
+  if (precoMax === null) {
+    return { erro: "Filtro 'precoMax' inválido. Use um número maior ou igual a zero." };
+  }
+
+  if (precoMin !== undefined && precoMax !== undefined && precoMin > precoMax) {
+    return { erro: "O filtro 'precoMin' não pode ser maior que 'precoMax'." };
+  }
+
+  const ordenarFinal = filtroVazio(ordenar) ? "relevancia" : ordenar;
+  if (!ORDENACOES_VALIDAS.has(ordenarFinal)) {
+    return { erro: "Filtro 'ordenar' inválido." };
+  }
+
+  return {
+    dados: {
+      categoria,
+      busca,
+      tamanho,
+      precoMin,
+      precoMax,
+      pagina,
+      limite: limiteFinal,
+      ordenar: ordenarFinal,
+    },
+  };
+}
+
 export async function listarProdutosQuery({
   categoria,
   busca,
@@ -36,8 +131,8 @@ export async function listarProdutosQuery({
   limite = 12,
   ordenar = "relevancia",
 }) {
-  const numPagina = Math.max(1, Number(pagina) || 1);
-  const numLimite = Math.min(48, Math.max(1, Number(limite) || 12));
+  const numPagina = pagina;
+  const numLimite = limite;
   const offset = (numPagina - 1) * numLimite;
 
   const condicoes = [];
@@ -61,13 +156,13 @@ export async function listarProdutosQuery({
     condicoes.push(`$${params.length} = ANY(tamanhos)`);
   }
 
-  if (precoMin !== undefined && precoMin !== null && precoMin !== "") {
-    params.push(Number(precoMin));
+  if (precoMin !== undefined) {
+    params.push(precoMin);
     condicoes.push(`preco >= $${params.length}`);
   }
 
-  if (precoMax !== undefined && precoMax !== null && precoMax !== "") {
-    params.push(Number(precoMax));
+  if (precoMax !== undefined) {
+    params.push(precoMax);
     condicoes.push(`preco <= $${params.length}`);
   }
 

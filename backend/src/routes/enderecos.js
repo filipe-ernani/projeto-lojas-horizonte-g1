@@ -7,6 +7,7 @@ import {
   listarEnderecosQuery,
   validarDadosEndereco,
 } from "../queries/enderecosQueries.js";
+import { paraIdSeguro } from "../utils/validacao.js";
 
 const router = Router();
 
@@ -39,8 +40,8 @@ router.post("/enderecos", requireAuth, async (req, res, next) => {
 
 router.put("/enderecos/:id", requireAuth, async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
-    if (!id || Number.isNaN(id)) {
+    const id = paraIdSeguro(req.params.id);
+    if (id === null) {
       return res.status(404).json({ erro: "Endereço não encontrado." });
     }
 
@@ -67,8 +68,8 @@ router.put("/enderecos/:id", requireAuth, async (req, res, next) => {
 
 router.delete("/enderecos/:id", requireAuth, async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
-    if (!id || Number.isNaN(id)) {
+    const id = paraIdSeguro(req.params.id);
+    if (id === null) {
       return res.status(404).json({ erro: "Endereço não encontrado." });
     }
 

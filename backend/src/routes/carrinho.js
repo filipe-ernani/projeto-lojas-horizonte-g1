@@ -5,6 +5,7 @@ import {
   substituirCarrinhoQuery,
 } from "../queries/carrinhoQueries.js";
 import { finalizarCarrinhoQuery } from "../queries/pedidosQueries.js";
+import { registrarBeginCheckoutSeNovo } from "../services/analyticsService.js";
 
 const router = Router();
 
@@ -36,12 +37,38 @@ router.put("/carrinho", requireAuth, async (req, res, next) => {
   }
 });
 
+router.post("/checkout/iniciado", requireAuth, async (req, res, next) => {
+  try {
+    if (!req.sessaoId) {
+      return res
+        .status(400)
+        .json({ erro: "Cabeçalho X-Sessao-Id ausente ou inválido." });
+    }
+
+    const carrinho = await obterCarrinhoQuery(req.usuarioId);
+    if (carrinho.itens.length === 0) {
+      return res.status(400).json({ erro: "Carrinho está vazio." });
+    }
+
+    await registrarBeginCheckoutSeNovo({
+      sessaoId: req.sessaoId,
+      usuarioId: req.usuarioId,
+      valor: carrinho.subtotal,
+    });
+
+    res.status(204).send();
+  } catch (error_) {
+    next(error_);
+  }
+});
+
 router.post("/carrinho/finalizar", requireAuth, async (req, res, next) => {
   try {
-    const { enderecoId, formaPagamento } = req.body || {};
+    // Só estes campos são lidos: dados de cartão enviados no corpo são ignorados
+    const { enderecoId, formaPagamento, parcelas } = req.body || {};
     const resultado = await finalizarCarrinhoQuery(
       req.usuarioId,
-      { enderecoId, formaPagamento },
+      { enderecoId, formaPagamento, parcelas },
       req.sessaoId || null,
     );
 

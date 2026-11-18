@@ -1,7 +1,16 @@
 import { pool, query } from "../db.js";
 import { ensureUsuarioExiste } from "./usuariosQueries.js";
-import { gravarEvento } from "../services/analyticsService.js";
-import { formatarCarrinho, validarItemCarrinho } from "./carrinhoHelpers.js";
+import {
+  gravarEvento,
+  registrarBeginCheckoutSeNovo,
+} from "../services/analyticsService.js";
+import {
+  chaveItemCarrinho,
+  formatarCarrinho,
+  obterFreteCentavos,
+  validarFormatoItens,
+  validarItemCarrinho,
+} from "./carrinhoHelpers.js";
 
 export { formatarCarrinho };
 
@@ -16,7 +25,7 @@ export async function obterCarrinhoQuery(usuarioId) {
 
   const pedido = pedRes.rows[0];
   const itensRes = await query(
-    `SELECT i.*, p.nome, p.imagem_url
+    `SELECT i.*, p.nome, p.imagem_url, p.cores, p.preco AS preco_atual
      FROM loja.pedido_itens i
      JOIN loja.produtos p ON p.sku = i.sku
      WHERE i.pedido_id = $1 ORDER BY i.id ASC;`,
@@ -29,16 +38,26 @@ export async function obterCarrinhoQuery(usuarioId) {
 export async function substituirCarrinhoQuery(
   usuarioId,
   emailToken,
-  { itens = [], ultimaEtapa = "CARRINHO" } = {},
+  { itens, ultimaEtapa = "CARRINHO" } = {},
   sessaoId = null,
 ) {
+  const erroFormato = validarFormatoItens(itens);
+  if (erroFormato) {
+    return { erro: erroFormato, status: 400 };
+  }
+
   await ensureUsuarioExiste(usuarioId, emailToken);
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN;");
 
-    if (!Array.isArray(itens) || itens.length === 0) {
+    // Serializa os PUTs do mesmo usuário: evita corrida na criação do carrinho
+    await client.query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0));", [
+      `carrinho:${usuarioId}`,
+    ]);
+
+    if (itens.length === 0) {
       await client.query(
         "DELETE FROM loja.pedidos WHERE usuario_id = $1 AND status = 'CARRINHO_ATIVO';",
         [usuarioId],
@@ -47,7 +66,7 @@ export async function substituirCarrinhoQuery(
       return { sucesso: true, carrinho: formatarCarrinho(null, []) };
     }
 
-    const skus = itens.map((i) => String(i.produtoId || "").trim());
+    const skus = itens.map((i) => i.produtoId.trim());
     const prodRes = await client.query(
       "SELECT * FROM loja.produtos WHERE sku = ANY($1);",
       [skus],
@@ -58,7 +77,7 @@ export async function substituirCarrinhoQuery(
     const itensValidados = [];
 
     for (const item of itens) {
-      const validacao = validarItemCarrinho(item, mapaProdutos.get(item.produtoId));
+      const validacao = validarItemCarrinho(item, mapaProdutos.get(item.produtoId.trim()));
       if (!validacao.valido) {
         await client.query("ROLLBACK;");
         return { erro: validacao.erro, status: validacao.status };
@@ -67,8 +86,7 @@ export async function substituirCarrinhoQuery(
       itensValidados.push(validacao.dados);
     }
 
-    const freteFixo = Number(process.env.FRETE_SIMULADO) || 15.0;
-    const freteCentavos = Math.round(freteFixo * 100);
+    const freteCentavos = obterFreteCentavos();
     const totalCentavos = subtotalCentavos + freteCentavos;
 
     const subtotal = (subtotalCentavos / 100).toFixed(2);
@@ -90,10 +108,13 @@ export async function substituirCarrinhoQuery(
       pedidoId = anteriorRes.rows[0].id;
       etapaAnterior = anteriorRes.rows[0].ultima_etapa;
       const itensAnt = await client.query(
-        "SELECT sku, quantidade FROM loja.pedido_itens WHERE pedido_id = $1;",
+        "SELECT sku, tamanho, cor, quantidade FROM loja.pedido_itens WHERE pedido_id = $1;",
         [pedidoId],
       );
-      itensAnt.rows.forEach((r) => itensAnteriores.set(r.sku, Number(r.quantidade)));
+      itensAnt.rows.forEach((r) => {
+        const chave = chaveItemCarrinho(r);
+        itensAnteriores.set(chave, (itensAnteriores.get(chave) || 0) + Number(r.quantidade));
+      });
 
       await client.query(
         `UPDATE loja.pedidos SET
@@ -124,8 +145,20 @@ export async function substituirCarrinhoQuery(
     await client.query("COMMIT;");
 
     if (sessaoId) {
+      // Soma linhas repetidas para o aumento de cada variação ser contado uma vez
+      const itensNovos = new Map();
       for (const item of itensValidados) {
-        const diff = item.quantidade - (itensAnteriores.get(item.sku) || 0);
+        const chave = chaveItemCarrinho(item);
+        const atual = itensNovos.get(chave);
+        itensNovos.set(chave, {
+          sku: item.sku,
+          precoCentavos: item.precoCentavos,
+          quantidade: (atual?.quantidade || 0) + item.quantidade,
+        });
+      }
+
+      for (const [chave, item] of itensNovos) {
+        const diff = item.quantidade - (itensAnteriores.get(chave) || 0);
         if (diff > 0) {
           gravarEvento({
             evento: "add_to_cart",
@@ -138,8 +171,7 @@ export async function substituirCarrinhoQuery(
         }
       }
       if (etapaAnterior !== "CHECKOUT_INICIADO" && etapaValida === "CHECKOUT_INICIADO") {
-        gravarEvento({
-          evento: "begin_checkout",
+        void registrarBeginCheckoutSeNovo({
           sessaoId,
           usuarioId,
           valor: Number(subtotal),
@@ -157,6 +189,7 @@ export async function substituirCarrinhoQuery(
           imagemUrl: i.imagemUrl,
           tamanho: i.tamanho,
           cor: i.cor,
+          corHex: i.corHex,
           quantidade: i.quantidade,
         })),
         subtotal: Number(subtotal),

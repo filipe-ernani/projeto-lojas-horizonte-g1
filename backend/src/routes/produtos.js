@@ -3,6 +3,7 @@ import {
   buscarProdutoPorSkuQuery,
   buscarSemelhantesQuery,
   listarProdutosQuery,
+  validarFiltrosProdutos,
 } from "../queries/produtosQueries.js";
 import { gravarEvento } from "../services/analyticsService.js";
 
@@ -10,27 +11,12 @@ const router = Router();
 
 router.get("/produtos", async (req, res, next) => {
   try {
-    const {
-      categoria,
-      busca,
-      tamanho,
-      precoMin,
-      precoMax,
-      pagina,
-      limite,
-      ordenar,
-    } = req.query;
+    const validacao = validarFiltrosProdutos(req.query);
+    if (validacao.erro) {
+      return res.status(400).json({ erro: validacao.erro });
+    }
 
-    const resultado = await listarProdutosQuery({
-      categoria,
-      busca,
-      tamanho,
-      precoMin,
-      precoMax,
-      pagina,
-      limite,
-      ordenar,
-    });
+    const resultado = await listarProdutosQuery(validacao.dados);
 
     res.json(resultado);
   } catch (error_) {

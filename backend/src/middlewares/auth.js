@@ -3,6 +3,14 @@ import { query } from "../db.js";
 
 export const usuariosGarantidos = new Set();
 
+// Tokens sintéticos só valem com a flag ligada e nunca em produção (D3)
+function tokensDeTesteAtivos() {
+  return (
+    process.env.ALLOW_TEST_TOKENS === "true" &&
+    process.env.NODE_ENV !== "production"
+  );
+}
+
 export async function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
 
@@ -19,7 +27,7 @@ export async function requireAuth(req, res, next) {
   let decodedToken;
   try {
     if (
-      process.env.NODE_ENV !== "production" &&
+      tokensDeTesteAtivos() &&
       (token.startsWith("test:") || token.startsWith("mock:"))
     ) {
       // Suporte a tokens sintéticos para testes automatizados locais: test:uid:email:nome

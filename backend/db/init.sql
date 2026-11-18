@@ -70,6 +70,9 @@ CREATE TABLE IF NOT EXISTS loja.enderecos (
 );
 
 CREATE INDEX IF NOT EXISTS ix_enderecos_usuario ON loja.enderecos (usuario_id);
+-- No máximo um endereço padrão por usuário
+CREATE UNIQUE INDEX IF NOT EXISTS ux_enderecos_padrao_por_usuario
+  ON loja.enderecos (usuario_id) WHERE padrao IS TRUE;
 
 DROP TRIGGER IF EXISTS trg_enderecos_updated ON loja.enderecos;
 CREATE TRIGGER trg_enderecos_updated BEFORE UPDATE ON loja.enderecos
@@ -92,14 +95,20 @@ CREATE TABLE IF NOT EXISTS loja.pedidos (
   status          TEXT NOT NULL CHECK (status IN ('CARRINHO_ATIVO','FINALIZADO','CANCELADO')),
   ultima_etapa    TEXT CHECK (ultima_etapa IN ('CARRINHO','CHECKOUT_INICIADO')),
   endereco_id     BIGINT REFERENCES loja.enderecos(id) ON DELETE SET NULL,
-  forma_pagamento TEXT CHECK (forma_pagamento IN ('PIX','CARTAO','BOLETO')),
+  forma_pagamento TEXT CONSTRAINT pedidos_forma_pagamento_check
+                  CHECK (forma_pagamento IN ('PIX','CARTAO_CREDITO','CARTAO_DEBITO','BOLETO')),
   subtotal        NUMERIC(10,2) NOT NULL DEFAULT 0,
   frete           NUMERIC(10,2) NOT NULL DEFAULT 0,
   valor_total     NUMERIC(10,2) NOT NULL DEFAULT 0,
   criado_em       TIMESTAMPTZ NOT NULL DEFAULT now(),
   finalizado_em   TIMESTAMPTZ,
   cancelado_em    TIMESTAMPTZ,
-  updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  parcelas        SMALLINT NOT NULL DEFAULT 1,
+  CONSTRAINT pedidos_parcelas_faixa_check CHECK (parcelas BETWEEN 1 AND 12),
+  -- IS NOT DISTINCT FROM: com forma_pagamento nula, parcelas também precisa ser 1
+  CONSTRAINT pedidos_parcelas_credito_check
+    CHECK (forma_pagamento IS NOT DISTINCT FROM 'CARTAO_CREDITO' OR parcelas = 1)
 );
 
 -- No máximo um carrinho ativo por usuário
@@ -155,7 +164,8 @@ SELECT 'P-' || p.id                                                           AS
        substr(encode(sha256(convert_to(p.usuario_id, 'UTF8')), 'hex'), 1, 16) AS usuario_hash,
        p.status, p.forma_pagamento, p.subtotal, p.frete, p.valor_total,
        p.finalizado_em, p.cancelado_em, p.updated_at,
-       'APP'                                                                  AS origem
+       'APP'                                                                  AS origem,
+       p.parcelas
 FROM loja.pedidos p
 WHERE p.status IN ('FINALIZADO','CANCELADO');
 

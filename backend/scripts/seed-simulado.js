@@ -8,9 +8,12 @@
  * Todos os registros gerados possuem a coluna `origem: SIMULADO`.
  */
 
-const fs = require("node:fs");
-const path = require("node:path");
-const crypto = require("node:crypto");
+import fs from "node:fs";
+import path from "node:path";
+import crypto from "node:crypto";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // 1. Configurações de cores e tamanhos
 const MAPA_CORES_HEX = {
@@ -40,7 +43,7 @@ const TAMANHOS_POR_CATEGORIA = {
   Beleza: ["Único"],
 };
 
-const FORMAS_PAGAMENTO = ["PIX", "CARTAO", "BOLETO"];
+const FORMAS_PAGAMENTO = ["PIX", "CARTAO_CREDITO", "CARTAO_DEBITO"];
 
 // 2. Leitura de parâmetros (variáveis de ambiente ou argumentos de CLI)
 function obterParametro(nome, valorPadrao) {

@@ -1,6 +1,13 @@
+// Requer a API local iniciada com ALLOW_TEST_TOKENS=true (tokens test:) e a
+// variável INTEGRACAO_API_KEY definida no ambiente ou no backend/.env.
 import { pool, query } from "../src/db.js";
 
 async function testarGarantiaUsuario() {
+  const chaveIntegracao = process.env.INTEGRACAO_API_KEY;
+  if (!chaveIntegracao) {
+    throw new Error("Defina INTEGRACAO_API_KEY para executar este teste.");
+  }
+
   const testUid = "user-virgem-" + Date.now();
   const testEmail = testUid + "@teste.com";
   const testNome = "Usuario Teste " + Date.now();
@@ -131,7 +138,7 @@ async function testarGarantiaUsuario() {
 
   // 8. Testar integração (deve continuar com Z)
   const integRes = await fetch("http://localhost:3000/api/integracao/pedidos?limite=1", {
-    headers: { "X-API-Key": "horizonte-bi-key-segura-2026" },
+    headers: { "X-API-Key": chaveIntegracao },
   });
   const integJson = await integRes.json();
   console.log("\n=== TESTE 5: EXPORT INTEGRAÇÃO (ISO UTC com Z) ===");

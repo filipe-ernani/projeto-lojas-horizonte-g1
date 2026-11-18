@@ -21,7 +21,7 @@ export function converterParaCsv(colunas, itens) {
         if (val === null || val === undefined) return "";
         if (val instanceof Date) return val.toISOString();
         const str = String(val);
-        if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+        if (/[",\r\n]/.test(str)) {
           return `"${str.replace(/"/g, '""')}"`;
         }
         return str;
@@ -37,7 +37,7 @@ export async function exportarPedidosQuery(desdeIso, limite) {
     `SELECT * FROM loja.vw_export_pedidos
      WHERE updated_at >= $1
      ORDER BY updated_at ASC
-     LIMIT $2;`,
+     FETCH FIRST ($2::bigint) ROWS WITH TIES;`, // WITH TIES: não corta linhas de mesmo updated_at
     [dataDesde, limite],
   );
 
@@ -54,7 +54,7 @@ export async function exportarPedidoItensQuery(desdeIso, limite) {
     `SELECT * FROM loja.vw_export_pedido_itens
      WHERE updated_at >= $1
      ORDER BY updated_at ASC
-     LIMIT $2;`,
+     FETCH FIRST ($2::bigint) ROWS WITH TIES;`,
     [dataDesde, limite],
   );
 
@@ -71,7 +71,7 @@ export async function exportarEventosQuery(desdeIso, limite) {
     `SELECT * FROM loja.vw_export_analytics_eventos
      WHERE updated_at >= $1
      ORDER BY updated_at ASC
-     LIMIT $2;`,
+     FETCH FIRST ($2::bigint) ROWS WITH TIES;`,
     [dataDesde, limite],
   );
 

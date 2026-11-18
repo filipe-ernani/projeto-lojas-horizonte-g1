@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
+    "db:migrate": "node scripts/migrar.js",
     "seed": "node scripts/seed-catalogo.js",
     "seed:simulado": "node scripts/seed-simulado.js",
     "export:novos": "node scripts/export-novos.js"

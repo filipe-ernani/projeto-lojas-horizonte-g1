@@ -3,6 +3,7 @@ import { requireAuth } from "../middlewares/auth.js";
 import {
   buscarPerfilQuery,
   upsertPerfilQuery,
+  validarDadosPerfil,
 } from "../queries/usuariosQueries.js";
 
 const router = Router();
@@ -18,11 +19,16 @@ router.get("/usuarios/perfil", requireAuth, async (req, res, next) => {
 
 router.put("/usuarios/perfil", requireAuth, async (req, res, next) => {
   try {
-    const { nome, telefone } = req.body || {};
-    const perfil = await upsertPerfilQuery(req.usuarioId, req.usuarioEmail, {
-      nome: typeof nome === "string" ? nome.trim() : (nome === undefined ? undefined : ""),
-      telefone: typeof telefone === "string" ? telefone.trim() : (telefone === undefined ? undefined : ""),
-    });
+    const validacao = validarDadosPerfil(req.body || {});
+    if (!validacao.valido) {
+      return res.status(400).json({ erro: validacao.erro });
+    }
+
+    const perfil = await upsertPerfilQuery(
+      req.usuarioId,
+      req.usuarioEmail,
+      validacao.dados,
+    );
     res.json(perfil);
   } catch (error_) {
     next(error_);

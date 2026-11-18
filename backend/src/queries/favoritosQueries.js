@@ -1,4 +1,5 @@
 import { query } from "../db.js";
+import { primeiraCorHex } from "./carrinhoHelpers.js";
 import { formatarProduto } from "./produtosQueries.js";
 import { ensureUsuarioExiste } from "./usuariosQueries.js";
 
@@ -11,7 +12,11 @@ export async function listarFavoritosQuery(usuarioId) {
      ORDER BY f.criado_em DESC, p.sku ASC;`,
     [usuarioId],
   );
-  return res.rows.map(formatarProduto);
+  // Favorito não tem cor escolhida: usa a primeira cor do produto
+  return res.rows.map((p) => ({
+    ...formatarProduto(p),
+    corHex: primeiraCorHex(p.cores),
+  }));
 }
 
 export async function adicionarFavoritoQuery(usuarioId, emailToken, sku) {

@@ -4,6 +4,7 @@ import {
   cancelarPedidoQuery,
   listarMeusPedidosQuery,
 } from "../queries/pedidosQueries.js";
+import { paraIdSeguro } from "../utils/validacao.js";
 
 const router = Router();
 
@@ -18,8 +19,8 @@ router.get("/pedidos/meus", requireAuth, async (req, res, next) => {
 
 router.post("/pedidos/:id/cancelar", requireAuth, async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
-    if (!id || Number.isNaN(id)) {
+    const id = paraIdSeguro(req.params.id);
+    if (id === null) {
       return res.status(404).json({ erro: "Pedido não encontrado." });
     }
 

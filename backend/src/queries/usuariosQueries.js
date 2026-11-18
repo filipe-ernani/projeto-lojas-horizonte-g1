@@ -1,5 +1,6 @@
 import { query } from "../db.js";
 import { formatarDataLocalSaoPaulo, formatarIsoUtc } from "../utils/datas.js";
+import { temCaractereDeControle } from "../utils/validacao.js";
 import { usuariosGarantidos } from "../middlewares/auth.js";
 
 export async function buscarPerfilQuery(usuarioId, emailToken = "") {
@@ -32,6 +33,45 @@ export async function buscarPerfilQuery(usuarioId, emailToken = "") {
   };
 }
 
+/**
+ * Valida o corpo do perfil. Campo ausente mantém o valor salvo; telefone vazio
+ * ou null apaga o número.
+ */
+export function validarDadosPerfil({ nome, telefone } = {}) {
+  const dados = {};
+
+  if (nome !== undefined) {
+    if (typeof nome !== "string" || temCaractereDeControle(nome)) {
+      return { valido: false, erro: "O campo nome é inválido." };
+    }
+    dados.nome = nome.trim();
+    if (dados.nome.length > 100) {
+      return { valido: false, erro: "O campo nome deve ter no máximo 100 caracteres." };
+    }
+  }
+
+  if (telefone !== undefined) {
+    if (telefone !== null && typeof telefone !== "string") {
+      return { valido: false, erro: "O campo telefone é inválido." };
+    }
+    dados.telefone = (telefone ?? "").trim();
+
+    const digitos = dados.telefone.replace(/\D/g, "");
+    const formatoValido =
+      /^[\d\s()+-]+$/.test(dados.telefone) &&
+      digitos.length >= 10 &&
+      digitos.length <= 13;
+    if (dados.telefone && !formatoValido) {
+      return {
+        valido: false,
+        erro: "Telefone inválido. Informe DDD e número, como (11) 99999-9999.",
+      };
+    }
+  }
+
+  return { valido: true, dados };
+}
+
 export async function upsertPerfilQuery(usuarioId, emailToken, { nome, telefone } = {}) {
   const nomeParam = typeof nome === "string" ? nome.trim() : null;
   const telefoneParam = typeof telefone === "string" ? telefone.trim() : null;
@@ -41,11 +81,11 @@ export async function upsertPerfilQuery(usuarioId, emailToken, { nome, telefone 
      VALUES ($1, $2, COALESCE($3, ''), COALESCE($4, ''), now(), now())
      ON CONFLICT (usuario_id) DO UPDATE SET
        nome = CASE WHEN $3 IS NOT NULL AND $3 <> '' THEN $3 ELSE loja.usuarios.nome END,
-       telefone = CASE WHEN $4 IS NOT NULL AND $4 <> '' THEN $4 ELSE loja.usuarios.telefone END,
+       telefone = CASE WHEN $5::boolean THEN COALESCE($4, '') ELSE loja.usuarios.telefone END,
        email = CASE WHEN $2 <> '' THEN $2 ELSE loja.usuarios.email END,
        updated_at = now()
      RETURNING usuario_id, nome, email, telefone, criado_em, updated_at;`,
-    [usuarioId, emailToken || "", nomeParam, telefoneParam],
+    [usuarioId, emailToken || "", nomeParam, telefoneParam, telefone !== undefined],
   );
 
   if (usuariosGarantidos) {

@@ -1,4 +1,4 @@
-import { query } from "../db.js";
+import { pool, query } from "../db.js";
 import { auth } from "../firebase.js";
 
 const UUID_REGEX =
@@ -33,6 +33,46 @@ export async function gravarEvento({
     );
   } catch (error_) {
     console.error("Erro ao gravar evento analítico:", error_.message);
+  }
+}
+
+/**
+ * Grava begin_checkout uma única vez por sessão. A trava evita duplicidade
+ * quando duas requisições da mesma sessão chegam ao mesmo tempo.
+ */
+export async function registrarBeginCheckoutSeNovo({
+  sessaoId,
+  usuarioId = null,
+  valor = null,
+}) {
+  if (!sessaoId) return false;
+
+  let client;
+  try {
+    client = await pool.connect();
+    await client.query("BEGIN;");
+    await client.query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0));", [
+      `begin_checkout:${sessaoId}`,
+    ]);
+    const resultado = await client.query(
+      `INSERT INTO loja.analytics_eventos (
+        evento, sessao_id, usuario_id, valor, ocorrido_em
+      )
+      SELECT 'begin_checkout', $1::text, $2::text, $3::numeric, now()
+      WHERE NOT EXISTS (
+        SELECT 1 FROM loja.analytics_eventos
+        WHERE sessao_id = $1::text AND evento = 'begin_checkout'
+      );`,
+      [sessaoId, usuarioId, valor],
+    );
+    await client.query("COMMIT;");
+    return resultado.rowCount > 0;
+  } catch (error_) {
+    if (client) await client.query("ROLLBACK;").catch(() => {});
+    console.error("Erro ao registrar begin_checkout:", error_.message);
+    return false;
+  } finally {
+    client?.release();
   }
 }
 
