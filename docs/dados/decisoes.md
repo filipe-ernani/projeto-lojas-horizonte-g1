@@ -264,7 +264,7 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
   - `valido` resume as regras de cada canal (ERP: D18; marketplace: `valido AND incluir AND periodo_completo`). Nada é removido (D07).
   - Receita do marketplace sem frete: frete não é venda de produto.
   - Custo do marketplace estimado pela margem da categoria (`custo_estimado = true`). A margem é calculada do próprio catálogo (`1 − custo ÷ preço`) e é idêntica à do `parametros.yaml` (conferido): nenhum número novo no código.
-  - `cliente_id`: nulo no ERP (cupom sem identificação), `customer_unique_id` no marketplace (D11). Preparado para a recomendação (D19), que usa o cliente do site.
+  - `cliente_id`: nulo no ERP (cupom sem identificação), `customer_unique_id` no marketplace (D11). Permite contar clientes únicos e recompra; no site, recebe o `usuario_hash` do contrato do Caio.
   - `dim_data` vai do primeiro dia com venda válida até 31/12 do ano da última venda, para incluir a Black Friday de 2026. Black Friday por regra (sexta-feira de novembro entre os dias 23 e 29), sem data fixa no código.
 - **Resultado:** loja física com 401.335 linhas, 399.736 válidas, 403.365 unidades e R$ 30.795.090,78; marketplace com 112.650 linhas, 42.758 válidas (= unidades) e R$ 5.250.663,26. Nenhuma venda válida sem grupo. Calendário de 09/01/2025 (primeira venda válida) a 31/12/2026: 722 dias, Black Fridays em 28/11/2025 e 27/11/2026.
 - **Pendente:** o site entra como mais um bloco do `UNION ALL`, sem mudar as colunas.
