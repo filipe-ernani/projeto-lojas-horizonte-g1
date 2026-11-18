@@ -8,6 +8,9 @@ import {
   House,
   Waves,
 } from "lucide-react";
+import ProductSilhouette from "@/components/ProductSilhouette/ProductSilhouette";
+import { tipoDaPeca } from "@/components/ProductSilhouette/tipoDaPeca";
+import { FORMAS } from "@/components/ProductSilhouette/formas";
 import styles from "./ProductImage.module.css";
 
 /**
@@ -64,41 +67,6 @@ function resolverIcone(categoria) {
   return mapa[normalizada] || Shirt;
 }
 
-function hexParaRgb(hex) {
-  if (!hex || typeof hex !== "string") return null;
-  const limpo = hex.replace("#", "").trim();
-  if (limpo.length === 3) {
-    return [
-      Number.parseInt(limpo[0] + limpo[0], 16),
-      Number.parseInt(limpo[1] + limpo[1], 16),
-      Number.parseInt(limpo[2] + limpo[2], 16),
-    ];
-  }
-  if (limpo.length === 6) {
-    return [
-      Number.parseInt(limpo.slice(0, 2), 16),
-      Number.parseInt(limpo.slice(2, 4), 16),
-      Number.parseInt(limpo.slice(4, 6), 16),
-    ];
-  }
-  return null;
-}
-
-function obterLuminosidade(hex) {
-  const rgb = hexParaRgb(hex);
-  if (!rgb) return 1;
-  const [r, g, b] = rgb;
-  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return 1;
-  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-}
-
-function obterCorIcone(hex) {
-  if (!hex) return "var(--color-muted)";
-  return obterLuminosidade(hex) < 0.5
-    ? "var(--color-paper)"
-    : "var(--color-ink)";
-}
-
 function formatarAriaLabel(alt, categoria) {
   const base = alt?.trim() || "Produto";
   if (categoria) {
@@ -107,34 +75,42 @@ function formatarAriaLabel(alt, categoria) {
   return `${base} (sem imagem disponível)`;
 }
 
+function extrairNomeProduto(produto, nome, alt) {
+  if (produto?.nome) return produto.nome;
+  if (nome) return nome;
+  if (!alt || alt === "Imagem do produto") return "";
+  return alt
+    .replace(/^Foto principal de\s+/i, "")
+    .replace(/^Miniatura\s+\d+.*$/i, "")
+    .trim();
+}
+
 /**
- * Imagem de produto conforme docs/DESIGN.md:
- * Proporção 4:5, fundo derivado da cor ou --color-card, raio 16px (--radius-lg).
- * Sem imagem ou em caso de erro: placeholder com ícone por categoria e contraste adaptativo.
+ * Imagem de produto conforme docs/DESIGN.md e silhuetas SVG:
+ * - Proporção 4:5, fundo derivado do token de superfície (--color-card), raio 16px (--radius-lg).
+ * - Imagem real quando disponível (imagemUrl).
+ * - Placeholder: silhueta da peça tingida com a cor do produto centralizada com padding de ~12%.
+ * - Se o produto não tiver cor (ex.: Beleza), usa o neutro por padrão sem passar cor.
+ * - Se a silhueta for desconhecida (retornar null), fallback para o ícone da categoria.
  */
 export default function ProductImage({
   imagemUrl,
   alt = "Imagem do produto",
   cor,
   categoria,
+  nome,
+  produto,
   className = "",
 }) {
   const [comErro, setComErro] = useState(false);
 
   const temImagem = Boolean(imagemUrl) && !comErro;
 
-  const estiloPlaceholder = cor
-    ? {
-        backgroundColor: `color-mix(in srgb, ${cor} 35%, var(--color-card))`,
-      }
-    : undefined;
+  const nomeProduto = extrairNomeProduto(produto, nome, alt);
+  const corProduto = produto?.cores?.[0]?.hex || cor || produto?.cor || undefined;
 
-  const estiloIcone = cor
-    ? {
-        color: obterCorIcone(cor),
-        opacity: 0.9,
-      }
-    : undefined;
+  const tipo = tipoDaPeca(nomeProduto);
+  const temSilhueta = Boolean(tipo && FORMAS[tipo]);
 
   return (
     <div className={`${styles.wrapper} ${className}`.trim()}>
@@ -149,17 +125,23 @@ export default function ProductImage({
       ) : (
         <div
           className={styles.placeholder}
-          style={estiloPlaceholder}
           role="img"
           aria-label={formatarAriaLabel(alt, categoria)}
         >
-          {createElement(resolverIcone(categoria), {
-            className: styles.placeholderIcon,
-            size: 48,
-            strokeWidth: 1.8,
-            "aria-hidden": "true",
-            style: estiloIcone,
-          })}
+          {temSilhueta ? (
+            <ProductSilhouette
+              nome={nomeProduto}
+              {...(corProduto ? { cor: corProduto } : {})}
+              className={styles.silhueta}
+            />
+          ) : (
+            createElement(resolverIcone(categoria), {
+              className: styles.placeholderIcon,
+              size: 48,
+              strokeWidth: 1.8,
+              "aria-hidden": "true",
+            })
+          )}
           <span className="sr-only">Sem imagem disponível</span>
         </div>
       )}
