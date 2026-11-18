@@ -23,7 +23,7 @@ export default function Layout() {
   return (
     <div className={styles.shell}>
       <Header />
-      <main className={`container ${styles.main}`}>
+      <main className={styles.main}>
         <Outlet />
       </main>
       <Footer />

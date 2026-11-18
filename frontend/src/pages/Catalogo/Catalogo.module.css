@@ -16,6 +16,13 @@
   width: 100%;
 }
 
+.statusAtualizacao {
+  min-height: var(--space-6);
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
 @media (min-width: 640px) {
   .main {
     padding-block: var(--space-8) var(--space-16);

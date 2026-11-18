@@ -3,6 +3,7 @@ import { MapPin, Plus } from "lucide-react";
 import Button from "@/components/ui/Button/Button";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
 import AddressCard from "@/components/AddressCard/AddressCard";
+import AvisoAcao from "@/components/AvisoAcao/AvisoAcao";
 import PerfilEnderecoForm from "./PerfilEnderecoForm";
 import styles from "./PerfilEnderecosSection.module.css";
 
@@ -20,15 +21,18 @@ export default function PerfilEnderecosSection({
 }) {
   const [criando, setCriando] = useState(false);
   const [enderecoEmEdicao, setEnderecoEmEdicao] = useState(null);
+  const [mensagemSucesso, setMensagemSucesso] = useState("");
 
   const mostrandoFormulario = criando || Boolean(enderecoEmEdicao);
 
   function handleNovo() {
+    setMensagemSucesso("");
     setEnderecoEmEdicao(null);
     setCriando(true);
   }
 
   function handleEditar(endereco) {
+    setMensagemSucesso("");
     setCriando(false);
     setEnderecoEmEdicao(endereco);
   }
@@ -43,6 +47,11 @@ export default function PerfilEnderecosSection({
       await onSalvarEndereco(dados);
     }
     handleCancelar();
+    setMensagemSucesso(
+      dados?.id
+        ? "Endereço atualizado com sucesso!"
+        : "Endereço salvo com sucesso!",
+    );
   }
 
   return (
@@ -70,6 +79,12 @@ export default function PerfilEnderecosSection({
           </Button>
         ) : null}
       </div>
+
+      <AvisoAcao
+        tipo="sucesso"
+        mensagem={mensagemSucesso}
+        onFechar={() => setMensagemSucesso("")}
+      />
 
       {mostrandoFormulario ? (
         <PerfilEnderecoForm

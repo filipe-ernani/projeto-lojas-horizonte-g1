@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import useProduto from "@/hooks/useProduto";
 import useSemelhantes from "@/hooks/useSemelhantes";
 import useAvaliacoes from "@/hooks/useAvaliacoes";
@@ -7,6 +8,7 @@ import useFavoritos from "@/hooks/useFavoritos";
 import useCarrinho from "@/hooks/useCarrinho";
 import RatingPill from "@/components/ui/RatingPill/RatingPill";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
+import AvisoAcao from "@/components/AvisoAcao/AvisoAcao";
 import { formatCurrency } from "@/utils/formatCurrency";
 import ProductGallery from "./ProductGallery";
 import ProductReviews from "./ProductReviews";
@@ -30,7 +32,7 @@ import styles from "./Produto.module.css";
  * - Se qtdAvaliacoes for 0 ou notaMedia for null: omite RatingPill e a seção de avaliações.
  * - Erro 404 exibe EmptyState com "Produto não encontrado" e link para o catálogo.
  */
-export default function Produto({
+function ProdutoConteudo({
   produto: produtoProp,
   avaliacoes: avaliacoesProp,
   produtosSemelhantes: semelhantesProp,
@@ -39,6 +41,7 @@ export default function Produto({
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { usuario } = useAuth();
 
   const {
     dados: produtoApi,
@@ -49,8 +52,23 @@ export default function Produto({
 
   const { dados: semelhantesApi } = useSemelhantes(id);
   const { dados: avaliacoesApi } = useAvaliacoes(id);
-  const { isFavorito, alternar } = useFavoritos();
-  const { adicionar } = useCarrinho();
+  const {
+    isFavorito,
+    alternar,
+    favoritosProntos,
+    erro: erroFavoritos,
+    erroAcao: erroAcaoFavoritos,
+    limparErroAcao: limparErroFavoritos,
+    recarregar: recarregarFavoritos,
+  } = useFavoritos();
+  const {
+    adicionar,
+    cestaPronta,
+    erro: erroCesta,
+    erroAcao: erroAcaoCesta,
+    limparErroAcao: limparErroCesta,
+    recarregar: recarregarCesta,
+  } = useCarrinho();
 
   const produto = produtoProp !== undefined ? produtoProp : produtoApi;
   const produtosSemelhantes =
@@ -66,9 +84,9 @@ export default function Produto({
   // 1. Estado Carregando
   if (carregandoProduto) {
     return (
-      <main className={`container ${styles.container}`}>
+      <div className={`container ${styles.container}`}>
         <ProdutoSkeleton />
-      </main>
+      </div>
     );
   }
 
@@ -78,41 +96,41 @@ export default function Produto({
     (!carregandoProduto && !produto && !erroProduto)
   ) {
     return (
-      <main className={`container ${styles.container}`}>
+      <div className={`container ${styles.container}`}>
         <EmptyState
           titulo="Produto não encontrado"
           mensagem={`O produto solicitado (#${id || "indisponível"}) não foi encontrado ou não está mais disponível em nosso catálogo.`}
           textoAcao="Voltar ao catálogo"
           para="/catalogo"
         />
-      </main>
+      </div>
     );
   }
 
   // 3. Erro de rede ou servidor
   if (erroProduto) {
     return (
-      <main className={`container ${styles.container}`}>
+      <div className={`container ${styles.container}`}>
         <EmptyState
           titulo="Não foi possível carregar o produto"
           mensagem="Não foi possível carregar. Tente novamente."
           textoAcao="Tentar de novo"
           onAcao={recarregarProduto}
         />
-      </main>
+      </div>
     );
   }
 
   if (!produto) {
     return (
-      <main className={`container ${styles.container}`}>
+      <div className={`container ${styles.container}`}>
         <EmptyState
           titulo="Produto não encontrado"
           mensagem={`O produto solicitado (#${id || "indisponível"}) não foi encontrado ou não está mais disponível em nosso catálogo.`}
           textoAcao="Voltar ao catálogo"
           para="/catalogo"
         />
-      </main>
+      </div>
     );
   }
 
@@ -129,11 +147,13 @@ export default function Produto({
     qtdAvaliacoes = 0,
   } = produto;
 
-  // Verificação de calçados (tamanhos puramente numéricos)
+  // "Número (calçado)" vale só para a categoria Calçados
   const saoCalcados =
-    Array.isArray(tamanhos) &&
-    tamanhos.length > 0 &&
-    tamanhos.every((t) => !Number.isNaN(Number(t)));
+    String(categoria)
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .trim()
+      .toLowerCase() === "calcados";
 
   // Regra D-07 só quando houver opções:
   // Se tamanhos for ["Único"] ou houver apenas 1 opção, seleciona automaticamente sem pedir escolha
@@ -174,10 +194,18 @@ export default function Produto({
   const idProduto = produto?.id || produto?.sku || id;
   const favorito = isFavorito(idProduto);
 
+  // Visitante pode clicar: a ação o leva para o login
+  const adicionarDesabilitado = Boolean(usuario) && !cestaPronta;
+  const favoritoDesabilitado = Boolean(usuario) && !favoritosProntos;
+
   async function handleToggleFavorito() {
-    const resultado = await alternar(idProduto, produto);
-    if (resultado?.precisaLogin) {
-      navigate("/login", { state: { from: location } });
+    try {
+      const resultado = await alternar(idProduto, produto);
+      if (resultado?.precisaLogin) {
+        navigate("/login", { state: { from: location } });
+      }
+    } catch {
+      // A mensagem da falha chega por erroAcao de useFavoritos
     }
   }
 
@@ -192,11 +220,17 @@ export default function Produto({
     try {
       const corNome =
         typeof corEfetiva === "object" ? corEfetiva?.nome : corEfetiva;
+      const corHex =
+        typeof corEfetiva === "object" ? corEfetiva?.hex : null;
 
       const resultado = await adicionar({
         produtoId: idProduto,
+        nome,
+        preco,
+        imagemUrl,
         tamanho: tamanhoEfetivo,
         cor: corNome || null,
+        corHex: corHex || null,
         quantidade: 1,
       });
 
@@ -218,7 +252,7 @@ export default function Produto({
         setFeedbackAdicao("");
       }, 3000);
     } catch {
-      setFeedbackAdicao("Não foi possível adicionar o produto.");
+      // A mensagem da falha chega por erroAcao de useCarrinho
     } finally {
       setAdicionando(false);
     }
@@ -229,7 +263,7 @@ export default function Produto({
     notaMedia != null && Number(notaMedia) > 0 && Number(qtdAvaliacoes) > 0;
 
   return (
-    <main className={`container ${styles.container}`}>
+    <div className={`container ${styles.container}`}>
       <div className={styles.mainGrid}>
         <div className={styles.galleryColumn}>
           <ProductGallery
@@ -291,7 +325,29 @@ export default function Produto({
             onToggleFavorito={handleToggleFavorito}
             adicionando={adicionando}
             feedbackAdicao={feedbackAdicao}
+            adicionarDesabilitado={adicionarDesabilitado}
+            favoritoDesabilitado={favoritoDesabilitado}
           />
+
+          <AvisoAcao mensagem={erroAcaoCesta?.message} onFechar={limparErroCesta} />
+          <AvisoAcao
+            mensagem={erroAcaoFavoritos?.message}
+            onFechar={limparErroFavoritos}
+          />
+          {erroCesta ? (
+            <AvisoAcao
+              mensagem="Não foi possível carregar sua cesta."
+              textoAcao="Tentar de novo"
+              onAcao={recarregarCesta}
+            />
+          ) : null}
+          {erroFavoritos ? (
+            <AvisoAcao
+              mensagem="Não foi possível carregar seus favoritos."
+              textoAcao="Tentar de novo"
+              onAcao={recarregarFavoritos}
+            />
+          ) : null}
 
           <ProductAccordions descricao={descricao} />
         </div>
@@ -302,6 +358,14 @@ export default function Produto({
       ) : null}
 
       <ProductSimilarSection produtos={produtosSemelhantes} />
-    </main>
+    </div>
   );
+}
+
+/**
+ * A key reinicia cor, tamanho e avisos ao navegar de um produto para outro.
+ */
+export default function Produto(props) {
+  const { id } = useParams();
+  return <ProdutoConteudo key={id} {...props} />;
 }

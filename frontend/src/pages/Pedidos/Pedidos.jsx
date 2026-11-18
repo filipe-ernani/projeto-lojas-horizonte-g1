@@ -98,7 +98,7 @@ export default function Pedidos({
   }
 
   return (
-    <main className={`container ${styles.main}`}>
+    <div className={`container ${styles.main}`}>
       <header className={styles.header}>
         <h1 className={styles.title}>Meus pedidos</h1>
         <p className={styles.subtitle}>{subtituloPedidos}</p>
@@ -113,6 +113,6 @@ export default function Pedidos({
           {renderConteudo()}
         </section>
       </div>
-    </main>
+    </div>
   );
 }

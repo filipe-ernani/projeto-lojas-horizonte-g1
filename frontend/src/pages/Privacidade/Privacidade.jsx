@@ -2,7 +2,7 @@ import styles from "./Privacidade.module.css";
 
 export default function Privacidade() {
   return (
-    <main className={`container ${styles.page}`}>
+    <div className={`container ${styles.page}`}>
       <aside className={styles.avisoAcademico} role="note">
         <strong>Aviso:</strong> Projeto acadêmico (Lojas Horizonte) — conteúdo
         demonstrativo, não substitui revisão jurídica.
@@ -71,6 +71,6 @@ export default function Privacidade() {
           entrando em contato com a equipe do projeto.
         </p>
       </section>
-    </main>
+    </div>
   );
 }

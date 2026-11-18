@@ -6,7 +6,7 @@ const OPCOES_ORDENACAO = [
   { valor: "relevancia", rotulo: "Relevância" },
   { valor: "menor-preco", rotulo: "Menor preço" },
   { valor: "maior-preco", rotulo: "Maior preço" },
-  { valor: "melhor-avaliados", rotulo: "Melhor avaliados" },
+  { valor: "recentes", rotulo: "Mais recentes" },
 ];
 
 /**
@@ -17,20 +17,28 @@ export default function CatalogoHeader({
   totalProdutos = 0,
   ordenar = "relevancia",
   busca = "",
+  carregando = false,
+  comErro = false,
   onMudarOrdenacao,
   onAbrirFiltrosMobile,
 }) {
   const titulo = busca ? `Resultados para "${busca}"` : "Catálogo";
 
+  // Sem resposta da API não existe contagem: "0 produtos" pareceria lista vazia
+  let contagem = `${totalProdutos} produtos encontrados`;
+  if (carregando) {
+    contagem = "Carregando produtos...";
+  } else if (comErro) {
+    contagem = "";
+  } else if (totalProdutos === 1) {
+    contagem = "1 produto encontrado";
+  }
+
   return (
     <div className={styles.header}>
       <div className={styles.titleArea}>
         <h1 className={styles.title}>{titulo}</h1>
-        <p className={styles.count}>
-          {totalProdutos === 1
-            ? "1 produto encontrado"
-            : `${totalProdutos} produtos encontrados`}
-        </p>
+        {contagem ? <p className={styles.count}>{contagem}</p> : null}
       </div>
 
       <div className={styles.controlsArea}>

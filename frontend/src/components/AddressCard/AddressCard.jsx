@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Badge from "@/components/ui/Badge/Badge";
 import Button from "@/components/ui/Button/Button";
+import AvisoAcao from "@/components/AvisoAcao/AvisoAcao";
 import styles from "./AddressCard.module.css";
 
 /**
@@ -16,6 +17,7 @@ export default function AddressCard({
   className = "",
 }) {
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
+  const [erroAcao, setErroAcao] = useState("");
 
   if (!endereco) {
     return null;
@@ -34,10 +36,30 @@ export default function AddressCard({
     padrao = false,
   } = endereco;
 
-  function handleConfirmarExclusao() {
+  async function handleConfirmarExclusao() {
     setConfirmandoExclusao(false);
-    if (typeof onExcluir === "function") {
-      onExcluir(id);
+    setErroAcao("");
+    if (typeof onExcluir !== "function") {
+      return;
+    }
+    try {
+      await onExcluir(id);
+    } catch (err) {
+      setErroAcao(
+        err?.message || "Não foi possível excluir o endereço. Tente novamente.",
+      );
+    }
+  }
+
+  async function handleDefinirPadrao() {
+    setErroAcao("");
+    try {
+      await onDefinirPadrao(id, endereco);
+    } catch (err) {
+      setErroAcao(
+        err?.message ||
+          "Não foi possível definir o endereço padrão. Tente novamente.",
+      );
     }
   }
 
@@ -63,6 +85,8 @@ export default function AddressCard({
         </p>
         {cep ? <p className={styles.cep}>CEP {cep}</p> : null}
       </div>
+
+      <AvisoAcao mensagem={erroAcao} onFechar={() => setErroAcao("")} />
 
       {confirmandoExclusao ? (
         <div className={styles.confirmBox} role="alert">
@@ -91,7 +115,7 @@ export default function AddressCard({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onDefinirPadrao(id, endereco)}
+              onClick={handleDefinirPadrao}
               aria-label={`Tornar ${apelido} o endereço padrão`}
             >
               Tornar padrão

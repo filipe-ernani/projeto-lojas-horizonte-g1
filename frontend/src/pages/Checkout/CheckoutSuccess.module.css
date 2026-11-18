@@ -64,6 +64,50 @@
   margin: 0;
 }
 
+.campoPix {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.campoRotulo {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--color-muted);
+}
+
+.campoLinha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.campoValor {
+  flex: 1 1 12rem;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-size: var(--fs-sm);
+  overflow-wrap: anywhere;
+}
+
+.retorno,
+.retornoErro {
+  min-height: var(--space-5);
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--color-ink);
+}
+
+.retornoErro {
+  color: var(--color-danger-text);
+}
+
 .disclaimer {
   font-size: var(--fs-xs);
   color: var(--color-muted);

@@ -3,11 +3,14 @@ import styles from "./CheckoutPagamento.module.css";
 
 /**
  * Seção de forma de pagamento do Checkout:
- * Exibe título e as opções de pagamento simuladas (Pix, Cartão, Boleto).
+ * Exibe título e as opções de pagamento simuladas (Pix, crédito e débito).
  */
 export default function CheckoutPagamento({
   formaPagamento,
   onSelecionar,
+  parcelas,
+  onSelecionarParcelas,
+  total,
 }) {
   return (
     <section className={styles.section} aria-labelledby="secao-pagamento">
@@ -20,6 +23,9 @@ export default function CheckoutPagamento({
       <PaymentOptions
         selecionado={formaPagamento}
         onSelecionar={onSelecionar}
+        parcelas={parcelas}
+        onSelecionarParcelas={onSelecionarParcelas}
+        total={total}
       />
     </section>
   );

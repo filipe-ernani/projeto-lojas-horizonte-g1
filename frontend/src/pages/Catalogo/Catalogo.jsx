@@ -71,6 +71,7 @@ export default function Catalogo({
     total: totalApi,
     limite: limiteApi,
     carregando,
+    atualizando,
     erro,
     recarregar,
   } = useProdutos(filtrosQuery);
@@ -138,6 +139,12 @@ export default function Catalogo({
     setFiltrosAbertosMobile(false);
   }
 
+  // Usado quando a tela não tem resultado: a busca também sai da URL
+  function handleLimparTudo() {
+    setSearchParams(new URLSearchParams());
+    setFiltrosAbertosMobile(false);
+  }
+
   function handleMudarOrdenacao(novaOrdenacao) {
     atualizarParams({ ordenar: novaOrdenacao });
   }
@@ -147,33 +154,64 @@ export default function Catalogo({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  if (carregando) {
-    return (
-      <main className={`container ${styles.main}`}>
-        <CatalogoSkeleton />
-      </main>
-    );
-  }
+  function renderProdutos() {
+    if (carregando) {
+      return <CatalogoSkeleton />;
+    }
 
-  if (erro) {
-    return (
-      <main className={`container ${styles.main}`}>
+    if (erro?.status === 400) {
+      return (
+        <EmptyState
+          titulo="Não foi possível aplicar os filtros"
+          mensagem={erro.message}
+          textoAcao="Limpar filtros"
+          onAcao={handleLimparTudo}
+        />
+      );
+    }
+
+    if (erro) {
+      return (
         <EmptyState
           titulo="Não foi possível carregar o catálogo"
           mensagem="Não foi possível carregar. Tente novamente."
           textoAcao="Tentar de novo"
           onAcao={recarregar}
         />
-      </main>
+      );
+    }
+
+    if ((produtos?.length ?? 0) === 0) {
+      return (
+        <EmptyState
+          titulo="Nenhum produto encontrado"
+          mensagem="Não encontramos produtos com os critérios selecionados. Tente ajustar os filtros ou fazer uma nova busca."
+          textoAcao="Limpar filtros"
+          onAcao={handleLimparTudo}
+        />
+      );
+    }
+
+    return (
+      <>
+        <ProductGrid produtos={produtos} />
+        <Pagination
+          paginaAtual={pagina}
+          totalPaginas={totalPaginas}
+          onMudarPagina={handleMudarPagina}
+        />
+      </>
     );
   }
 
   return (
-    <main className={`container ${styles.main}`}>
+    <div className={`container ${styles.main}`}>
       <CatalogoHeader
         totalProdutos={total}
         ordenar={ordenar}
         busca={busca}
+        carregando={carregando}
+        comErro={Boolean(erro)}
         onMudarOrdenacao={handleMudarOrdenacao}
         onAbrirFiltrosMobile={() => setFiltrosAbertosMobile(true)}
       />
@@ -190,32 +228,20 @@ export default function Catalogo({
           onFecharMobile={() => setFiltrosAbertosMobile(false)}
         />
 
-        <div className={styles.productsArea}>
+        <div className={styles.productsArea} aria-busy={atualizando}>
           <ActiveFilterChips
             filtros={filtrosAtivos}
             onRemoverFiltro={handleRemoverFiltro}
             onLimparTudo={handleLimparFiltros}
           />
 
-          {produtos.length === 0 ? (
-            <EmptyState
-              titulo="Nenhum produto encontrado"
-              mensagem="Não encontramos produtos com os critérios selecionados. Tente ajustar os filtros ou fazer uma nova busca."
-              textoAcao="Limpar filtros"
-              onAcao={handleLimparFiltros}
-            />
-          ) : (
-            <>
-              <ProductGrid produtos={produtos} />
-              <Pagination
-                paginaAtual={pagina}
-                totalPaginas={totalPaginas}
-                onMudarPagina={handleMudarPagina}
-              />
-            </>
-          )}
+          <p className={styles.statusAtualizacao} role="status">
+            {atualizando ? "Atualizando resultados..." : ""}
+          </p>
+
+          {renderProdutos()}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

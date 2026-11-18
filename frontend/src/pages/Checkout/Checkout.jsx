@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import useCarrinho from "@/hooks/useCarrinho";
 import useEnderecos from "@/hooks/useEnderecos";
+import useCheckoutIniciado from "@/hooks/useCheckoutIniciado";
 import { finalizarCarrinho } from "@/services/carrinhoService";
 import OrderSummary from "@/components/OrderSummary/OrderSummary";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
@@ -46,6 +47,8 @@ export default function Checkout({
     recarregar: recarregarEnderecos,
   } = useEnderecos();
 
+  useCheckoutIniciado();
+
   const itens =
     carrinhoProp?.itens !== undefined ? carrinhoProp.itens : itensContexto;
   const subtotal =
@@ -89,6 +92,23 @@ export default function Checkout({
 
   // Forma de pagamento padrão
   const [formaPagamento, setFormaPagamento] = useState("PIX");
+  const [parcelas, setParcelas] = useState(1);
+
+  // O pedido já finalizado vem primeiro: recarregar a cesta não pode esconder a confirmação
+  if (sucessoPedido || pedidoCriado) {
+    const pedidoExibicao = sucessoPedido || pedidoCriado;
+    return (
+      <>
+        <CheckoutHeader passoAtivo={3} />
+        <main className={`container ${styles.main}`}>
+          <CheckoutSuccess
+            pedido={pedidoExibicao}
+            formaPagamento={pedidoExibicao?.formaPagamento || formaPagamento}
+          />
+        </main>
+      </>
+    );
+  }
 
   if (carregando) {
     return (
@@ -116,22 +136,6 @@ export default function Checkout({
               recarregarCarrinho();
               recarregarEnderecos();
             }}
-          />
-        </main>
-      </>
-    );
-  }
-
-  // Se o pedido já foi finalizado com sucesso
-  if (sucessoPedido || pedidoCriado) {
-    const pedidoExibicao = sucessoPedido || pedidoCriado;
-    return (
-      <>
-        <CheckoutHeader passoAtivo={3} />
-        <main className={`container ${styles.main}`}>
-          <CheckoutSuccess
-            pedidoId={pedidoExibicao?.id}
-            formaPagamento={formaPagamento}
           />
         </main>
       </>
@@ -172,23 +176,23 @@ export default function Checkout({
     setEnviando(true);
     setErroEnvio(null);
 
+    // Só as escolhas do pedido são enviadas: nenhum dado de cartão sai do navegador
+    const dadosPedido = {
+      enderecoId: enderecoSelecionado,
+      formaPagamento,
+      ...(formaPagamento === "CARTAO_CREDITO" ? { parcelas } : {}),
+    };
+
     try {
-      let resultado;
-      if (onFinalizar) {
-        resultado = await onFinalizar({
-          enderecoId: enderecoSelecionado,
-          formaPagamento,
-        });
-      } else {
-        resultado = await finalizarCarrinho({
-          enderecoId: enderecoSelecionado,
-          formaPagamento,
-        });
-        await recarregarCarrinho();
-      }
+      const resultado = onFinalizar
+        ? await onFinalizar(dadosPedido)
+        : await finalizarCarrinho(dadosPedido);
 
       if (resultado) {
         setSucessoPedido(resultado);
+      }
+      if (!onFinalizar) {
+        recarregarCarrinho();
       }
     } catch (err) {
       setErroEnvio(
@@ -222,6 +226,9 @@ export default function Checkout({
             <CheckoutPagamento
               formaPagamento={formaPagamento}
               onSelecionar={setFormaPagamento}
+              parcelas={parcelas}
+              onSelecionarParcelas={setParcelas}
+              total={total}
             />
 
             {erroEnvio ? (

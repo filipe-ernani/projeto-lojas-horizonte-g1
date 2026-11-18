@@ -27,20 +27,27 @@ export default function CartItem({
     imagemUrl,
     tamanho,
     cor,
+    corHex,
     quantidade = 1,
   } = item;
 
   const precoFormatado = formatCurrency(preco);
+  const atributos = [
+    tamanho ? `Tamanho: ${tamanho}` : null,
+    cor ? `Cor: ${cor}` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   function handleQuantidadeChange(novaQuantidade) {
     if (onAlterarQuantidade) {
-      onAlterarQuantidade(produtoId, novaQuantidade);
+      onAlterarQuantidade(item, novaQuantidade);
     }
   }
 
   function handleRemover() {
     if (onRemover) {
-      onRemover(produtoId);
+      onRemover(item);
     }
   }
 
@@ -52,7 +59,7 @@ export default function CartItem({
         aria-label={`Ver detalhes de ${nome}`}
       >
         <div className={styles.imageWrapper}>
-          <ProductImage imagemUrl={imagemUrl} alt={nome} />
+          <ProductImage imagemUrl={imagemUrl} alt={nome} cor={corHex} />
         </div>
       </Link>
 
@@ -62,9 +69,7 @@ export default function CartItem({
             <Link to={`/produto/${produtoId}`} className={styles.titleLink}>
               <h3 className={styles.name}>{nome}</h3>
             </Link>
-            <p className={styles.attributes}>
-              Tamanho: {tamanho} · Cor: {cor}
-            </p>
+            {atributos ? <p className={styles.attributes}>{atributos}</p> : null}
           </div>
 
           <div className={styles.priceContainer}>

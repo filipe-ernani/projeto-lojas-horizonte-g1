@@ -4,6 +4,7 @@ import useCarrinho from "@/hooks/useCarrinho";
 import CartItem from "@/components/CartItem/CartItem";
 import OrderSummary from "@/components/OrderSummary/OrderSummary";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
+import AvisoAcao from "@/components/AvisoAcao/AvisoAcao";
 import CarrinhoSkeleton from "./CarrinhoSkeleton";
 import styles from "./Carrinho.module.css";
 
@@ -30,6 +31,8 @@ export default function Carrinho({
     total: totalContexto,
     carregando: carregandoContexto,
     erro: erroContexto,
+    erroAcao,
+    limparErroAcao,
     alterarQuantidade: alterarQtdContexto,
     remover: removerContexto,
     recarregar,
@@ -58,15 +61,15 @@ export default function Carrinho({
 
   if (carregando) {
     return (
-      <main className={`container ${styles.main}`}>
+      <div className={`container ${styles.main}`}>
         <CarrinhoSkeleton />
-      </main>
+      </div>
     );
   }
 
   if (erro) {
     return (
-      <main className={`container ${styles.main}`}>
+      <div className={`container ${styles.main}`}>
         <EmptyState
           titulo="Não foi possível carregar sua cesta"
           mensagem={
@@ -75,31 +78,37 @@ export default function Carrinho({
           textoAcao="Tentar de novo"
           onAcao={recarregar}
         />
-      </main>
+      </div>
     );
   }
 
-  function handleAlterarQuantidade(alvo, novaQtd) {
+  async function handleAlterarQuantidade(item, novaQtd) {
     if (onAlterarQuantidadeProp) {
-      onAlterarQuantidadeProp(alvo, novaQtd);
+      onAlterarQuantidadeProp(item, novaQtd);
       return;
     }
-    const item = typeof alvo === "object" ? alvo : { produtoId: alvo };
-    alterarQtdContexto(
-      item.produtoId || item.sku,
-      item.tamanho,
-      item.cor,
-      novaQtd,
-    );
+    try {
+      await alterarQtdContexto(
+        item.produtoId || item.sku,
+        item.tamanho,
+        item.cor,
+        novaQtd,
+      );
+    } catch {
+      // A mensagem da falha chega por erroAcao de useCarrinho
+    }
   }
 
-  function handleRemover(alvo) {
+  async function handleRemover(item) {
     if (onRemoverProp) {
-      onRemoverProp(alvo);
+      onRemoverProp(item);
       return;
     }
-    const item = typeof alvo === "object" ? alvo : { produtoId: alvo };
-    removerContexto(item.produtoId || item.sku, item.tamanho, item.cor);
+    try {
+      await removerContexto(item.produtoId || item.sku, item.tamanho, item.cor);
+    } catch {
+      // A mensagem da falha chega por erroAcao de useCarrinho
+    }
   }
 
   const temItens = Array.isArray(itens) && itens.length > 0;
@@ -110,11 +119,13 @@ export default function Carrinho({
   const subtituloCesta = temItens ? `${totalItens} ${rotuloItens}` : "0 itens";
 
   return (
-    <main className={`container ${styles.main}`}>
+    <div className={`container ${styles.main}`}>
       <header className={styles.header}>
         <h1 className={styles.title}>Sua cesta</h1>
         <p className={styles.subtitle}>{subtituloCesta}</p>
       </header>
+
+      <AvisoAcao mensagem={erroAcao?.message} onFechar={limparErroAcao} />
 
       {!temItens ? (
         <EmptyState
@@ -158,6 +169,6 @@ export default function Carrinho({
           </div>
         </div>
       )}
-    </main>
+    </div>
   );
 }

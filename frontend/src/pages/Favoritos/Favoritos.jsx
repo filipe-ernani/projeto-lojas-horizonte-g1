@@ -6,6 +6,7 @@ import useCarrinho from "@/hooks/useCarrinho";
 import ProductGrid from "@/components/ProductGrid/ProductGrid";
 import Button from "@/components/ui/Button/Button";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
+import AvisoAcao from "@/components/AvisoAcao/AvisoAcao";
 import FavoritosSkeleton from "./FavoritosSkeleton";
 import styles from "./Favoritos.module.css";
 
@@ -25,14 +26,23 @@ export default function Favoritos({
   const location = useLocation();
 
   const {
-    itens: itensApi,
+    favoritos: itensApi,
     carregando: carregandoApi,
     erro: erroApi,
+    erroAcao: erroAcaoFavoritos,
+    limparErroAcao: limparErroFavoritos,
     recarregar,
     alternar,
   } = useFavoritos();
 
-  const { adicionar } = useCarrinho();
+  const {
+    adicionar,
+    cestaPronta,
+    erro: erroCesta,
+    erroAcao: erroAcaoCesta,
+    limparErroAcao: limparErroCesta,
+    recarregar: recarregarCesta,
+  } = useCarrinho();
   const [adicionandoId, setAdicionandoId] = useState(null);
   const [feedback, setFeedback] = useState("");
 
@@ -49,15 +59,15 @@ export default function Favoritos({
 
   if (carregando) {
     return (
-      <main className={`container ${styles.main}`}>
+      <div className={`container ${styles.main}`}>
         <FavoritosSkeleton />
-      </main>
+      </div>
     );
   }
 
   if (erro) {
     return (
-      <main className={`container ${styles.main}`}>
+      <div className={`container ${styles.main}`}>
         <EmptyState
           titulo="Não foi possível carregar os favoritos"
           mensagem={
@@ -66,7 +76,7 @@ export default function Favoritos({
           textoAcao="Tentar de novo"
           onAcao={recarregar}
         />
-      </main>
+      </div>
     );
   }
 
@@ -93,8 +103,12 @@ export default function Favoritos({
       const corNome = typeof corObj === "object" ? corObj?.nome : corObj;
       const res = await adicionar({
         produtoId: produto.id,
+        nome: produto.nome,
+        preco: produto.preco,
+        imagemUrl: produto.imagemUrl,
         tamanho: tamanhos[0] || null,
         cor: corNome || null,
+        corHex: produto.corHex || corObj?.hex || null,
         quantidade: 1,
       });
 
@@ -106,18 +120,22 @@ export default function Favoritos({
       setFeedback(`"${produto.nome}" adicionado à cesta!`);
       setTimeout(() => setFeedback(""), 3000);
     } catch {
-      setFeedback("Não foi possível adicionar o produto.");
+      // A mensagem da falha chega por erroAcao de useCarrinho
     } finally {
       setAdicionandoId(null);
     }
   }
 
-  function handleFavoritar(produto) {
+  async function handleFavoritar(produto) {
     if (onFavoritarProp) {
       onFavoritarProp(produto);
       return;
     }
-    alternar(produto.id, produto);
+    try {
+      await alternar(produto.id, produto);
+    } catch {
+      // A mensagem da falha chega por erroAcao de useFavoritos
+    }
   }
 
   function renderAcoes(produto) {
@@ -136,7 +154,7 @@ export default function Favoritos({
         variant="primary"
         size="sm"
         fullWidth
-        disabled={estaAdicionando}
+        disabled={estaAdicionando || (!precisaEscolher && !cestaPronta)}
         onClick={() => handleAdicionarAoCarrinho(produto)}
         aria-label={
           precisaEscolher
@@ -153,13 +171,14 @@ export default function Favoritos({
     );
   }
 
-  const rotuloItens = produtos.length === 1 ? "item salvo" : "itens salvos";
+  const rotuloItens =
+    temProdutos && produtos.length === 1 ? "item salvo" : "itens salvos";
   const subtituloFavoritos = temProdutos
     ? `${produtos.length} ${rotuloItens}`
     : "0 itens salvos";
 
   return (
-    <main className={`container ${styles.main}`}>
+    <div className={`container ${styles.main}`}>
       <header className={styles.header}>
         <h1 className={styles.title}>Favoritos</h1>
         <p className={styles.subtitle}>{subtituloFavoritos}</p>
@@ -169,6 +188,19 @@ export default function Favoritos({
         <p className={styles.feedbackAlert} role="status" aria-live="polite">
           {feedback}
         </p>
+      ) : null}
+
+      <AvisoAcao
+        mensagem={erroAcaoFavoritos?.message}
+        onFechar={limparErroFavoritos}
+      />
+      <AvisoAcao mensagem={erroAcaoCesta?.message} onFechar={limparErroCesta} />
+      {erroCesta ? (
+        <AvisoAcao
+          mensagem="Não foi possível carregar sua cesta."
+          textoAcao="Tentar de novo"
+          onAcao={recarregarCesta}
+        />
       ) : null}
 
       {!temProdutos ? (
@@ -187,6 +219,6 @@ export default function Favoritos({
           renderAcoes={renderAcoes}
         />
       )}
-    </main>
+    </div>
   );
 }

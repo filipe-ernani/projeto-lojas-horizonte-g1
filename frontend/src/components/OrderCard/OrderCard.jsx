@@ -4,6 +4,7 @@ import Badge from "@/components/ui/Badge/Badge";
 import Button from "@/components/ui/Button/Button";
 import Accordion from "@/components/ui/Accordion/Accordion";
 import ProductImage from "@/components/ui/ProductImage/ProductImage";
+import AvisoAcao from "@/components/AvisoAcao/AvisoAcao";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
 import styles from "./OrderCard.module.css";
@@ -19,6 +20,7 @@ export default function OrderCard({
   cancelando = false,
 }) {
   const [confirmandoCancelamento, setConfirmandoCancelamento] = useState(false);
+  const [erroCancelamento, setErroCancelamento] = useState("");
 
   if (!pedido) {
     return null;
@@ -59,8 +61,16 @@ export default function OrderCard({
 
   async function handleConfirmarCancelamento() {
     setConfirmandoCancelamento(false);
-    if (onCancelar) {
+    setErroCancelamento("");
+    if (!onCancelar) {
+      return;
+    }
+    try {
       await onCancelar(id);
+    } catch (err) {
+      setErroCancelamento(
+        err?.message || "Não foi possível cancelar o pedido. Tente novamente.",
+      );
     }
   }
 
@@ -95,11 +105,15 @@ export default function OrderCard({
         <div className={styles.thumbnailsRow}>
           {itens.slice(0, 4).map((item, index) => (
             <div
-              key={`${id}-thumb-${item.produtoId || index}`}
+              key={`${id}-thumb-${item.produtoId || index}-${item.tamanho}-${item.cor}`}
               className={styles.thumbnailWrapper}
               title={item.nome}
             >
-              <ProductImage imagemUrl={item.imagemUrl} alt={item.nome} />
+              <ProductImage
+                imagemUrl={item.imagemUrl}
+                alt={item.nome}
+                cor={item.corHex}
+              />
             </div>
           ))}
           {itens.length > 4 ? (
@@ -115,11 +129,22 @@ export default function OrderCard({
               {itens.map((item, index) => {
                 const itemKey = `${id}-${item.produtoId || index}-${item.tamanho}-${item.cor}`;
                 const precoItemFormatado = formatCurrency(item.preco);
+                const atributosItem = [
+                  item.tamanho ? `Tamanho: ${item.tamanho}` : null,
+                  item.cor ? `Cor: ${item.cor}` : null,
+                  `Qtd: ${item.quantidade || 1}`,
+                ]
+                  .filter(Boolean)
+                  .join(" · ");
 
                 return (
                   <li key={itemKey} className={styles.itemRow}>
                     <div className={styles.itemImageWrapper}>
-                      <ProductImage imagemUrl={item.imagemUrl} alt={item.nome} />
+                      <ProductImage
+                        imagemUrl={item.imagemUrl}
+                        alt={item.nome}
+                        cor={item.corHex}
+                      />
                     </div>
 
                     <div className={styles.itemDetails}>
@@ -130,10 +155,7 @@ export default function OrderCard({
                         <h4 className={styles.itemName}>{item.nome}</h4>
                       </Link>
 
-                      <p className={styles.itemMeta}>
-                        Tamanho: {item.tamanho} · Cor: {item.cor} · Qtd:{" "}
-                        {item.quantidade || 1}
-                      </p>
+                      <p className={styles.itemMeta}>{atributosItem}</p>
                     </div>
 
                     <span className={styles.itemPrice}>{precoItemFormatado}</span>
@@ -147,6 +169,10 @@ export default function OrderCard({
 
       {!isCancelado && onCancelar ? (
         <div className={styles.cardFooter}>
+          <AvisoAcao
+            mensagem={erroCancelamento}
+            onFechar={() => setErroCancelamento("")}
+          />
           {confirmandoCancelamento ? (
             <div className={styles.confirmBox} role="alert">
               <p className={styles.confirmText}>

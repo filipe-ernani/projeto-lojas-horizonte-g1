@@ -2,7 +2,7 @@ import styles from "./Institucional.module.css";
 
 export default function Institucional() {
   return (
-    <main className={`container ${styles.page}`}>
+    <div className={`container ${styles.page}`}>
       <aside className={styles.avisoAcademico} role="note">
         <strong>Aviso:</strong> Projeto acadêmico (Lojas Horizonte) — conteúdo
         demonstrativo, não substitui revisão jurídica.
@@ -55,6 +55,6 @@ export default function Institucional() {
           plataforma e sugestões de melhoria.
         </p>
       </section>
-    </main>
+    </div>
   );
 }

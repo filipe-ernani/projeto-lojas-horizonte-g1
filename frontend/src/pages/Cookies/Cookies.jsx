@@ -2,7 +2,7 @@ import styles from "./Cookies.module.css";
 
 export default function Cookies() {
   return (
-    <main className={`container ${styles.page}`}>
+    <div className={`container ${styles.page}`}>
       <aside className={styles.avisoAcademico} role="note">
         <strong>Aviso:</strong> Projeto acadêmico (Lojas Horizonte) — conteúdo
         demonstrativo, não substitui revisão jurídica.
@@ -60,6 +60,6 @@ export default function Cookies() {
           novamente a cada nova visita.
         </p>
       </section>
-    </main>
+    </div>
   );
 }

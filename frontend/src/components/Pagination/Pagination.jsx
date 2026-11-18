@@ -2,6 +2,23 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import styles from "./Pagination.module.css";
 
 /**
+ * Janela de páginas: primeira, última e vizinhas da atual; "..." marca os saltos.
+ */
+function montarJanela(paginaAtual, totalPaginas) {
+  const janela = [];
+  for (let num = 1; num <= totalPaginas; num += 1) {
+    const visivel =
+      num === 1 || num === totalPaginas || Math.abs(num - paginaAtual) <= 1;
+    if (visivel) {
+      janela.push(num);
+    } else if (janela[janela.length - 1] !== "...") {
+      janela.push("...");
+    }
+  }
+  return janela;
+}
+
+/**
  * Paginação conforme docs/DESIGN.md:
  * Texto 14 px muted; paginação com quadrados de 44 px (atual: preto).
  */
@@ -15,8 +32,7 @@ export default function Pagination({
     return null;
   }
 
-  // Gera lista de páginas para exibição
-  const paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+  const paginas = montarJanela(paginaAtual, totalPaginas);
 
   return (
     <nav
@@ -34,7 +50,19 @@ export default function Pagination({
       </button>
 
       <ul className={styles.pagesList}>
-        {paginas.map((num) => {
+        {paginas.map((num, indice) => {
+          if (num === "...") {
+            return (
+              <li
+                key={`salto-${indice}`}
+                className={styles.ellipsis}
+                aria-hidden="true"
+              >
+                ...
+              </li>
+            );
+          }
+
           const isAtiva = num === paginaAtual;
           return (
             <li key={num}>

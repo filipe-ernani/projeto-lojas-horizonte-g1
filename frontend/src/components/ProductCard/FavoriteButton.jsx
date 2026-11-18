@@ -11,6 +11,7 @@ export default function FavoriteButton({
   isFavorito = false,
   onClick,
   ariaLabel = "Adicionar aos favoritos",
+  disabled = false,
   className = "",
 }) {
   return (
@@ -20,6 +21,7 @@ export default function FavoriteButton({
       ativo={isFavorito}
       tamanho={40}
       onClick={onClick}
+      disabled={disabled}
       className={`${styles.favoriteBtn} ${className}`.trim()}
     />
   );

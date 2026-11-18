@@ -15,6 +15,8 @@ export default function ProductActionRow({
   onToggleFavorito,
   adicionando = false,
   feedbackAdicao = "",
+  adicionarDesabilitado = false,
+  favoritoDesabilitado = false,
 }) {
   const textoBotao = adicionando
     ? "Adicionando..."
@@ -29,7 +31,7 @@ export default function ProductActionRow({
           variant="primary"
           size="lg"
           fullWidth
-          disabled={!podeAdicionar || adicionando}
+          disabled={!podeAdicionar || adicionando || adicionarDesabilitado}
           onClick={onAdicionar}
           aria-live="polite"
         >
@@ -45,6 +47,7 @@ export default function ProductActionRow({
           }
           ativo={favorito}
           tamanho={52}
+          disabled={favoritoDesabilitado}
           onClick={onToggleFavorito}
         />
       </div>

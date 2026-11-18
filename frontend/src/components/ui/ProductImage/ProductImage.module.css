@@ -46,6 +46,18 @@
   transition: transform 0.25s ease;
 }
 
+/* Contorno reforçado: mantém a peça visível quando a cor é próxima do fundo */
+.placeholder .silhueta :global(.b) {
+  stroke: var(--color-ink);
+  stroke-opacity: 0.55;
+  stroke-width: 1.6;
+}
+
+.placeholder .silhueta :global(.ln) {
+  stroke: var(--color-ink);
+  stroke-opacity: 0.5;
+}
+
 .wrapper:hover .silhueta {
   transform: scale(1.04);
 }

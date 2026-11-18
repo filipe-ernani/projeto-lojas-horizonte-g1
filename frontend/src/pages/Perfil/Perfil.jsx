@@ -33,7 +33,8 @@ export default function Perfil({
     perfil: perfilApi,
     carregando: carregandoPerfil,
     erro: erroPerfil,
-    salvarPerfil: salvarPerfilApi,
+    salvando: salvandoPerfil,
+    salvar: salvarPerfilApi,
     recarregar: recarregarPerfil,
   } = usePerfil();
 
@@ -41,22 +42,19 @@ export default function Perfil({
     enderecos: enderecosApi,
     carregando: carregandoEnderecos,
     erro: erroEnderecos,
-    criarEndereco,
-    editarEndereco,
-    excluirEndereco,
+    criar: criarEndereco,
+    editar: editarEndereco,
+    excluir: excluirEndereco,
     definirPadrao,
     recarregar: recarregarEnderecos,
   } = useEnderecos();
 
-  const perfil =
-    perfilProp ||
-    (perfilApi?.email
-      ? perfilApi
-      : {
-          nome: usuario?.displayName || "",
-          email: usuario?.email || "",
-          telefone: usuario?.phoneNumber || "",
-        });
+  // Cada campo vem da API; a conta do Firebase só completa o que a API não tiver
+  const perfil = perfilProp || {
+    nome: perfilApi?.nome || usuario?.displayName || "",
+    email: perfilApi?.email || usuario?.email || "",
+    telefone: perfilApi?.telefone || usuario?.phoneNumber || "",
+  };
 
   const enderecos =
     enderecosProp !== undefined ? enderecosProp : enderecosApi;
@@ -132,8 +130,9 @@ export default function Perfil({
     return (
       <div className={styles.sectionsContainer}>
         <PerfilDadosSection
-          key={`${perfil?.email || ""}-${perfil?.nome || ""}`}
+          key={perfil?.email || ""}
           perfil={perfil}
+          salvandoPerfil={salvandoPerfil}
           onSalvarPerfil={handleSalvarPerfil}
         />
         <PerfilEnderecosSection
@@ -147,7 +146,7 @@ export default function Perfil({
   }
 
   return (
-    <main className={`container ${styles.main}`}>
+    <div className={`container ${styles.main}`}>
       <header className={styles.header}>
         <h1 className={styles.title}>Meu perfil</h1>
         <p className={styles.subtitle}>
@@ -164,6 +163,6 @@ export default function Perfil({
           {renderConteudo()}
         </section>
       </div>
-    </main>
+    </div>
   );
 }

@@ -15,7 +15,7 @@ import styles from "./Home.module.css";
  * Página Inicial (Home /) conforme docs/DESIGN.md e docs/API.md:
  * - Seção #novidades conectada ao hook useNovidades (D-25: 8 SKUs reais da API).
  * - Suporte completo aos 3 estados na seção de novidades (carregando, erro e vazio).
- * - Link "Ver catálogo" da seção direciona para /catalogo?ordenar=novidades.
+ * - Link "Ver catálogo" da seção direciona para /catalogo?ordenar=recentes.
  */
 export default function Home({
   categorias: categoriasProp,
@@ -59,7 +59,7 @@ export default function Home({
   }, [location.hash]);
 
   return (
-    <main className={`container ${styles.main}`}>
+    <div className={`container ${styles.main}`}>
       <HomeHero />
 
       <BenefitsBanner />
@@ -83,13 +83,13 @@ export default function Home({
               Novidades
             </h2>
             <p className={styles.sectionSubtitle}>
-              Últimos lançamentos com cortes contemporâneos e tecidos selecionados
+              Seleção SIMULADA de novidades para demonstração da loja
             </p>
           </div>
           <Link
-            to="/catalogo?ordenar=novidades"
+            to="/catalogo?ordenar=recentes"
             className={styles.viewAll}
-            aria-label="Ver catálogo completo ordenado por novidades"
+            aria-label="Ver catálogo completo ordenado pelos mais recentes"
           >
             <span>Ver catálogo</span>
             <ArrowRight size={16} strokeWidth={1.8} aria-hidden="true" />
@@ -132,12 +132,12 @@ export default function Home({
             titulo="Vitrine em preparação"
             mensagem="Os últimos lançamentos e novidades aparecerão assim que o catálogo for carregado."
             textoAcao="Explorar catálogo completo"
-            para="/catalogo?ordenar=novidades"
+            para="/catalogo?ordenar=recentes"
           />
         )}
       </section>
 
       <EditorialBanner />
-    </main>
+    </div>
   );
 }

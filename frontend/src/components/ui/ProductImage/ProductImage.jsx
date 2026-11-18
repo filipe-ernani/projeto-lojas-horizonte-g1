@@ -107,7 +107,8 @@ export default function ProductImage({
   const temImagem = Boolean(imagemUrl) && !comErro;
 
   const nomeProduto = extrairNomeProduto(produto, nome, alt);
-  const corProduto = produto?.cores?.[0]?.hex || cor || produto?.cor || undefined;
+  const corProduto =
+    cor || produto?.corHex || produto?.cores?.[0]?.hex || undefined;
 
   const tipo = tipoDaPeca(nomeProduto);
   const temSilhueta = Boolean(tipo && FORMAS[tipo]);

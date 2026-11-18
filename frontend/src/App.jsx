@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import ErrorBoundary from "@/components/ErrorBoundary/ErrorBoundary";
 import Layout from "@/components/Layout/Layout";
 import PrivateRoute from "@/components/PrivateRoute/PrivateRoute";
 import Home from "@/pages/Home/Home";
@@ -16,38 +17,42 @@ import Termos from "@/pages/Termos/Termos";
 import Cookies from "@/pages/Cookies/Cookies";
 
 function App() {
+  const location = useLocation();
+
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
+    <ErrorBoundary resetKey={location.pathname}>
+      <Routes>
+        <Route path="/login" element={<Login />} />
 
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/catalogo" element={<Catalogo />} />
-        <Route path="/produto/:id" element={<Produto />} />
-        <Route path="/institucional" element={<Institucional />} />
-        <Route path="/privacidade" element={<Privacidade />} />
-        <Route path="/termos" element={<Termos />} />
-        <Route path="/cookies" element={<Cookies />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/catalogo" element={<Catalogo />} />
+          <Route path="/produto/:id" element={<Produto />} />
+          <Route path="/institucional" element={<Institucional />} />
+          <Route path="/privacidade" element={<Privacidade />} />
+          <Route path="/termos" element={<Termos />} />
+          <Route path="/cookies" element={<Cookies />} />
 
-        <Route element={<PrivateRoute />}>
-          <Route path="/favoritos" element={<Favoritos />} />
-          <Route path="/carrinho" element={<Carrinho />} />
-          <Route path="/perfil" element={<Perfil />} />
-          <Route path="/pedidos" element={<Pedidos />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/favoritos" element={<Favoritos />} />
+            <Route path="/carrinho" element={<Carrinho />} />
+            <Route path="/perfil" element={<Perfil />} />
+            <Route path="/pedidos" element={<Pedidos />} />
+          </Route>
         </Route>
-      </Route>
 
-      <Route
-        path="/checkout"
-        element={
-          <PrivateRoute>
-            <Checkout />
-          </PrivateRoute>
-        }
-      />
+        <Route
+          path="/checkout"
+          element={
+            <PrivateRoute>
+              <Checkout />
+            </PrivateRoute>
+          }
+        />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </ErrorBoundary>
   );
 }
 

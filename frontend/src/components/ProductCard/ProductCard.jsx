@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useFavoritos from "@/hooks/useFavoritos";
+import AvisoAcao from "@/components/AvisoAcao/AvisoAcao";
 import { formatCurrency } from "@/utils/formatCurrency";
 import ProductImage from "@/components/ui/ProductImage/ProductImage";
 import RatingPill from "@/components/ui/RatingPill/RatingPill";
@@ -23,7 +25,14 @@ export default function ProductCard({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isFavorito: isFavoritoFn, alternar } = useFavoritos();
+  const {
+    isFavorito: isFavoritoFn,
+    alternar,
+    favoritosProntos,
+    carregando: carregandoFavoritos,
+    limparErroAcao,
+  } = useFavoritos();
+  const [erroFavorito, setErroFavorito] = useState("");
 
   if (!produto) {
     return null;
@@ -31,7 +40,7 @@ export default function ProductCard({
 
   const { id, nome, categoria, preco, imagemUrl, notaMedia, cores } = produto;
   const precoFormatado = formatCurrency(preco);
-  const corHex = cores?.[0]?.hex;
+  const corHex = produto.corHex || cores?.[0]?.hex;
 
   const itemFavorito =
     isFavoritoProp !== undefined
@@ -48,9 +57,23 @@ export default function ProductCard({
       return;
     }
 
-    const resultado = await alternar(id || produto.sku, produto);
-    if (resultado?.precisaLogin) {
-      navigate("/login", { state: { from: location } });
+    // O erro aparece no próprio card: a página pode não exibir erroAcao
+    setErroFavorito("");
+    try {
+      const resultado = await alternar(id || produto.sku, produto);
+      if (resultado?.precisaLogin) {
+        navigate("/login", { state: { from: location } });
+      } else if (resultado?.bloqueado) {
+        limparErroAcao();
+        setErroFavorito(
+          "Aguarde o carregamento dos seus favoritos e tente novamente.",
+        );
+      }
+    } catch (err) {
+      limparErroAcao();
+      setErroFavorito(
+        err?.message || "Não foi possível atualizar seus favoritos.",
+      );
     }
   }
 
@@ -64,7 +87,7 @@ export default function ProductCard({
         <div className={styles.imageContainer}>
           {seloNovo && (
             <div className={styles.badgeWrapper}>
-              <Badge variante="novo">Novo</Badge>
+              <Badge variante="novo">Novo · SIMULADO</Badge>
             </div>
           )}
           <ProductImage
@@ -91,6 +114,7 @@ export default function ProductCard({
         <FavoriteButton
           isFavorito={itemFavorito}
           onClick={handleFavoritar}
+          disabled={carregandoFavoritos && !favoritosProntos}
           ariaLabel={
             itemFavorito
               ? `Remover ${nome} dos favoritos`
@@ -98,6 +122,8 @@ export default function ProductCard({
           }
         />
       </div>
+
+      <AvisoAcao mensagem={erroFavorito} onFechar={() => setErroFavorito("")} />
 
       {acoes ? <div className={styles.actions}>{acoes}</div> : null}
     </article>

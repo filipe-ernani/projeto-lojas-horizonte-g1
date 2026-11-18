@@ -14,6 +14,7 @@ import styles from "./PerfilDadosSection.module.css";
  */
 export default function PerfilDadosSection({
   perfil,
+  salvandoPerfil = false,
   onSalvarPerfil,
 }) {
   const { usuario } = useAuth();
@@ -33,7 +34,19 @@ export default function PerfilDadosSection({
   const [erroNome, setErroNome] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const [mensagemErro, setMensagemErro] = useState(null);
-  const [salvando, setSalvando] = useState(false);
+  const [salvandoLocal, setSalvando] = useState(false);
+  const salvando = salvandoLocal || salvandoPerfil;
+
+  // Dados novos da API entram no formulário sem remontar a seção (preserva as mensagens)
+  const dadosRecebidos = `${nomeInicial}|${telefoneInicial}`;
+  const [dadosAplicados, setDadosAplicados] = useState(dadosRecebidos);
+  if (dadosRecebidos !== dadosAplicados) {
+    setDadosAplicados(dadosRecebidos);
+    setNome(nomeInicial);
+    setTelefone(telefoneInicial);
+    setPlaceholderNome(nomeInicial || "Seu nome completo");
+    setPlaceholderTelefone(telefoneInicial || "(11) 99999-9999");
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
