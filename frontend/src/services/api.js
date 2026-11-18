@@ -20,12 +20,7 @@ function removerBarrasFinais(url = "") {
   return limpa;
 }
 
-const BASE_URL = removerBarrasFinais(
-  import.meta?.env?.VITE_API_URL ||
-    (typeof globalThis !== "undefined" &&
-      globalThis.process?.env?.VITE_API_URL) ||
-    "",
-);
+const BASE_URL = removerBarrasFinais(import.meta?.env?.VITE_API_URL || "");
 
 /**
  * Obtém ou inicializa o identificador de sessão persistido em sessionStorage.
@@ -143,6 +138,13 @@ export async function apiFetch(caminho, opcoes = {}) {
 
   const texto = await resposta.text();
   const dados = parseJsonSeguro(texto);
+
+  if (dados === null) {
+    const mensagem = !resposta.ok
+      ? `Erro ${resposta.status} ao comunicar com o servidor.`
+      : "Resposta inválida do servidor (esperava JSON).";
+    throw new ApiError(mensagem, resposta.status, null);
+  }
 
   if (!resposta.ok) {
     const mensagem =

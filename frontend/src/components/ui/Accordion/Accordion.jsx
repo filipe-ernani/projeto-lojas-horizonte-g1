@@ -13,11 +13,12 @@ export default function Accordion({
   className = "",
   ...rest
 }) {
+  const isOpen = open !== undefined ? open : (defaultOpen ? true : undefined);
+
   return (
     <details
       className={`${styles.accordion} ${className}`.trim()}
-      open={open}
-      defaultOpen={defaultOpen}
+      open={isOpen}
       {...rest}
     >
       <summary className={styles.summary}>
