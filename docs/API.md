@@ -59,7 +59,10 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 | POST | `/api/carrinho/finalizar` | privado | `{ enderecoId, formaPagamento }` (`PIX`, `CARTAO`, `BOLETO`) | `Pedido` |
 | GET | `/api/pedidos/meus` | privado | — | `Pedido[]` |
 | POST | `/api/pedidos/:id/cancelar` | privado | — | `{ ok: true, id, status: "CANCELADO" }` (409 se já cancelado) |
-| POST | `/api/chat` | privado | `{ mensagem, sessaoId }` | `{ resposta }` |
+| POST | `/api/chat` | privado | `{ mensagem, sessaoId }` | `{ resposta }` (timeout 20s, 20 msg/min, D-28) |
+| GET | `/api/integracao/pedidos` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
+| GET | `/api/integracao/pedido-itens` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
+| GET | `/api/integracao/eventos` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
 
 O preço e o total são **sempre calculados pelo servidor**; o front só exibe.
 

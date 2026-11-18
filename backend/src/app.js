@@ -8,6 +8,8 @@ import enderecosRouter from "./routes/enderecos.js";
 import favoritosRouter from "./routes/favoritos.js";
 import carrinhoRouter from "./routes/carrinho.js";
 import pedidosRouter from "./routes/pedidos.js";
+import integracaoRouter from "./routes/integracao.js";
+import chatRouter from "./routes/chat.js";
 import { analyticsMiddleware } from "./services/analyticsService.js";
 
 export const app = express();
@@ -26,7 +28,7 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Authorization", "Content-Type", "X-Sessao-Id"],
+    allowedHeaders: ["Authorization", "Content-Type", "X-Sessao-Id", "X-API-Key"],
   }),
 );
 
@@ -45,6 +47,8 @@ app.use("/api", enderecosRouter);
 app.use("/api", favoritosRouter);
 app.use("/api", carrinhoRouter);
 app.use("/api", pedidosRouter);
+app.use("/api", integracaoRouter);
+app.use("/api", chatRouter);
 
 // Rota 404 JSON padronizada para endpoints /api não mapeados
 app.use("/api", (req, res) => {
