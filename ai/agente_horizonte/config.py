@@ -1,6 +1,7 @@
 """
 Environment configuration for read-only Databricks access.
 """
+
 import os
 import re
 from typing import Any
@@ -67,3 +68,13 @@ def reviews_identifiers() -> tuple[str, str]:
         _identifier("DATABRICKS_REVIEWS_TABLE", parts=3),
         _identifier("DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN"),
     )
+
+
+def bm25_top_k() -> int:
+    try:
+        value = int(os.getenv("BM25_TOP_K", "5"))
+    except ValueError:
+        raise ValueError("BM25_TOP_K must be a positive integer") from None
+    if value < 1:
+        raise ValueError("BM25_TOP_K must be a positive integer")
+    return value

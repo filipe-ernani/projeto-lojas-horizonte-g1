@@ -3,7 +3,11 @@ import os
 import pytest
 
 from agente_horizonte.data.databricks_client import fetch_products, fetch_reviews
-from agente_horizonte.retrieval.document_loader import build_product_documents
+from agente_horizonte.retrieval.bm25 import BM25Retriever
+from agente_horizonte.retrieval.document_loader import (
+    build_product_documents,
+    load_documents_from_databricks,
+)
 from agente_horizonte.retrieval.preprocessing import tokenize
 
 pytestmark = [
@@ -45,6 +49,9 @@ def test_reviews_read_and_filter_real_records():
         pytest.skip("Blocked: prepared reviews and their product relationship are not available")
     records = fetch_reviews(limit=10)
     assert records, "The prepared reviews table must contain records to validate retrieval"
+    assert all(
+        isinstance(row.get("review_id"), str) and row["review_id"].strip() for row in records
+    )
     id_column = os.environ["DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN"].strip()
     sample = next((row for row in records if row[id_column] is not None), None)
     assert sample is not None, "No review with a product identifier was found"
@@ -81,3 +88,112 @@ def test_catalog_prepares_real_documents():
         assert document["type"] == "product"
         assert document["tokens"] == tokenize(document["text"])
         assert document["tokens"]
+
+
+def test_catalog_bm25_search_and_rebuild_real_data():
+    documents = load_documents_from_databricks()
+    assert documents, "The catalog must produce searchable documents"
+    query = documents[0]["text"]
+    retriever = BM25Retriever(documents, top_k=3)
+
+    def check_results(current_documents):
+        results = retriever.search(query)
+        assert results, "A query taken from the catalog must find matching documents"
+        assert len(results) <= 3
+        assert [result["score"] for result in results] == sorted(
+            [result["score"] for result in results], reverse=True
+        )
+        query_tokens = set(tokenize(query))
+        for result in results:
+            assert query_tokens.intersection(tokenize(result["text"]))
+            assert any(
+                result["product_id"] == document["product_id"]
+                and result["text"] == document["text"]
+                and result["source"] == document["source"]
+                for document in current_documents
+            )
+
+    check_results(documents)
+    refreshed = load_documents_from_databricks()
+    retriever.rebuild(refreshed)
+    check_results(refreshed)
+
+
+def test_reviews_bm25_search_and_rebuild_real_data():
+    if not os.getenv("DATABRICKS_REVIEWS_TABLE") or not os.getenv(
+        "DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN"
+    ):
+        pytest.skip("Configure the prepared reviews table and its product identifier")
+
+    documents = load_documents_from_databricks(
+        review_id_field="review_id", review_text_fields=("comentario",)
+    )
+    reviews = [document for document in documents if document["type"] == "review"]
+    assert reviews, "The prepared reviews table must produce searchable comments"
+    review_ids = [review["review_id"] for review in reviews]
+    assert len(review_ids) == len(set(review_ids)), "Each review must have its own identifier"
+    assert all(review["review_id"] == review["source"]["row"]["review_id"] for review in reviews)
+    product_ids = {
+        document["product_id"] for document in documents if document["type"] == "product"
+    }
+    assert all(review["product_id"] in product_ids for review in reviews)
+
+    query = max(reviews, key=lambda document: len(document["tokens"]))["text"]
+    retriever = BM25Retriever(documents, top_k=5)
+
+    def check_results(current_documents):
+        results = retriever.search(query)
+        assert 1 <= len(results) <= 5
+        assert [result["score"] for result in results] == sorted(
+            [result["score"] for result in results], reverse=True
+        )
+        review_results = [result for result in results if result["type"] == "review"]
+        assert review_results, "A query taken from a comment must retrieve reviews"
+        for result in review_results:
+            assert result["review_id"] == result["source"]["row"]["review_id"]
+            assert result["source"]["table"] == os.environ["DATABRICKS_REVIEWS_TABLE"].strip()
+            assert any(
+                document["type"] == "review"
+                and result["review_id"] == document["review_id"]
+                and result["product_id"] == document["product_id"]
+                and result["text"] == document["text"]
+                and result["source"] == document["source"]
+                for document in current_documents
+            )
+
+    check_results(documents)
+    refreshed = load_documents_from_databricks(
+        review_id_field="review_id", review_text_fields=("comentario",)
+    )
+    retriever.rebuild(refreshed)
+    check_results(refreshed)
+
+
+def test_product_rating_ranking_real_data():
+    if not os.getenv("DATABRICKS_REVIEWS_TABLE") or not os.getenv(
+        "DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN"
+    ):
+        pytest.skip("Configure the prepared reviews table and its product identifier")
+    documents = load_documents_from_databricks(
+        review_id_field="review_id", review_text_fields=("comentario",)
+    )
+    retriever = BM25Retriever(documents, top_k=5)
+    results = retriever.search("", sort_by_rating=True)
+    assert results, "There must be rated catalog products to validate ranking"
+    assert len(results) <= 5
+    assert [result["average_rating"] for result in results] == sorted(
+        [result["average_rating"] for result in results], reverse=True
+    )
+    records = fetch_reviews(limit=None)
+    id_column = os.environ["DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN"].strip()
+    for result in results:
+        assert result["type"] == "product"
+        ratings = [row["nota"] for row in records if row[id_column] == result["product_id"]]
+        assert result["average_rating"] == pytest.approx(sum(ratings) / len(ratings))
+        assert result["review_count"] == len(ratings)
+
+    query = results[0]["text"]
+    filtered = retriever.search(query, sort_by_rating=True)
+    assert filtered
+    assert all(set(tokenize(query)).intersection(tokenize(result["text"])) for result in filtered)
+    assert all(result["review_count"] > 0 for result in filtered)
