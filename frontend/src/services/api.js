@@ -21,7 +21,7 @@ function removerBarrasFinais(url = "") {
 }
 
 const BASE_URL = removerBarrasFinais(
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_URL) ||
+  import.meta?.env?.VITE_API_URL ||
     (typeof globalThis !== "undefined" &&
       globalThis.process?.env?.VITE_API_URL) ||
     "",
@@ -36,14 +36,20 @@ export function obterSessaoId() {
     const CHAVE = "horizonte_sessao_id";
     let sessaoId = sessionStorage.getItem(CHAVE);
     if (!sessaoId) {
-      if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      if (
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+      ) {
         sessaoId = crypto.randomUUID();
       } else {
-        sessaoId = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-          const r = (Math.random() * 16) | 0;
-          const v = c === "x" ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        });
+        sessaoId = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+          /[xy]/g,
+          (c) => {
+            const r = Math.trunc(Math.random() * 16);
+            const v = c === "x" ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+          },
+        );
       }
       sessionStorage.setItem(CHAVE, sessaoId);
     }
@@ -63,7 +69,9 @@ function parseJsonSeguro(texto) {
 }
 
 export class NetworkError extends Error {
-  constructor(mensagem = "Não foi possível carregar. Verifique a conexão com o servidor.") {
+  constructor(
+    mensagem = "Não foi possível carregar. Verifique a conexão com o servidor.",
+  ) {
     super(mensagem);
     this.name = "NetworkError";
     this.isNetworkError = true;
@@ -120,12 +128,12 @@ export async function apiFetch(caminho, opcoes = {}) {
       ...opcoes,
       headers,
     });
-  } catch (erroOriginal) {
-    if (erroOriginal?.name === "AbortError" || opcoes.signal?.aborted) {
-      throw erroOriginal;
+  } catch (error_) {
+    if (error_?.name === "AbortError" || opcoes.signal?.aborted) {
+      throw error_;
     }
     const erroRede = new NetworkError();
-    erroRede.cause = erroOriginal;
+    erroRede.cause = error_;
     throw erroRede;
   }
 
@@ -137,7 +145,8 @@ export async function apiFetch(caminho, opcoes = {}) {
   const dados = parseJsonSeguro(texto);
 
   if (!resposta.ok) {
-    const mensagem = dados?.erro || `Erro ${resposta.status} ao comunicar com o servidor.`;
+    const mensagem =
+      dados?.erro || `Erro ${resposta.status} ao comunicar com o servidor.`;
     throw new ApiError(mensagem, resposta.status, dados);
   }
 
