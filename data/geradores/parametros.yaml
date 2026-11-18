@@ -100,6 +100,137 @@ catalogo:
   # Valores de uma lognormal: mediana 1, com poucos SKUs bem acima disso.
   popularidade_sigma: 0.8
 
+  # -------------------------------------------------------------------------
+  # Catálogo v2 (D21): informações para o agente do Emanuel tirar dúvidas e
+  # recomendar produtos. Tudo é montado por regra, sem sorteio: SKUs, preços,
+  # custos e popularidades continuam idênticos aos da v1.
+  # -------------------------------------------------------------------------
+
+  # Concordância do nome. Tipos que não estão aqui são masculinos no singular.
+  genero_tipo:
+    feminino: [Blusa, Saia, Camisa, Calça, Jaqueta, Camiseta, Bermuda, Polo, Sapatilha, Sandália,
+               Bota, Calcinha, Cueca, Sunga, Carteira, Mochila, Bolsa, Mala, Garrafa, Camiseta Dry,
+               Legging, Almofada, Toalha de Banho, Manta, Cortina]
+    masculino_plural: [Óculos de Sol]
+
+  # Palavras que concordam com o tipo: [feminino, masculino plural]
+  flexao:
+    Feminino: [Feminina, Femininos]
+    Masculino: [Masculina, Masculinos]
+    Esportivo: [Esportiva, Esportivos]
+    Estampado: [Estampada, Estampados]
+    Básico: [Básica, Básicos]
+    Sintético: [Sintética, Sintéticos]
+    Clássico: [Clássica, Clássicos]
+
+  # Uma imagem por tipo de produto em cada categoria; {categoria} e {tipo} viram texto sem acento, em minúsculas
+  # e com hífens (ex.: Acessórios, "Óculos de Sol" -> imagens/acessorios/oculos-de-sol.png). Os arquivos de
+  # imagem ficam por conta do front-end (Caio).
+  imagem_padrao: "imagens/{categoria}/{tipo}.png"
+
+  # Frase e ocasiões de uso de cada tipo, por categoria (o mesmo tipo pode ter usos
+  # diferentes: a Bermuda de Esporte não é a Bermuda Masculina).
+  detalhes:
+    Feminino:
+      Short: ["Short feminino de cintura média, confortável para o calor.", [dia a dia, praia, passeio]]
+      Blusa: ["Blusa feminina de modelagem solta, fácil de combinar.", [dia a dia, trabalho]]
+      Saia: ["Saia feminina na altura dos joelhos.", [trabalho, passeio]]
+      Camisa: ["Camisa feminina de botões, com caimento estruturado.", [trabalho, ocasiões especiais]]
+      Calça: ["Calça feminina de cintura alta e corte reto.", [trabalho, dia a dia]]
+      Macacão: ["Macacão feminino de peça única, prático e versátil.", [passeio, festa]]
+      Vestido: ["Vestido feminino midi, leve e fluido.", [passeio, festa]]
+      Jaqueta: ["Jaqueta feminina para dias mais frescos.", [frio, passeio]]
+    Masculino:
+      Camiseta: ["Camiseta masculina de gola careca e manga curta.", [dia a dia, casual]]
+      Bermuda: ["Bermuda masculina com bolsos, na altura dos joelhos.", [dia a dia, praia, passeio]]
+      Polo: ["Camisa polo masculina, com gola e botões.", [trabalho, casual]]
+      Camisa: ["Camisa masculina de botões e manga longa.", [trabalho, ocasiões especiais]]
+      Calça: ["Calça masculina de corte reto.", [trabalho, dia a dia]]
+      Moletom: ["Blusa de moletom masculina, quente e confortável.", [frio, casual]]
+      Jaqueta: ["Jaqueta masculina para dias mais frescos.", [frio, passeio]]
+    Infantil:
+      Body: ["Body infantil com fechamento de botões, fácil de trocar.", [dia a dia, bebê]]
+      Camiseta: ["Camiseta infantil confortável para brincar.", [dia a dia, escola]]
+      Bermuda: ["Bermuda infantil com elástico na cintura.", [dia a dia, praia]]
+      Pijama: ["Pijama infantil de duas peças.", [dormir]]
+      Vestido: ["Vestido infantil leve, para passeios e festas.", [passeio, festa]]
+      Conjunto: ["Conjunto infantil de blusa e short.", [dia a dia, passeio]]
+    Calçados:
+      Chinelo: ["Chinelo de dedo com solado de borracha.", [praia, casa]]
+      Sapatilha: ["Sapatilha leve e flexível, fácil de calçar.", [dia a dia, trabalho]]
+      Sandália: ["Sandália aberta, fresca para o calor.", [passeio, verão]]
+      Tênis: ["Tênis com amortecimento no solado.", [dia a dia, caminhada]]
+      Mocassim: ["Mocassim sem cadarço, de visual mais social.", [trabalho, ocasiões especiais]]
+      Bota: ["Bota de cano curto, para dias frios.", [frio, passeio]]
+    Moda íntima e praia:
+      Calcinha: ["Calcinha de cós confortável.", [dia a dia]]
+      Cueca: ["Cueca boxer de cós elástico.", [dia a dia]]
+      Sutiã: ["Sutiã com bojo e alças reguláveis.", [dia a dia]]
+      Sunga: ["Sunga com forro interno.", [praia, piscina]]
+      Biquíni: ["Biquíni de duas peças, com amarração.", [praia, piscina]]
+      Maiô: ["Maiô de peça única, com costas abertas.", [praia, piscina]]
+    Acessórios:
+      Carteira: ["Carteira com divisórias para cartões e notas.", [dia a dia, presente]]
+      Cinto: ["Cinto com fivela de metal.", [trabalho, dia a dia]]
+      Óculos de Sol: ["Óculos de sol com proteção UV.", [praia, verão, viagem]]
+      Mochila: ["Mochila com compartimento para notebook.", [trabalho, escola, viagem]]
+      Bolsa: ["Bolsa de ombro com alça regulável.", [trabalho, passeio]]
+      Relógio: ["Relógio analógico com pulseira ajustável.", [trabalho, presente]]
+      Mala: ["Mala de mão com rodinhas.", [viagem]]
+    Esporte:
+      Garrafa: ["Garrafa reutilizável para levar água ao treino.", [treino, academia]]
+      Top: ["Top esportivo de sustentação média.", [treino, academia]]
+      Camiseta Dry: ["Camiseta de tecido que seca rápido.", [treino, corrida]]
+      Bermuda: ["Bermuda esportiva leve, com elástico na cintura.", [treino, corrida]]
+      Legging: ["Legging de cintura alta, com elasticidade.", [treino, academia, yoga]]
+      Tapete de Yoga: ["Tapete antiderrapante para exercícios no chão.", [yoga, pilates, treino em casa]]
+    Beleza:
+      Sabonete Líquido: ["Sabonete líquido para o banho.", [banho, cuidados diários]]
+      Hidratante: ["Hidratante corporal de rápida absorção.", [cuidados diários]]
+      Body Splash: ["Body splash de fragrância leve.", [dia a dia, presente]]
+      Kit Maquiagem: ["Kit de maquiagem com itens básicos.", [festa, presente]]
+      Perfume: ["Perfume de longa duração.", [ocasiões especiais, presente]]
+    Casa:
+      Almofada: ["Almofada decorativa com capa removível.", [decoração, sala]]
+      Toalha de Banho: ["Toalha de banho macia e absorvente.", [banho]]
+      Manta: ["Manta para sofá ou cama.", [frio, decoração, sala]]
+      Cortina: ["Cortina com ilhós para varão.", [decoração, quarto, sala]]
+      Jogo de Cama: ["Jogo de cama de casal com lençol e fronhas.", [quarto]]
+
+  # Frase e ocasiões extras de cada complemento (material, estilo, linha ou fragrância)
+  variacoes:
+    Malha: ["Tecido de malha, macio e com elasticidade.", []]
+    Algodão: ["Feito de algodão, respirável.", []]
+    Jeans: ["Em jeans resistente.", [casual]]
+    Viscose: ["Em viscose leve, de bom caimento.", [verão]]
+    Tricô: ["Em tricô, aconchegante.", [frio]]
+    Linho: ["Em linho, fresco para dias quentes.", [verão]]
+    Cetim: ["Em cetim, com brilho suave.", [festa]]
+    Piquet: ["Em malha piquet, de textura discreta.", []]
+    Sarja: ["Em sarja, tecido firme e durável.", [trabalho]]
+    Estampado: ["Com estampa colorida.", []]
+    Moletom: ["Em moletom felpado.", [frio]]
+    Casual: ["De estilo casual.", [dia a dia]]
+    Tressê: ["Com detalhes em tressê.", [verão]]
+    Confort: ["Com palmilha extra macia.", [dia a dia]]
+    Esportivo: ["Versão esportiva, com solado antiderrapante.", [treino, caminhada]]
+    Couro: ["Em couro.", [trabalho]]
+    Básico: ["Modelo básico, sem detalhes.", []]
+    Microfibra: ["Em microfibra, leve e macia.", []]
+    Renda: ["Com detalhes em renda.", [ocasiões especiais]]
+    Sintético: ["Em material sintético, fácil de limpar.", []]
+    Viagem: ["Versão para viagem, mais espaçosa.", [viagem]]
+    Clássico: ["De design clássico.", [trabalho]]
+    Treino: ["Linha de treino.", [treino]]
+    Fitness: ["Linha fitness.", [academia]]
+    Running: ["Linha de corrida.", [corrida]]
+    Performance: ["Linha performance, para treinos intensos.", [treino]]
+    Suave: ["Fragrância suave.", []]
+    Cítrico: ["Fragrância cítrica.", [verão]]
+    Floral: ["Fragrância floral.", []]
+    Amadeirado: ["Fragrância amadeirada.", [noite]]
+    Percal: ["Em percal, de toque macio.", []]
+
 # ---------------------------------------------------------------------------
 # ERP: vendas das lojas físicas, cadastro de produtos e estoque diário
 # Gerado por data/geradores/gera_erp.py

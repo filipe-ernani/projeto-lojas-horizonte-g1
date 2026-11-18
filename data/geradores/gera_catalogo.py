@@ -11,9 +11,17 @@ Regra de preço (detalhes em data/geradores/parametros.yaml):
     - o preço-base de cada tipo é um ponto da faixa de preço do Olist da categoria;
     - a cor não muda o preço: o mesmo modelo em cores diferentes custa o mesmo.
 
+Colunas da v2 (D21), para o agente de recomendação, montadas por regra, sem sorteio:
+    tipo, variacao, cor   partes do nome, em colunas separadas
+    descricao             frase do tipo + frase da variação + cor
+    ocasioes              ocasiões de uso do tipo e da variação, separadas por ";"
+    imagem_url            uma imagem por tipo de produto em cada categoria
+O nome concorda com o gênero do tipo (ex.: "Sapatilha Esportiva", "Blusa Feminina").
+
 Com a mesma seed, o arquivo gerado é sempre idêntico.
 """
 
+import unicodedata
 from pathlib import Path
 from statistics import NormalDist
 
@@ -43,6 +51,25 @@ PUBLICO = {"Feminino": "Feminino", "Masculino": "Masculino", "Infantil": "Infant
 
 # 0,6745 é o quantil 75% da normal padrão: liga o intervalo p25-p75 ao desvio da lognormal
 Z75 = NormalDist().inv_cdf(0.75)
+
+
+def concorda(palavra: str, tipo: str, cfg_catalogo: dict) -> str:
+    """Flexiona a palavra para o gênero e o número do tipo (ex.: Esportivo -> Esportiva)."""
+    genero = cfg_catalogo["genero_tipo"]
+    formas = cfg_catalogo["flexao"].get(palavra)
+    if formas is None:
+        return palavra
+    if tipo in genero["feminino"]:
+        return formas[0]
+    if tipo in genero["masculino_plural"]:
+        return formas[1]
+    return palavra
+
+
+def slug(texto: str) -> str:
+    """'Óculos de Sol' -> 'oculos-de-sol' (para o nome do arquivo de imagem)."""
+    sem_acento = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode()
+    return "-".join(sem_acento.lower().split())
 
 
 def preco_de_varejo(valor: float) -> float:
@@ -105,10 +132,19 @@ def main() -> None:
         produtos = sorteia_produtos(rng, cfg, cfg_catalogo["cores"], cfg["skus"])
         popularidade = rng.lognormal(mean=0.0, sigma=cfg_catalogo["popularidade_sigma"], size=len(produtos))
 
+        detalhes = cfg_catalogo["detalhes"][categoria]
         for i, (tipo, complemento, cor) in enumerate(produtos):
-            publico = f" {PUBLICO[categoria]}" if categoria in PUBLICO else ""
-            modelo = f"{tipo}{publico} {complemento}"
+            publico = f" {concorda(PUBLICO[categoria], tipo, cfg_catalogo)}" if categoria in PUBLICO else ""
+            variacao = concorda(complemento, tipo, cfg_catalogo)
+            modelo = f"{tipo}{publico} {variacao}"
             preco = round(preco_de_varejo(base[tipo] * fator[complemento]), 2)
+
+            # v2: descrição e ocasiões montadas por regra (nenhum sorteio novo)
+            frase_tipo, ocasioes_tipo = detalhes[tipo]
+            frase_variacao, ocasioes_variacao = cfg_catalogo["variacoes"][complemento]
+            descricao = f"{frase_tipo} {frase_variacao}" + (f" Cor: {cor.lower()}." if cor else "")
+            ocasioes = list(dict.fromkeys(ocasioes_tipo + ocasioes_variacao))   # une sem repetir
+
             linhas.append({
                 "sku": f"HZ-{CODIGOS[categoria]}-{i + 1:03d}",
                 "nome": f"{modelo} {cor}" if cor else modelo,
@@ -118,6 +154,12 @@ def main() -> None:
                 "preco": preco,
                 "custo": round(preco * (1 - cfg["margem"]), 2),
                 "popularidade": round(float(popularidade[i]), 2),
+                "tipo": tipo,
+                "variacao": variacao,
+                "cor": cor or "",
+                "descricao": descricao,
+                "ocasioes": ";".join(ocasioes),
+                "imagem_url": cfg_catalogo["imagem_padrao"].format(categoria=slug(categoria), tipo=slug(tipo)),
             })
 
     catalogo = pd.DataFrame(linhas)
