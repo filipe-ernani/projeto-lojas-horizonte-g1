@@ -14,18 +14,35 @@ import {
  */
 export default function useEnderecos() {
   const { usuario } = useAuth();
+  const uid = usuario?.uid ?? null;
 
   const [enderecos, setEnderecos] = useState([]);
-  const [carregando, setCarregando] = useState(false);
+  const [carregando, setCarregando] = useState(Boolean(uid));
   const [erro, setErro] = useState(null);
   const [versao, setVersao] = useState(0);
+  const [uidAtual, setUidAtual] = useState(uid);
+
+  // Troca de usuário: nada do usuário anterior pode continuar na tela
+  if (uid !== uidAtual) {
+    setUidAtual(uid);
+    setEnderecos([]);
+    setErro(null);
+    setCarregando(Boolean(uid));
+  }
 
   const recarregar = useCallback(() => {
+    if (!uid) {
+      return;
+    }
+    if (erro) {
+      setCarregando(true);
+    }
+    setErro(null);
     setVersao((v) => v + 1);
-  }, []);
+  }, [uid, erro]);
 
   useEffect(() => {
-    if (!usuario) {
+    if (!uid) {
       return;
     }
 
@@ -33,7 +50,11 @@ export default function useEnderecos() {
 
     listarEnderecos({ signal: controller.signal })
       .then((lista) => {
+        if (controller.signal.aborted) {
+          return;
+        }
         setEnderecos(lista);
+        setErro(null);
         setCarregando(false);
       })
       .catch((err) => {
@@ -47,7 +68,7 @@ export default function useEnderecos() {
     return () => {
       controller.abort();
     };
-  }, [usuario, versao]);
+  }, [uid, versao]);
 
   const criar = useCallback(
     async (dados) => {

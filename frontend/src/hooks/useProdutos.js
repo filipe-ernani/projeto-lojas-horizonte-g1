@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { listarProdutos } from "@/services/produtosService";
 
+const ATRASO_FILTRO_PRECO_MS = 300;
+
 /**
- * Hook para listar produtos do catálogo com filtros, paginação e debounce de 300ms exclusivamente na busca textual.
- * Retorna { dados, total, pagina, limite, carregando, erro, recarregar } com AbortController.
+ * Hook para listar produtos do catálogo com filtros, paginação e debounce de 300ms só nos filtros de preço.
+ * Retorna { dados, produtos, total, pagina, limite, carregando, atualizando, erro, recarregar } com AbortController.
+ * atualizando fica ligado desde a digitação do preço até a resposta da API.
+ * Filtro inválido (400) aparece em erro, nunca como lista vazia.
  */
 export default function useProdutos(filtros = {}) {
   const {
@@ -17,8 +21,8 @@ export default function useProdutos(filtros = {}) {
     ordenar = "relevancia",
   } = filtros;
 
-  // Estado com debounce de 300ms exclusivamente para busca textual
-  const [buscaDebounced, setBuscaDebounced] = useState(busca);
+  const [precoMinDebounced, setPrecoMinDebounced] = useState(precoMin);
+  const [precoMaxDebounced, setPrecoMaxDebounced] = useState(precoMax);
   const [dados, setDados] = useState([]);
   const [total, setTotal] = useState(0);
   const [paginaReal, setPaginaReal] = useState(pagina);
@@ -27,16 +31,38 @@ export default function useProdutos(filtros = {}) {
   const [erro, setErro] = useState(null);
   const [versao, setVersao] = useState(0);
 
-  // Aplica debounce apenas para a busca textual
+  const chaveBusca = JSON.stringify([
+    categoria,
+    busca,
+    tamanho,
+    precoMinDebounced,
+    precoMaxDebounced,
+    pagina,
+    limite,
+    ordenar,
+  ]);
+  const [chaveAtual, setChaveAtual] = useState(chaveBusca);
+
+  // Nova busca: erro e dados da busca anterior não podem continuar na tela
+  if (chaveBusca !== chaveAtual) {
+    setChaveAtual(chaveBusca);
+    setDados([]);
+    setTotal(0);
+    setErro(null);
+    setCarregando(true);
+  }
+
+  // Aplica debounce apenas nos filtros de preço
   useEffect(() => {
     const timer = setTimeout(() => {
-      setBuscaDebounced(busca);
-    }, 300);
+      setPrecoMinDebounced(precoMin);
+      setPrecoMaxDebounced(precoMax);
+    }, ATRASO_FILTRO_PRECO_MS);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [busca]);
+  }, [precoMin, precoMax]);
 
   const recarregar = useCallback(() => {
     setCarregando(true);
@@ -50,10 +76,10 @@ export default function useProdutos(filtros = {}) {
     listarProdutos(
       {
         categoria,
-        busca: buscaDebounced,
+        busca,
         tamanho,
-        precoMin,
-        precoMax,
+        precoMin: precoMinDebounced,
+        precoMax: precoMaxDebounced,
         pagina,
         limite,
         ordenar,
@@ -61,16 +87,22 @@ export default function useProdutos(filtros = {}) {
       { signal: controller.signal },
     )
       .then((resposta) => {
+        if (controller.signal.aborted) {
+          return;
+        }
         setDados(resposta.itens);
         setTotal(resposta.total);
         setPaginaReal(resposta.pagina);
         setLimiteReal(resposta.limite);
+        setErro(null);
         setCarregando(false);
       })
       .catch((err) => {
         if (err?.name === "AbortError" || controller.signal.aborted) {
           return;
         }
+        setDados([]);
+        setTotal(0);
         setErro(err);
         setCarregando(false);
       });
@@ -80,15 +112,18 @@ export default function useProdutos(filtros = {}) {
     };
   }, [
     categoria,
-    buscaDebounced,
+    busca,
     tamanho,
-    precoMin,
-    precoMax,
+    precoMinDebounced,
+    precoMaxDebounced,
     pagina,
     limite,
     ordenar,
     versao,
   ]);
+
+  const precoPendente =
+    precoMin !== precoMinDebounced || precoMax !== precoMaxDebounced;
 
   return {
     dados,
@@ -97,6 +132,7 @@ export default function useProdutos(filtros = {}) {
     pagina: paginaReal,
     limite: limiteReal,
     carregando,
+    atualizando: carregando || precoPendente,
     erro,
     recarregar,
   };

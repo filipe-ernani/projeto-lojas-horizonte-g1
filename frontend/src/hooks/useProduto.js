@@ -11,6 +11,15 @@ export default function useProduto(id) {
   const [carregando, setCarregando] = useState(Boolean(id));
   const [erro, setErro] = useState(null);
   const [versao, setVersao] = useState(0);
+  const [idAtual, setIdAtual] = useState(id);
+
+  // Novo produto: erro e dados do produto anterior não podem continuar na tela
+  if (id !== idAtual) {
+    setIdAtual(id);
+    setDados(null);
+    setErro(null);
+    setCarregando(Boolean(id));
+  }
 
   const recarregar = useCallback(() => {
     if (!id) return;
@@ -28,16 +37,18 @@ export default function useProduto(id) {
 
     obterProduto(id, { signal: controller.signal })
       .then((produto) => {
+        if (controller.signal.aborted) {
+          return;
+        }
         setDados(produto);
+        setErro(null);
         setCarregando(false);
       })
       .catch((err) => {
         if (err?.name === "AbortError" || controller.signal.aborted) {
           return;
         }
-        if (err?.status === 404) {
-          err.status = 404;
-        }
+        setDados(null);
         setErro(err);
         setCarregando(false);
       });

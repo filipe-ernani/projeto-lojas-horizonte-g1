@@ -6,6 +6,7 @@ export { default as useSemelhantes } from "./useSemelhantes";
 export { default as useAvaliacoes } from "./useAvaliacoes";
 export { default as useFavoritos } from "./useFavoritos";
 export { default as useCarrinho } from "./useCarrinho";
+export { default as useCheckoutIniciado } from "./useCheckoutIniciado";
 export { default as usePedidos } from "./usePedidos";
 export { default as usePerfil } from "./usePerfil";
 export { default as useEnderecos } from "./useEnderecos";

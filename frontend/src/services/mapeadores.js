@@ -4,6 +4,15 @@
  * a adaptação é realizada exclusivamente neste arquivo (regra 5 da tarefa 4A).
  */
 
+import { ApiError } from "./api";
+
+/**
+ * Resposta 200 com formato inesperado é falha, nunca lista vazia.
+ */
+function erroFormatoInesperado(resposta) {
+  return new ApiError("Resposta inesperada do servidor.", 200, resposta);
+}
+
 /**
  * Normaliza um produto retornado pela API para a estrutura esperada pelos componentes da UI.
  */
@@ -44,15 +53,10 @@ export function mapearProduto(apiProduto) {
  * Normaliza o payload de listagem paginada da API (/api/produtos).
  */
 export function mapearListaProdutos(resposta) {
-  if (!resposta || typeof resposta !== "object") {
-    return { itens: [], total: 0, pagina: 1, limite: 12 };
+  const listaOriginal = Array.isArray(resposta) ? resposta : resposta?.itens;
+  if (!Array.isArray(listaOriginal)) {
+    throw erroFormatoInesperado(resposta);
   }
-
-  const listaOriginal = Array.isArray(resposta.itens)
-    ? resposta.itens
-    : Array.isArray(resposta)
-      ? resposta
-      : [];
 
   const itens = listaOriginal.map(mapearProduto).filter(Boolean);
 
@@ -125,6 +129,7 @@ export function mapearItemCarrinho(item) {
     imagemUrl: item.imagemUrl || null,
     tamanho: item.tamanho || null,
     cor: item.cor || null,
+    corHex: item.corHex || null,
     quantidade: Math.max(1, Number(item.quantidade) || 1),
   };
 }
@@ -133,12 +138,11 @@ export function mapearItemCarrinho(item) {
  * Normaliza o payload do carrinho (/api/carrinho).
  */
 export function mapearCarrinho(resposta) {
-  if (!resposta || typeof resposta !== "object") {
-    return { itens: [], subtotal: 0, frete: 0, total: 0 };
+  if (!Array.isArray(resposta?.itens)) {
+    throw erroFormatoInesperado(resposta);
   }
 
-  const listaOriginal = Array.isArray(resposta.itens) ? resposta.itens : [];
-  const itens = listaOriginal.map(mapearItemCarrinho).filter(Boolean);
+  const itens = resposta.itens.map(mapearItemCarrinho).filter(Boolean);
   const subtotal =
     typeof resposta.subtotal === "number"
       ? resposta.subtotal
@@ -164,8 +168,30 @@ export function mapearCarrinho(resposta) {
  * Normaliza a lista de produtos favoritados (/api/favoritos).
  */
 export function mapearFavoritos(resposta) {
-  if (!Array.isArray(resposta)) return [];
-  return resposta.map(mapearProduto).filter(Boolean);
+  if (!Array.isArray(resposta)) {
+    throw erroFormatoInesperado(resposta);
+  }
+
+  return resposta
+    .map((item) => {
+      const produto = mapearProduto(item);
+      return produto ? { ...produto, corHex: item.corHex || null } : null;
+    })
+    .filter(Boolean);
+}
+
+/**
+ * Normaliza os dados do Pix SIMULADO, presentes só na resposta de finalização com PIX.
+ */
+function mapearPix(pix) {
+  if (!pix || typeof pix !== "object") return null;
+
+  return {
+    chave: pix.chave || "",
+    codigoCopiaECola: pix.codigoCopiaECola || "",
+    expiraEm: pix.expiraEm || null,
+    origem: pix.origem || "SIMULADO",
+  };
 }
 
 /**
@@ -190,6 +216,13 @@ export function mapearPedido(p) {
     canceladoEm: p.canceladoEm || null,
     canceladoEmLocal: p.canceladoEmLocal || null,
     status: p.status || "FINALIZADO",
+    formaPagamento: p.formaPagamento || null,
+    parcelas: Number(p.parcelas) || 1,
+    valorParcela:
+      p.valorParcela === undefined || p.valorParcela === null
+        ? null
+        : Number(p.valorParcela),
+    pix: mapearPix(p.pix),
     total:
       typeof p.total === "number" ? p.total : Number(p.valor_total || p.total) || 0,
     qtdItens:
@@ -205,7 +238,9 @@ export function mapearPedido(p) {
  * Normaliza a lista de pedidos do usuário (/api/pedidos/meus).
  */
 export function mapearPedidos(resposta) {
-  if (!Array.isArray(resposta)) return [];
+  if (!Array.isArray(resposta)) {
+    throw erroFormatoInesperado(resposta);
+  }
   return resposta.map(mapearPedido).filter(Boolean);
 }
 
@@ -260,6 +295,8 @@ export function mapearEndereco(e) {
  * Normaliza a lista de endereços do usuário (/api/enderecos).
  */
 export function mapearEnderecos(resposta) {
-  if (!Array.isArray(resposta)) return [];
+  if (!Array.isArray(resposta)) {
+    throw erroFormatoInesperado(resposta);
+  }
   return resposta.map(mapearEndereco).filter(Boolean);
 }

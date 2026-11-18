@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { atualizarPerfil, obterPerfil } from "@/services/perfilService";
 
@@ -12,22 +12,47 @@ const PERFIL_VAZIO = {
 
 /**
  * Hook para obter e atualizar dados do perfil do usuário autenticado (/api/usuarios/perfil).
- * Retorna { dados, perfil, carregando, erro, recarregar, salvar } com AbortController.
+ * Retorna { dados, perfil, carregando, salvando, erro, recarregar, salvar } com AbortController.
+ * Erro ao salvar não vira erro de carga: é relançado para quem chamou salvar.
  */
 export default function usePerfil() {
   const { usuario } = useAuth();
+  const uid = usuario?.uid ?? null;
 
   const [perfil, setPerfil] = useState(PERFIL_VAZIO);
-  const [carregando, setCarregando] = useState(false);
+  const [carregando, setCarregando] = useState(Boolean(uid));
+  const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState(null);
   const [versao, setVersao] = useState(0);
+  const [uidAtual, setUidAtual] = useState(uid);
+  const uidRef = useRef(uid);
 
-  const recarregar = useCallback(() => {
-    setVersao((v) => v + 1);
-  }, []);
+  // Troca de usuário: nada do usuário anterior pode continuar na tela
+  if (uid !== uidAtual) {
+    setUidAtual(uid);
+    setPerfil(PERFIL_VAZIO);
+    setErro(null);
+    setSalvando(false);
+    setCarregando(Boolean(uid));
+  }
 
   useEffect(() => {
-    if (!usuario) {
+    uidRef.current = uid;
+  }, [uid]);
+
+  const recarregar = useCallback(() => {
+    if (!uid) {
+      return;
+    }
+    if (erro) {
+      setCarregando(true);
+    }
+    setErro(null);
+    setVersao((v) => v + 1);
+  }, [uid, erro]);
+
+  useEffect(() => {
+    if (!uid) {
       return;
     }
 
@@ -35,7 +60,11 @@ export default function usePerfil() {
 
     obterPerfil({ signal: controller.signal })
       .then((dados) => {
+        if (controller.signal.aborted) {
+          return;
+        }
         setPerfil(dados);
+        setErro(null);
         setCarregando(false);
       })
       .catch((err) => {
@@ -49,28 +78,28 @@ export default function usePerfil() {
     return () => {
       controller.abort();
     };
-  }, [usuario, versao]);
+  }, [uid, versao]);
 
   const salvar = useCallback(
     async (dadosAtualizados) => {
-      if (!usuario) {
+      if (!uid) {
         return { precisaLogin: true };
       }
 
-      setCarregando(true);
-      setErro(null);
+      setSalvando(true);
       try {
         const resultado = await atualizarPerfil(dadosAtualizados);
-        setPerfil(resultado);
-        setCarregando(false);
+        if (uidRef.current === uid) {
+          setPerfil(resultado);
+        }
         return resultado;
-      } catch (err) {
-        setErro(err);
-        setCarregando(false);
-        throw err;
+      } finally {
+        if (uidRef.current === uid) {
+          setSalvando(false);
+        }
       }
     },
-    [usuario],
+    [uid],
   );
 
   const perfilEfetivo = usuario ? perfil : PERFIL_VAZIO;
@@ -79,6 +108,7 @@ export default function usePerfil() {
     dados: perfilEfetivo,
     perfil: perfilEfetivo,
     carregando: usuario ? carregando : false,
+    salvando: usuario ? salvando : false,
     erro: usuario ? erro : null,
     recarregar,
     salvar,

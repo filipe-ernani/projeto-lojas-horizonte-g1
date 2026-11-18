@@ -1,25 +1,47 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { cancelarPedido, listarMeusPedidos } from "@/services/pedidosService";
+import {
+  cancelarPedido as cancelarPedidoApi,
+  listarMeusPedidos,
+} from "@/services/pedidosService";
 
 /**
  * Hook para listar e gerenciar pedidos do usuário autenticado (/api/pedidos/meus).
- * Retorna { dados, pedidos, carregando, erro, recarregar, cancelar } com AbortController.
+ * Retorna { dados, pedidos, carregando, erro, cancelando, recarregar, cancelar, cancelarPedido } com AbortController.
  */
 export default function usePedidos() {
   const { usuario } = useAuth();
+  const uid = usuario?.uid ?? null;
 
   const [pedidos, setPedidos] = useState([]);
-  const [carregando, setCarregando] = useState(false);
+  const [carregando, setCarregando] = useState(Boolean(uid));
+  const [cancelando, setCancelando] = useState(false);
   const [erro, setErro] = useState(null);
   const [versao, setVersao] = useState(0);
+  const [uidAtual, setUidAtual] = useState(uid);
+
+  // Troca de usuário: nada do usuário anterior pode continuar na tela
+  if (uid !== uidAtual) {
+    setUidAtual(uid);
+    setPedidos([]);
+    setErro(null);
+    setCancelando(false);
+    setCarregando(Boolean(uid));
+  }
 
   const recarregar = useCallback(() => {
+    if (!uid) {
+      return;
+    }
+    if (erro) {
+      setCarregando(true);
+    }
+    setErro(null);
     setVersao((v) => v + 1);
-  }, []);
+  }, [uid, erro]);
 
   useEffect(() => {
-    if (!usuario) {
+    if (!uid) {
       return;
     }
 
@@ -27,7 +49,11 @@ export default function usePedidos() {
 
     listarMeusPedidos({ signal: controller.signal })
       .then((lista) => {
+        if (controller.signal.aborted) {
+          return;
+        }
         setPedidos(lista);
+        setErro(null);
         setCarregando(false);
       })
       .catch((err) => {
@@ -41,7 +67,7 @@ export default function usePedidos() {
     return () => {
       controller.abort();
     };
-  }, [usuario, versao]);
+  }, [uid, versao]);
 
   const cancelar = useCallback(
     async (id) => {
@@ -49,9 +75,14 @@ export default function usePedidos() {
         return { precisaLogin: true };
       }
 
-      const res = await cancelarPedido(id);
-      recarregar();
-      return res;
+      setCancelando(true);
+      try {
+        const res = await cancelarPedidoApi(id);
+        recarregar();
+        return res;
+      } finally {
+        setCancelando(false);
+      }
     },
     [usuario, recarregar],
   );
@@ -62,8 +93,10 @@ export default function usePedidos() {
     dados: pedidosEfetivos,
     pedidos: pedidosEfetivos,
     carregando: usuario ? carregando : false,
+    cancelando: usuario ? cancelando : false,
     erro: usuario ? erro : null,
     recarregar,
     cancelar,
+    cancelarPedido: cancelar,
   };
 }

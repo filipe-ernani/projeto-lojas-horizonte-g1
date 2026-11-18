@@ -1,7 +1,8 @@
+import { auth } from "../firebase.js";
+
 async function obterTokenAuth() {
   try {
-    const modulo = await import("../firebase.js");
-    const usuario = modulo?.auth?.currentUser;
+    const usuario = auth?.currentUser;
     if (usuario) {
       return await usuario.getIdToken();
     }
