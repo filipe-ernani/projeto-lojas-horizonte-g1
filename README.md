@@ -14,7 +14,7 @@ O desenvolvimento deste MVP foca em solucionar os seguintes gargalos operacionai
 Para mitigar os problemas, a squad desenvolveu um Protótipo Funcional (MVP) focado em dados e escalabilidade:
 - **Aplicação Web:** Loja demonstrativa (API local + Postgres) contemplando catálogo, carrinho e finalização de pedido.
 - **Pipeline de Dados:** Ingestão e tratamento de dados unificando clientes, pedidos e pagamentos das 3 fontes (ERP, site, Olist).
-- **Inteligência Artificial:** Agente "Analista Horizonte" (ADK + Gemini) focado em previsão de demanda semanal para a Black Friday, utilizando MLflow. *(Nota: Chat de suporte na vitrine está fora do escopo inicial)*.
+- **Inteligência Artificial:** Sistema de recomendação de produtos em tempo real (ADK + BM25), sugerindo itens adicionais ao cliente com base nos produtos adicionados ao carrinho e avaliações geradas sinteticamente. (Previsão de demanda mantida no roadmap futuro).
 - **Business Intelligence:** Dashboard AI/BI e alerta automatizado no Google Sheets com 8 indicadores estratégicos (Receita, Ticket Médio, Conversão, Giro de Estoque, etc).
 
 ## 4. Arquitetura e Stack Tecnológica
