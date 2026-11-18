@@ -37,6 +37,7 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D18 | Regras de qualidade da silver do ERP | Aceita |
 | D19 | Recomendação de produtos como recurso de IA | Aceita |
 | D20 | Unificação dos canais na silver (fato e dimensões) | Aceita |
+| D21 | Recomendação conversacional no agente ADK | Aceita |
 
 ---
 
@@ -268,3 +269,18 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
   - `dim_data` vai do primeiro dia com venda válida até 31/12 do ano da última venda, para incluir a Black Friday de 2026. Black Friday por regra (sexta-feira de novembro entre os dias 23 e 29), sem data fixa no código.
 - **Resultado:** loja física com 401.335 linhas, 399.736 válidas, 403.365 unidades e R$ 30.795.090,78; marketplace com 112.650 linhas, 42.758 válidas (= unidades) e R$ 5.250.663,26. Nenhuma venda válida sem grupo. Calendário de 09/01/2025 (primeira venda válida) a 31/12/2026: 722 dias, Black Fridays em 28/11/2025 e 27/11/2026.
 - **Pendente:** o site entra como mais um bloco do `UNION ALL`, sem mudar as colunas.
+
+## D21 · Recomendação conversacional no agente ADK
+
+- **Data:** 2026-11-18
+- **Status:** Aceita
+- **Contexto:** a D19 previa um modelo treinado no histórico de compras, com uma tabela de recomendações voltando para a API. O Emanuel definiu outra abordagem.
+- **Decisão:** o agente ADK responde dúvidas sobre os produtos e recomenda a partir do que a pessoa descreve (RAG sobre o catálogo e as avaliações). A recomendação acontece na conversa, não na vitrine.
+- **Substitui:** o trecho "Impacto nos dados" da D19, que continua válida quanto à escolha da recomendação como recurso de IA.
+- **Impacto nos dados:**
+  - Catálogo v2 (`gera_catalogo.py`, PR #44): novas colunas `tipo`, `variacao`, `cor`, `descricao`, `ocasioes` e `imagem_url`, montadas por regra a partir do `parametros.yaml`, sem sorteio novo. SKUs, preços, custos e popularidade idênticos aos da v1; nomes com concordância corrigida (73 de 200). Vendas e estoque do ERP idênticos (conteúdo conferido por checksum).
+  - O agente vai ler a `gold.gold_catalogo` (catálogo sem custo e popularidade, com nota média e unidades vendidas) e a `gold.gold_avaliacoes` (nota e texto). Enquanto o agente não acessa o workspace do pipeline, a entrega é por CSV.
+  - O gerador do site produz avaliações com texto coerente com a nota e o tipo de produto. Não precisa de clientes recorrentes nem de afinidades entre produtos.
+  - Não há tabela de recomendações voltando para a API.
+  - Unidades vendidas consideram loja física e site; o marketplace não tem SKU do catálogo (D12).
+- **Responsável:** Emanuel (agente); Diego (catálogo e tabelas gold).
