@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Badge from "@/components/ui/Badge/Badge";
+import Button from "@/components/ui/Button/Button";
 import Accordion from "@/components/ui/Accordion/Accordion";
 import ProductImage from "@/components/ui/ProductImage/ProductImage";
 import { formatCurrency } from "@/utils/formatCurrency";
@@ -8,10 +10,16 @@ import styles from "./OrderCard.module.css";
 
 /**
  * OrderCard conforme docs/DESIGN.md:
- * Número do pedido, data (formatDate), Badge de status (FINALIZADO escuro, CANCELADO perigo),
- * total (formatCurrency), quantidade de itens e um Accordion para ver os itens detalhados.
+ * Número do pedido, data (priorizando dataLocal), Badge de status (FINALIZADO escuro, CANCELADO perigo),
+ * total (formatCurrency), quantidade de itens, Accordion com detalhes e ação de cancelar quando permitido.
  */
-export default function OrderCard({ pedido }) {
+export default function OrderCard({
+  pedido,
+  onCancelar,
+  cancelando = false,
+}) {
+  const [confirmandoCancelamento, setConfirmandoCancelamento] = useState(false);
+
   if (!pedido) {
     return null;
   }
@@ -19,6 +27,9 @@ export default function OrderCard({ pedido }) {
   const {
     id,
     data,
+    dataLocal,
+    dataIso,
+    criadoEm,
     status = "FINALIZADO",
     total = 0,
     qtdItens,
@@ -26,12 +37,13 @@ export default function OrderCard({ pedido }) {
     enderecoResumo,
   } = pedido;
 
-  const dataFormatada = formatDate(data);
+  const dataReferencia = dataLocal || dataIso || data || criadoEm;
+  const dataFormatada = formatDate(dataReferencia);
   const totalFormatado = formatCurrency(total);
   const totalItens = qtdItens || itens.length || 0;
 
-  const isFinalizado = status.toUpperCase() === "FINALIZADO";
-  const isCancelado = status.toUpperCase() === "CANCELADO";
+  const isFinalizado = status?.toUpperCase() === "FINALIZADO";
+  const isCancelado = status?.toUpperCase() === "CANCELADO";
 
   const badgeVariante = isFinalizado
     ? "escuro"
@@ -44,6 +56,13 @@ export default function OrderCard({ pedido }) {
     : isCancelado
       ? "Cancelado"
       : status;
+
+  async function handleConfirmarCancelamento() {
+    setConfirmandoCancelamento(false);
+    if (onCancelar) {
+      await onCancelar(id);
+    }
+  }
 
   return (
     <article className={styles.card} aria-label={`Pedido número ${id}`}>
@@ -123,6 +142,46 @@ export default function OrderCard({ pedido }) {
               })}
             </ul>
           </Accordion>
+        </div>
+      ) : null}
+
+      {!isCancelado && onCancelar ? (
+        <div className={styles.cardFooter}>
+          {confirmandoCancelamento ? (
+            <div className={styles.confirmBox} role="alert">
+              <p className={styles.confirmText}>
+                Tem certeza que deseja cancelar o pedido #{id}?
+              </p>
+              <div className={styles.confirmActions}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={cancelando}
+                  onClick={handleConfirmarCancelamento}
+                >
+                  {cancelando ? "Cancelando..." : "Sim, cancelar pedido"}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={cancelando}
+                  onClick={() => setConfirmandoCancelamento(false)}
+                >
+                  Voltar
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={cancelando}
+              onClick={() => setConfirmandoCancelamento(true)}
+              aria-label={`Cancelar pedido #${id}`}
+            >
+              Cancelar pedido
+            </Button>
+          )}
         </div>
       ) : null}
     </article>

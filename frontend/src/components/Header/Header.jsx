@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Heart, Search, ShoppingBag, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import useCarrinho from "@/hooks/useCarrinho";
+import useFavoritos from "@/hooks/useFavoritos";
 import IconButton from "@/components/ui/IconButton/IconButton";
 import ThemeToggle from "@/components/ui/ThemeToggle/ThemeToggle";
 import Logo from "@/components/ui/Logo/Logo";
@@ -9,11 +11,20 @@ import HeaderMobileMenu from "./HeaderMobileMenu";
 import { LINKS_NAV, ehItemNavAtivo } from "./headerNavUtils";
 import styles from "./Header.module.css";
 
-export default function Header({ totalItensCesta }) {
+export default function Header({ totalItensCesta: totalItensCestaProp }) {
   const { usuario, carregando } = useAuth();
+  const { qtdTotal } = useCarrinho();
+  const { total: totalFavoritos } = useFavoritos();
   const navigate = useNavigate();
   const location = useLocation();
   const [termoBusca, setTermoBusca] = useState("");
+
+  const totalItensCesta =
+    totalItensCestaProp !== undefined
+      ? totalItensCestaProp
+      : usuario
+        ? qtdTotal
+        : 0;
 
   function aoBuscar(evento) {
     evento.preventDefault();
@@ -53,7 +64,12 @@ export default function Header({ totalItensCesta }) {
           </div>
         ) : (
           <>
-            <IconButton icone={Heart} rotulo="Favoritos" para="/favoritos" />
+            <IconButton
+              icone={Heart}
+              rotulo="Favoritos"
+              para="/favoritos"
+              contador={usuario ? totalFavoritos : 0}
+            />
             <IconButton
               icone={ShoppingBag}
               rotulo="Cesta de compras"

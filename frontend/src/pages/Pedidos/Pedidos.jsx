@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Package } from "lucide-react";
+import usePedidos from "@/hooks/usePedidos";
 import AccountNav from "@/components/AccountNav/AccountNav";
 import OrderCard from "@/components/OrderCard/OrderCard";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
@@ -8,18 +8,45 @@ import styles from "./Pedidos.module.css";
 
 /**
  * Página de Meus Pedidos (/pedidos) conforme docs/DESIGN.md:
+ * - Conectada diretamente ao hook usePedidos (dados reais da API).
  * - Menu lateral de navegação da conta (Perfil, Meus pedidos, Favoritos, Sair).
- * - Lista de OrderCard (número, data, status com Badge, total, qtd de itens e Accordion com detalhes).
- * - Estados: carregando (skeleton), erro e vazio ("Você ainda não fez pedidos" com botão para /catalogo).
- * - Sem dados mockados: pedidos chegam por props.
+ * - Lista de OrderCard (número, data com dataLocal, status com Badge, total, qtd de itens, Accordion e cancelamento).
+ * - Estados: carregando (skeleton), erro (com "Tentar de novo") e vazio.
+ * - Sem dados mockados (D-19).
  */
 export default function Pedidos({
-  pedidos = [],
-  estadoInicial = "vazio",
+  pedidos: pedidosProp,
+  estadoInicial,
+  onCancelar: onCancelarProp,
 }) {
-  const [estado, setEstado] = useState(estadoInicial);
+  const {
+    pedidos: pedidosApi,
+    carregando: carregandoApi,
+    erro: erroApi,
+    cancelando,
+    cancelarPedido,
+    recarregar,
+  } = usePedidos();
 
-  const temPedidos = pedidos && pedidos.length > 0;
+  const pedidos = pedidosProp !== undefined ? pedidosProp : pedidosApi;
+  const carregando =
+    estadoInicial === "carregando" ||
+    (pedidosProp === undefined && carregandoApi);
+  const erro =
+    estadoInicial === "erro"
+      ? new Error("Falha ao carregar pedidos")
+      : pedidosProp === undefined
+        ? erroApi
+        : null;
+
+  async function handleCancelar(id) {
+    if (onCancelarProp) {
+      return onCancelarProp(id);
+    }
+    return cancelarPedido(id);
+  }
+
+  const temPedidos = Array.isArray(pedidos) && pedidos.length > 0;
   const rotuloPedidos =
     pedidos.length === 1 ? "pedido realizado" : "pedidos realizados";
   const subtituloPedidos = temPedidos
@@ -27,19 +54,23 @@ export default function Pedidos({
     : "Acompanhe o histórico de suas compras";
 
   function renderConteudo() {
-    if (estado === "carregando") {
+    if (carregando) {
       return <PedidosSkeleton />;
     }
-    if (estado === "erro") {
+
+    if (erro) {
       return (
         <EmptyState
           titulo="Não foi possível carregar seus pedidos"
-          mensagem="Ocorreu um erro ao buscar o seu histórico de pedidos. Tente novamente em instantes."
+          mensagem={
+            erro?.message || "Não foi possível carregar. Tente novamente."
+          }
           textoAcao="Tentar de novo"
-          onAcao={() => setEstado("vazio")}
+          onAcao={recarregar}
         />
       );
     }
+
     if (!temPedidos) {
       return (
         <EmptyState
@@ -51,10 +82,16 @@ export default function Pedidos({
         />
       );
     }
+
     return (
       <div className={styles.ordersList}>
         {pedidos.map((pedido) => (
-          <OrderCard key={pedido.id} pedido={pedido} />
+          <OrderCard
+            key={pedido.id}
+            pedido={pedido}
+            onCancelar={handleCancelar}
+            cancelando={cancelando}
+          />
         ))}
       </div>
     );

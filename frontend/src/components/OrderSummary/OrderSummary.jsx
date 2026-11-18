@@ -45,7 +45,7 @@ export default function OrderSummary({
         </div>
 
         <div className={styles.row}>
-          <span className={styles.label}>Frete</span>
+          <span className={styles.label}>Frete (simulado)</span>
           <span className={styles.value}>{freteTexto}</span>
         </div>
       </div>

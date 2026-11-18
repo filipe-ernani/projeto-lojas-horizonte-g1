@@ -13,30 +13,46 @@ export default function ProductActionRow({
   onAdicionar,
   favorito,
   onToggleFavorito,
+  adicionando = false,
+  feedbackAdicao = "",
 }) {
-  return (
-    <div className={styles.actionRow}>
-      <Button
-        variant="primary"
-        size="lg"
-        fullWidth
-        disabled={!podeAdicionar}
-        onClick={onAdicionar}
-      >
-        Adicionar à cesta
-      </Button>
+  const textoBotao = adicionando
+    ? "Adicionando..."
+    : feedbackAdicao
+      ? feedbackAdicao
+      : "Adicionar à cesta";
 
-      <IconButton
-        icone={Heart}
-        rotulo={
-          favorito
-            ? "Remover produto dos favoritos"
-            : "Adicionar produto aos favoritos"
-        }
-        ativo={favorito}
-        tamanho={52}
-        onClick={onToggleFavorito}
-      />
+  return (
+    <div className={styles.actionRowContainer}>
+      <div className={styles.actionRow}>
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
+          disabled={!podeAdicionar || adicionando}
+          onClick={onAdicionar}
+          aria-live="polite"
+        >
+          {textoBotao}
+        </Button>
+
+        <IconButton
+          icone={Heart}
+          rotulo={
+            favorito
+              ? "Remover produto dos favoritos"
+              : "Adicionar produto aos favoritos"
+          }
+          ativo={favorito}
+          tamanho={52}
+          onClick={onToggleFavorito}
+        />
+      </div>
+      {feedbackAdicao ? (
+        <p className={styles.feedbackToast} role="status" aria-live="polite">
+          {feedbackAdicao}
+        </p>
+      ) : null}
     </div>
   );
 }

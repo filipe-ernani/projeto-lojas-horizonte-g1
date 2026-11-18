@@ -178,6 +178,36 @@
   flex-shrink: 0;
 }
 
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-line);
+}
+
+.confirmBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-line);
+  margin-top: var(--space-2);
+}
+
+.confirmText {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-ink);
+}
+
+.confirmActions {
+  display: flex;
+  gap: var(--space-2);
+}
+
 @media (min-width: 640px) {
   .card {
     padding: var(--space-6);

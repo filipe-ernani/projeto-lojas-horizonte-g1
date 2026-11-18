@@ -5,6 +5,10 @@ async function obterTokenAuth() {
     if (usuario) {
       return await usuario.getIdToken();
     }
+    if (import.meta.env.DEV) {
+      const testToken = sessionStorage.getItem("horizonte_test_token");
+      if (testToken) return testToken;
+    }
   } catch {
     // Silencioso se o Firebase não estiver inicializado ou usuário deslogado
   }

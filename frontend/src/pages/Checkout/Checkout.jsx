@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
+import useCarrinho from "@/hooks/useCarrinho";
+import useEnderecos from "@/hooks/useEnderecos";
+import { finalizarCarrinho } from "@/services/carrinhoService";
 import OrderSummary from "@/components/OrderSummary/OrderSummary";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
 import CheckoutHeader from "./CheckoutHeader";
@@ -12,6 +15,7 @@ import styles from "./Checkout.module.css";
 /**
  * Página de Checkout (/checkout) conforme docs/DESIGN.md:
  * - Compra SIMULADA (nenhum pagamento real).
+ * - Conectada a useCarrinho e useEnderecos reais.
  * - Cabeçalho simplificado com logo e indicador de passos (Cesta, Entrega e pagamento, Confirmação).
  * - Seções separadas de endereço e pagamento.
  * - Resumo com OrderSummary (total nunca calculado no front).
@@ -19,32 +23,74 @@ import styles from "./Checkout.module.css";
  * - Suporta estados: carregando (skeleton), erro, vazio e confirmação de sucesso.
  */
 export default function Checkout({
-  enderecos = [],
-  carrinho = { itens: [], subtotal: 0, frete: 0, total: 0 },
-  estadoInicial = "normal",
+  enderecos: enderecosProp,
+  carrinho: carrinhoProp,
+  estadoInicial,
   onFinalizar,
   pedidoCriado = null,
 }) {
-  const [estado, setEstado] = useState(estadoInicial);
+  const {
+    itens: itensContexto,
+    subtotal: subtotalContexto,
+    frete: freteContexto,
+    total: totalContexto,
+    carregando: carregandoCarrinho,
+    erro: erroCarrinho,
+    recarregar: recarregarCarrinho,
+  } = useCarrinho();
+
+  const {
+    enderecos: enderecosContexto,
+    carregando: carregandoEnderecos,
+    erro: erroEnderecos,
+    recarregar: recarregarEnderecos,
+  } = useEnderecos();
+
+  const itens =
+    carrinhoProp?.itens !== undefined ? carrinhoProp.itens : itensContexto;
+  const subtotal =
+    carrinhoProp?.subtotal !== undefined
+      ? carrinhoProp.subtotal
+      : subtotalContexto;
+  const frete =
+    carrinhoProp?.frete !== undefined ? carrinhoProp.frete : freteContexto;
+  const total =
+    carrinhoProp?.total !== undefined ? carrinhoProp.total : totalContexto;
+  const enderecos =
+    enderecosProp !== undefined ? enderecosProp : enderecosContexto;
+
+  const carregando =
+    estadoInicial === "carregando" ||
+    (carrinhoProp === undefined && carregandoCarrinho) ||
+    (enderecosProp === undefined && carregandoEnderecos);
+
+  const erro =
+    estadoInicial === "erro"
+      ? new Error("Falha no checkout")
+      : carrinhoProp === undefined && erroCarrinho
+        ? erroCarrinho
+        : enderecosProp === undefined && erroEnderecos
+          ? erroEnderecos
+          : null;
+
   const [enviando, setEnviando] = useState(false);
   const [erroEnvio, setErroEnvio] = useState(null);
   const [sucessoPedido, setSucessoPedido] = useState(pedidoCriado);
 
-  const itens = carrinho?.itens || [];
-  const subtotal = carrinho?.subtotal ?? 0;
-  const frete = carrinho?.frete ?? 0;
-  const total = carrinho?.total ?? 0;
+  // Pré-seleciona o endereço padrão ou o primeiro da lista de forma declarativa
+  const [enderecoSelecionadoManual, setEnderecoSelecionadoManual] =
+    useState(null);
 
-  // Pré-seleciona o endereço padrão ou o primeiro da lista
   const enderecoPadrao = enderecos.find((e) => e.padrao) || enderecos[0];
-  const [enderecoSelecionado, setEnderecoSelecionado] = useState(
-    enderecoPadrao ? enderecoPadrao.id : null,
-  );
+  const enderecoSelecionado =
+    enderecoSelecionadoManual !== null
+      ? enderecoSelecionadoManual
+      : enderecoPadrao?.id || null;
 
   // Forma de pagamento padrão
   const [formaPagamento, setFormaPagamento] = useState("PIX");
 
-  if (estado === "carregando") {
+  if (carregando) {
     return (
       <>
         <CheckoutHeader passoAtivo={2} />
@@ -55,16 +101,21 @@ export default function Checkout({
     );
   }
 
-  if (estado === "erro") {
+  if (erro) {
     return (
       <>
         <CheckoutHeader passoAtivo={2} />
         <main className={`container ${styles.main}`}>
           <EmptyState
             titulo="Não foi possível iniciar o checkout"
-            mensagem="Ocorreu uma falha ao preparar o seu pedido. Tente novamente em instantes."
+            mensagem={
+              erro?.message || "Não foi possível carregar. Tente novamente."
+            }
             textoAcao="Tentar de novo"
-            onAcao={() => setEstado("normal")}
+            onAcao={() => {
+              recarregarCarrinho();
+              recarregarEnderecos();
+            }}
           />
         </main>
       </>
@@ -88,7 +139,7 @@ export default function Checkout({
   }
 
   // Estado vazio: quando a cesta não possui itens
-  const cestaVazia = estado === "vazio" || itens.length === 0;
+  const cestaVazia = itens.length === 0;
   if (cestaVazia) {
     return (
       <>
@@ -106,7 +157,7 @@ export default function Checkout({
     );
   }
 
-  const temEnderecos = enderecos && enderecos.length > 0;
+  const temEnderecos = Array.isArray(enderecos) && enderecos.length > 0;
   const podeFinalizar =
     temEnderecos &&
     Boolean(enderecoSelecionado) &&
@@ -122,14 +173,22 @@ export default function Checkout({
     setErroEnvio(null);
 
     try {
+      let resultado;
       if (onFinalizar) {
-        const resultado = await onFinalizar({
+        resultado = await onFinalizar({
           enderecoId: enderecoSelecionado,
           formaPagamento,
         });
-        if (resultado) {
-          setSucessoPedido(resultado);
-        }
+      } else {
+        resultado = await finalizarCarrinho({
+          enderecoId: enderecoSelecionado,
+          formaPagamento,
+        });
+        await recarregarCarrinho();
+      }
+
+      if (resultado) {
+        setSucessoPedido(resultado);
       }
     } catch (err) {
       setErroEnvio(
@@ -157,7 +216,7 @@ export default function Checkout({
             <CheckoutEndereco
               enderecos={enderecos}
               enderecoSelecionado={enderecoSelecionado}
-              onSelecionar={setEnderecoSelecionado}
+              onSelecionar={setEnderecoSelecionadoManual}
             />
 
             <CheckoutPagamento

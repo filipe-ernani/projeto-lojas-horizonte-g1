@@ -1,4 +1,4 @@
-import { Navigate, useSearchParams } from "react-router-dom";
+import { Navigate, useLocation, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/ui/Button/Button";
 import Field from "@/components/ui/Field/Field";
@@ -9,7 +9,11 @@ import LoginSocial from "./LoginSocial";
 import LoginFooter from "./LoginFooter";
 import LoginFeedback from "./LoginFeedback";
 import { useLoginForm } from "./useLoginForm";
-import { CONFIG_MODOS, MODOS } from "./loginConstants";
+import {
+  CONFIG_MODOS,
+  MODOS,
+  obterDestinoRedirecionamento,
+} from "./loginConstants";
 import styles from "./Login.module.css";
 
 /**
@@ -20,6 +24,7 @@ import styles from "./Login.module.css";
  * - Redirecionamento e autenticação desacoplados no useLoginForm.
  */
 export default function Login() {
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const modoQuery = searchParams.get("modo");
   const modoInicial = [MODOS.ENTRAR, MODOS.CADASTRAR, MODOS.RECUPERAR].includes(
@@ -44,7 +49,8 @@ export default function Login() {
   }
 
   if (usuario) {
-    return <Navigate to="/" replace />;
+    const destino = obterDestinoRedirecionamento(location.state?.from);
+    return <Navigate to={destino} replace />;
   }
 
   const { modo, enviando, erros } = form;

@@ -85,6 +85,27 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     // O Firebase gerencia a sessão internamente e notifica mudanças de estado aqui.
     const cancelarInscricao = onAuthStateChanged(auth, (usuarioFirebase) => {
+      if (!usuarioFirebase && import.meta.env.DEV) {
+        try {
+          const testToken = sessionStorage.getItem("horizonte_test_token");
+          if (testToken) {
+            const partes = testToken.split(":");
+            const uid = partes[1] || "user-teste";
+            const email = partes[2] || "user@teste.com";
+            const displayName = partes[3] || "Usuário Teste";
+            setUsuario({
+              uid,
+              email,
+              displayName,
+              getIdToken: async () => testToken,
+            });
+            setCarregando(false);
+            return;
+          }
+        } catch {
+          // Silencioso se sessionStorage bloqueado
+        }
+      }
       setUsuario(usuarioFirebase);
       setCarregando(false);
     });

@@ -12,7 +12,7 @@ export default function ProductGrid({
   emptyTitulo = "Nenhum produto encontrado",
   emptyMensagem = "Não há produtos para exibir nesta seção no momento.",
   className = "",
-  isFavorito = false,
+  isFavorito,
   onFavoritar,
   renderAcoes,
 }) {
@@ -32,7 +32,11 @@ export default function ProductGrid({
     <div className={`product-grid ${styles.grid} ${className}`.trim()}>
       {produtos.map((produto) => {
         const itemFavorito =
-          typeof isFavorito === "function" ? isFavorito(produto) : isFavorito;
+          typeof isFavorito === "function"
+            ? isFavorito(produto)
+            : isFavorito !== undefined
+              ? isFavorito
+              : undefined;
         return (
           <ProductCard
             key={produto.id}

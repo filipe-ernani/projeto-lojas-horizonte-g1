@@ -16,6 +16,7 @@ export default function PerfilEnderecosSection({
   enderecos = [],
   onSalvarEndereco,
   onExcluirEndereco,
+  onDefinirPadrao,
 }) {
   const [criando, setCriando] = useState(false);
   const [enderecoEmEdicao, setEnderecoEmEdicao] = useState(null);
@@ -92,6 +93,7 @@ export default function PerfilEnderecosSection({
               endereco={endereco}
               onEditar={handleEditar}
               onExcluir={onExcluirEndereco}
+              onDefinirPadrao={onDefinirPadrao}
             />
           ))}
         </div>

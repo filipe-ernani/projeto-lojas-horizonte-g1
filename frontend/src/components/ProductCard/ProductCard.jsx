@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import useFavoritos from "@/hooks/useFavoritos";
 import { formatCurrency } from "@/utils/formatCurrency";
 import ProductImage from "@/components/ui/ProductImage/ProductImage";
 import RatingPill from "@/components/ui/RatingPill/RatingPill";
@@ -15,11 +16,15 @@ import styles from "./ProductCard.module.css";
  */
 export default function ProductCard({
   produto,
-  isFavorito = false,
+  isFavorito: isFavoritoProp,
   onFavoritar,
   acoes,
   seloNovo = false,
 }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isFavorito: isFavoritoFn, alternar } = useFavoritos();
+
   if (!produto) {
     return null;
   }
@@ -28,13 +33,24 @@ export default function ProductCard({
   const precoFormatado = formatCurrency(preco);
   const corHex = cores?.[0]?.hex;
 
-  function handleFavoritar(evento) {
+  const itemFavorito =
+    isFavoritoProp !== undefined
+      ? isFavoritoProp
+      : isFavoritoFn(id || produto.sku);
+
+  async function handleFavoritar(evento) {
     if (evento) {
       evento.preventDefault();
       evento.stopPropagation();
     }
     if (onFavoritar) {
       onFavoritar(produto);
+      return;
+    }
+
+    const resultado = await alternar(id || produto.sku, produto);
+    if (resultado?.precisaLogin) {
+      navigate("/login", { state: { from: location } });
     }
   }
 
@@ -73,10 +89,10 @@ export default function ProductCard({
 
       <div className={styles.favoriteWrapper}>
         <FavoriteButton
-          isFavorito={isFavorito}
+          isFavorito={itemFavorito}
           onClick={handleFavoritar}
           ariaLabel={
-            isFavorito
+            itemFavorito
               ? `Remover ${nome} dos favoritos`
               : `Adicionar ${nome} aos favoritos`
           }

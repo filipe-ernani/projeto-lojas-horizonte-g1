@@ -146,6 +146,13 @@
   margin-top: var(--space-2);
 }
 
+.feedbackToast {
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--color-brand);
+  font-weight: var(--fw-medium);
+}
+
 .accordions {
   display: flex;
   flex-direction: column;

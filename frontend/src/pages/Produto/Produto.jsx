@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import useProduto from "@/hooks/useProduto";
 import useSemelhantes from "@/hooks/useSemelhantes";
 import useAvaliacoes from "@/hooks/useAvaliacoes";
+import useFavoritos from "@/hooks/useFavoritos";
+import useCarrinho from "@/hooks/useCarrinho";
 import RatingPill from "@/components/ui/RatingPill/RatingPill";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
 import { formatCurrency } from "@/utils/formatCurrency";
@@ -35,6 +37,8 @@ export default function Produto({
   onAdicionar,
 }) {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     dados: produtoApi,
@@ -45,6 +49,8 @@ export default function Produto({
 
   const { dados: semelhantesApi } = useSemelhantes(id);
   const { dados: avaliacoesApi } = useAvaliacoes(id);
+  const { isFavorito, alternar } = useFavoritos();
+  const { adicionar } = useCarrinho();
 
   const produto = produtoProp !== undefined ? produtoProp : produtoApi;
   const produtosSemelhantes =
@@ -54,7 +60,8 @@ export default function Produto({
 
   const [corSelecionada, setCorSelecionada] = useState(null);
   const [tamanhoSelecionado, setTamanhoSelecionado] = useState(null);
-  const [favorito, setFavorito] = useState(false);
+  const [adicionando, setAdicionando] = useState(false);
+  const [feedbackAdicao, setFeedbackAdicao] = useState("");
 
   // 1. Estado Carregando
   if (carregandoProduto) {
@@ -164,16 +171,56 @@ export default function Produto({
   // Cor enviada para a galeria: a cor escolhida pelo usuário ou a primeira cor do produto
   const corGaleria = corSelecionada?.hex || cores?.[0]?.hex;
 
-  function handleAdicionar() {
-    if (!podeAdicionar) {
+  const idProduto = produto?.id || produto?.sku || id;
+  const favorito = isFavorito(idProduto);
+
+  async function handleToggleFavorito() {
+    const resultado = await alternar(idProduto, produto);
+    if (resultado?.precisaLogin) {
+      navigate("/login", { state: { from: location } });
+    }
+  }
+
+  async function handleAdicionar() {
+    if (!podeAdicionar || adicionando) {
       return;
     }
-    if (typeof onAdicionar === "function") {
-      onAdicionar({
-        produto,
-        cor: corEfetiva,
+
+    setAdicionando(true);
+    setFeedbackAdicao("");
+
+    try {
+      const corNome =
+        typeof corEfetiva === "object" ? corEfetiva?.nome : corEfetiva;
+
+      const resultado = await adicionar({
+        produtoId: idProduto,
         tamanho: tamanhoEfetivo,
+        cor: corNome || null,
+        quantidade: 1,
       });
+
+      if (resultado?.precisaLogin) {
+        navigate("/login", { state: { from: location } });
+        return;
+      }
+
+      setFeedbackAdicao("Produto adicionado à cesta!");
+      if (typeof onAdicionar === "function") {
+        onAdicionar({
+          produto,
+          cor: corEfetiva,
+          tamanho: tamanhoEfetivo,
+        });
+      }
+
+      setTimeout(() => {
+        setFeedbackAdicao("");
+      }, 3000);
+    } catch {
+      setFeedbackAdicao("Não foi possível adicionar o produto.");
+    } finally {
+      setAdicionando(false);
     }
   }
 
@@ -241,7 +288,9 @@ export default function Produto({
             podeAdicionar={podeAdicionar}
             onAdicionar={handleAdicionar}
             favorito={favorito}
-            onToggleFavorito={() => setFavorito((prev) => !prev)}
+            onToggleFavorito={handleToggleFavorito}
+            adicionando={adicionando}
+            feedbackAdicao={feedbackAdicao}
           />
 
           <ProductAccordions descricao={descricao} />

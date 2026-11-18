@@ -12,6 +12,7 @@ export default function AddressCard({
   endereco,
   onEditar,
   onExcluir,
+  onDefinirPadrao,
   className = "",
 }) {
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
@@ -86,6 +87,16 @@ export default function AddressCard({
         </div>
       ) : (
         <div className={styles.actions}>
+          {!padrao && onDefinirPadrao ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onDefinirPadrao(id, endereco)}
+              aria-label={`Tornar ${apelido} o endereço padrão`}
+            >
+              Tornar padrão
+            </Button>
+          ) : null}
           <Button
             variant="outline"
             size="sm"

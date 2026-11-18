@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
+import useFavoritos from "@/hooks/useFavoritos";
+import useCarrinho from "@/hooks/useCarrinho";
 import ProductGrid from "@/components/ProductGrid/ProductGrid";
 import Button from "@/components/ui/Button/Button";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
@@ -9,20 +11,43 @@ import styles from "./Favoritos.module.css";
 
 /**
  * Página de Favoritos (/favoritos) conforme docs/DESIGN.md:
- * - Grade com ProductGrid/ProductCard recebendo produtos por props (formato Produto do docs/API.md).
- * - Coração preenchido e botão "Escolher tamanho" abaixo de cada card levando a /produto/:id.
- * - Estados de carregando (skeleton), erro e vazio ("Você ainda não favoritou nada" com botão para /catalogo).
- * - Sem dados mockados: produtos e handler chegam por props.
+ * - Grade conectada ao useFavoritos (lista real da API).
+ * - Ações de remover (coração) e adicionar ao carrinho / escolher tamanho.
+ * - Estados de carregando (skeleton), erro (com "Tentar de novo") e vazio.
+ * - Sem dados mockados (D-19).
  */
 export default function Favoritos({
-  produtos = [],
-  estadoInicial = "vazio",
-  onFavoritar,
+  produtos: produtosProp,
+  estadoInicial,
+  onFavoritar: onFavoritarProp,
 }) {
   const navigate = useNavigate();
-  const [estado, setEstado] = useState(estadoInicial);
+  const location = useLocation();
 
-  if (estado === "carregando") {
+  const {
+    itens: itensApi,
+    carregando: carregandoApi,
+    erro: erroApi,
+    recarregar,
+    alternar,
+  } = useFavoritos();
+
+  const { adicionar } = useCarrinho();
+  const [adicionandoId, setAdicionandoId] = useState(null);
+  const [feedback, setFeedback] = useState("");
+
+  const produtos = produtosProp !== undefined ? produtosProp : itensApi;
+  const carregando =
+    estadoInicial === "carregando" ||
+    (produtosProp === undefined && carregandoApi);
+  const erro =
+    estadoInicial === "erro"
+      ? new Error("Falha ao carregar")
+      : produtosProp === undefined
+        ? erroApi
+        : null;
+
+  if (carregando) {
     return (
       <main className={`container ${styles.main}`}>
         <FavoritosSkeleton />
@@ -30,31 +55,100 @@ export default function Favoritos({
     );
   }
 
-  if (estado === "erro") {
+  if (erro) {
     return (
       <main className={`container ${styles.main}`}>
         <EmptyState
           titulo="Não foi possível carregar os favoritos"
-          mensagem="Ocorreu um erro ao carregar seus produtos favoritos. Tente novamente em instantes."
+          mensagem={
+            erro?.message || "Não foi possível carregar. Tente novamente."
+          }
           textoAcao="Tentar de novo"
-          onAcao={() => setEstado("vazio")}
+          onAcao={recarregar}
         />
       </main>
     );
   }
 
-  const temProdutos = produtos && produtos.length > 0;
+  const temProdutos = Array.isArray(produtos) && produtos.length > 0;
 
-  function renderAcaoEscolherTamanho(produto) {
+  async function handleAdicionarAoCarrinho(produto) {
+    const tamanhos = produto.tamanhos || [];
+    const cores = produto.cores || [];
+    const precisaTamanho =
+      tamanhos.length > 1 &&
+      tamanhos[0] !== "Único" &&
+      tamanhos[0] !== "Unico";
+    const precisaCor = cores.length > 1;
+
+    // Se o produto exige escolher tamanho ou cor, vai para a página de produto
+    if (precisaTamanho || precisaCor) {
+      navigate(`/produto/${produto.id}`);
+      return;
+    }
+
+    setAdicionandoId(produto.id);
+    try {
+      const corObj = cores[0];
+      const corNome = typeof corObj === "object" ? corObj?.nome : corObj;
+      const res = await adicionar({
+        produtoId: produto.id,
+        tamanho: tamanhos[0] || null,
+        cor: corNome || null,
+        quantidade: 1,
+      });
+
+      if (res?.precisaLogin) {
+        navigate("/login", { state: { from: location } });
+        return;
+      }
+
+      setFeedback(`"${produto.nome}" adicionado à cesta!`);
+      setTimeout(() => setFeedback(""), 3000);
+    } catch {
+      setFeedback("Não foi possível adicionar o produto.");
+    } finally {
+      setAdicionandoId(null);
+    }
+  }
+
+  function handleFavoritar(produto) {
+    if (onFavoritarProp) {
+      onFavoritarProp(produto);
+      return;
+    }
+    alternar(produto.id, produto);
+  }
+
+  function renderAcoes(produto) {
+    const tamanhos = produto.tamanhos || [];
+    const cores = produto.cores || [];
+    const precisaEscolher =
+      (tamanhos.length > 1 &&
+        tamanhos[0] !== "Único" &&
+        tamanhos[0] !== "Unico") ||
+      cores.length > 1;
+
+    const estaAdicionando = adicionandoId === produto.id;
+
     return (
       <Button
-        variant="outline"
+        variant="primary"
         size="sm"
         fullWidth
-        onClick={() => navigate(`/produto/${produto.id}`)}
-        aria-label={`Escolher tamanho para ${produto.nome}`}
+        disabled={estaAdicionando}
+        onClick={() => handleAdicionarAoCarrinho(produto)}
+        aria-label={
+          precisaEscolher
+            ? `Escolher opções para ${produto.nome}`
+            : `Adicionar ${produto.nome} à cesta`
+        }
       >
-        Escolher tamanho
+        {estaAdicionando
+          ? "Adicionando..."
+          : precisaEscolher
+            ? "Escolher opções"
+            : "Adicionar à cesta"}
       </Button>
     );
   }
@@ -71,6 +165,12 @@ export default function Favoritos({
         <p className={styles.subtitle}>{subtituloFavoritos}</p>
       </header>
 
+      {feedback ? (
+        <p className={styles.feedbackAlert} role="status" aria-live="polite">
+          {feedback}
+        </p>
+      ) : null}
+
       {!temProdutos ? (
         <EmptyState
           icone={Heart}
@@ -83,8 +183,8 @@ export default function Favoritos({
         <ProductGrid
           produtos={produtos}
           isFavorito={true}
-          onFavoritar={onFavoritar}
-          renderAcoes={renderAcaoEscolherTamanho}
+          onFavoritar={handleFavoritar}
+          renderAcoes={renderAcoes}
         />
       )}
     </main>

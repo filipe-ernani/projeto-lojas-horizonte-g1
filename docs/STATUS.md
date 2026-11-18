@@ -60,6 +60,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - [x] Dados (Tarefa 4A): serviços (`services/api.js`, `services/produtosService.js`, `services/mapeadores.js`) e hooks de produtos (`useCategorias`, `useProdutos`, `useNovidades`, `useProduto`, `useSemelhantes`, `useAvaliacoes`)
 - [x] Dados: `CartContext` e `FavoritesContext` (e camada de dados de rotas privadas: carrinho, favoritos, pedidos, perfil, endereços)
 - [x] UI (Tarefa 4A UI): ligar hooks às páginas (Home, Catálogo, Produto)
+- [x] UI (Tarefa 4B UI): ligar carrinho, favoritos, perfil, endereços e pedidos aos contextos e hooks do agente Dados
 - [ ] Chat: ligar à rota `/api/chat`
 
 ### Fase 5. Acabamento
@@ -69,16 +70,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
-- _(Novo)_ De Dados para UI (Tarefa 4B UI): A camada de dados de rotas privadas está completa, tipada/mapeada e validada com sucesso contra a API real.
-  - Providers globais já plugados no `main.jsx`: `FavoritosProvider` e `CarrinhoProvider` envolvem `<App />`.
-  - Contextos & Hooks:
-    - `useFavoritos()`: `{ itens, favoritos, skus, total, isFavorito(sku), alternar(sku), carregando, erro, recarregar }`. Tem atualização otimista instantânea e rollback automático em falhas de API/rede. Se deslogado, retorna `{ precisaLogin: true }` sem chamar API.
-    - `useCarrinho()`: `{ itens, subtotal, frete, total, qtdTotal, adicionar({ produtoId, tamanho, cor, quantidade }), alterarQuantidade(sku, tamanho, cor, quantidade), remover(sku, tamanho, cor), limpar(), carregando, erro, recarregar }`. Tem atualização otimista e rollback automático. Totais vêm sempre do back-end (`/api/carrinho`). Se deslogado, retorna `{ precisaLogin: true }` sem chamar API.
-    - `usePedidos()`: `{ pedidos, cancelando, cancelarPedido(id), carregando, erro, recarregar }`.
-    - `usePerfil()`: `{ perfil, salvando, salvarPerfil({ nome, telefone }), carregando, erro, recarregar }`.
-    - `useEnderecos()`: `{ enderecos, salvando, criarEndereco, editarEndereco, excluirEndereco, definirPadrao, carregando, erro, recarregar }`.
-  - Serviços diretos em `src/services/` (`favoritosService`, `carrinhoService`, `pedidosService`, `perfilService`, `enderecosService`) usam `api.js` nativo com Bearer e `X-Sessao-Id`, suportam `signal` e tratam 401 com evento de sessão expirada.
-  - Próximo passo para UI: ligar as páginas privadas (`Favoritos.jsx`, `Carrinho.jsx`, `Checkout.jsx`, `Pedidos.jsx`, `Perfil.jsx`) aos respectivos hooks/contextos.
+- _(Resolvido em 18/11)_ De Dados para UI (Tarefa 4B UI): A camada de dados de rotas privadas foi conectada com sucesso às páginas de interface (`ProductCard`, `Produto`, `Header`, `Favoritos`, `Carrinho`, `Checkout`, `Perfil`, `Pedidos`), com suporte total a feedback visual com `aria-live`, redirecionamento de login com preservação de rota (`location.state.from`), total e frete simulado vindos da API, CRUD de endereços, edição de dados e cancelamento de pedidos. Validação em Edge headless em 390px, 768px e 1440px nos temas claro e escuro.
 
 - _(Resolvido em 18/11)_ De Dados para UI (Tarefa 4A UI): a camada de dados e hooks de produtos está pronta e validada contra a API real (`http://localhost:3000`). Os hooks `useCategorias`, `useProdutos(filtros)`, `useNovidades()`, `useProduto(id)`, `useSemelhantes(id)` e `useAvaliacoes(id)` estão disponíveis em `src/hooks/` devolvendo `{ dados, carregando, erro, recarregar }`. O `ProductCard` já repassa `produto={produto}` para o `ProductImage` sem alterar silhuetas. Ligar os hooks às páginas de Home, Catálogo e Produto.
 
@@ -100,25 +92,6 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 ## Problemas conhecidos
 
 - Informações de materiais e composição na página de Produto dependem da chegada do dataset e de confirmação no `docs/API.md` (Fase 4).
-- `Home.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando a Home usar o hook de dados (Fase 4).
-- `Home.jsx` define `categorias = []` e `produtos = []` como props padrão para manter a vitrine funcional sem dados; substituir pela integração dos hooks na Fase 4.
-- `Catalogo.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando o Catálogo usar o hook de dados (Fase 4).
-- `Catalogo.jsx` define `produtos = []`, `categorias = []` e `tamanhos = []` como props padrão para manter o catálogo funcional sem dados; substituir pela integração dos hooks na Fase 4.
-- `Produto.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando o Produto usar o hook de dados (Fase 4).
-- `Produto.jsx` possui botão de favoritos apenas visual com toggle local; integrar ao `FavoritesContext` na Fase 4.
-- `Produto.jsx` recebe `onAdicionar` como prop; conectar ao `CartContext` na Fase 4.
-- `ProductCard.jsx` e `FavoriteButton.jsx` possuem botão de favoritos apenas visual com `preventDefault`; integrar ao `FavoritesContext` na Fase 4.
-- `Favoritos.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando Favoritos usar o hook de dados (Fase 4).
-- `Favoritos.jsx` define `produtos = []` como prop padrão e recebe `onFavoritar` como prop; conectar ao `FavoritesContext` na Fase 4.
-- `Carrinho.jsx` usa a prop `estadoInicial` só para visualizar os estados; remover quando o Carrinho usar o hook de dados (Fase 4).
-- `Carrinho.jsx` define `carrinho = { itens: [], subtotal: 0, frete: 0, total: 0 }` como prop padrão e recebe `onAlterarQuantidade` e `onRemover` como props; conectar ao `CartContext` na Fase 4.
-- `OrderSummary.jsx` recebe `total` por prop e nunca calcula no front; na Fase 4 os totais virão calculados diretamente da API (`/api/carrinho`).
-- `Checkout.jsx` usa props `enderecos = []`, `carrinho` e `estadoInicial` para testes de visualização; integrar com `useEnderecos` e `CartContext` na Fase 4.
-- `Checkout.jsx` recebe `onFinalizar` por prop; conectar à rota `/api/carrinho/finalizar` na Fase 4.
-- `Pedidos.jsx` usa a prop `pedidos = []` e `estadoInicial` para testes de visualização; integrar com `usePedidos` na Fase 4.
-- `Perfil.jsx` usa props `perfil = { nome: "", email: "", telefone: "" }`, `enderecos = []` e `estadoInicial` para testes de visualização; integrar com hooks de usuário e endereços na Fase 4.
-- `PerfilDadosSection.jsx` recebe `onSalvarPerfil` por prop; conectar à rota `/api/usuarios/perfil` (PUT) na Fase 4.
-- `PerfilEnderecosSection.jsx` e `PerfilEnderecoForm.jsx` recebem `onSalvarEndereco` e `onExcluirEndereco` por props; conectar aos endpoints `/api/enderecos` na Fase 4.
 - `ChatWidget.jsx` está montado no `Layout` para usuário logado com `sessaoId` em memória; o envio real (`onEnviar`) será conectado à rota `POST /api/chat` na Fase 4 (atualmente exibe estado de indisponibilidade com retry).
 
 ## Registro de sessões
@@ -149,6 +122,8 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 17/11 | Aprimoramento do placeholder de `ProductImage` em `components/ui/` com ícones por categoria, fundo derivado da cor (`color-mix`) e cálculo automático de contraste | `feat(design): aprimora placeholder de ProductImage com cor, categoria e contraste` | UI: integrar `cor` e `categoria` no ProductCard e ProductGallery |
 | 17/11 | Integração de cor e categoria em `ProductCard` e `ProductGallery` (com sincronização no `ColorSwatch`) e ajuste da regra D-07 em `Produto` (tamanho único e produtos sem cor) | `feat(ui): integra cor e categoria no ProductCard e ProductGallery e ajusta regra D-07` | UI: `ChatWidget` da Fase 2 |
 | 18/11 | Conexão da UI do Catálogo, Produto e Home com os hooks reais do agente Dados (Tarefa 4A UI), sincronização com URL, tratamento estrito de 404, novidades e ocultação de RatingPill sem avaliações | `feat(ui): conecta Catalogo, Produto e Home aos hooks da API real (tarefa 4A)` | Fase 4B: CartContext e FavoritesContext |
+| 18/11 | Tarefa 4B UI: ligadas telas privadas (`Favoritos`, `Carrinho`, `Checkout`, `Perfil`, `Pedidos`) e componentes (`ProductCard`, `ProductActionRow`, `Header`, `OrderCard`, `AddressCard`) aos contextos e hooks reais com feedback visual (`aria-live`), D-07, redirecionamento seguro ao login com retorno e testes em 390, 768 e 1440 px nos dois temas | `feat(ui): integra rotas privadas aos contextos e hooks da API` | Fase 4: Chat `/api/chat` |
+| 18/11 | Tarefa 4B Dados: camada de dados de rotas privadas (serviços de favoritos, carrinho, pedidos, perfil, endereços, contextos `FavoritosContext` e `CarrinhoContext` com otimismo e rollback, hooks com AbortController) sem mocks D-19 | `feat(dados): implementa camada de dados de rotas privadas e contextos` | UI: ligar rotas privadas aos hooks |
 | 18/11 | Revisão geral consolidada do projeto (Relatório 18/11), validação de B3b-fix (fuso America/Sao_Paulo e garantia de usuário no requireAuth), lint e build do front e testes do back | `docs: gera relatorio consolidado de revisao de 18/11/2026` | Fase 4B: CartContext e FavoritesContext |
 | 17/11 | Interface do `ChatWidget` (botão flutuante 60px, painel acessível com Esc/Tab trap, sessaoId em memória, boas-vindas e estados sem respostas fictícias) montada no `Layout` para usuário logado | `feat(ui): implementa interface acessivel do ChatWidget no Layout` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |
 | 17/11 | Refatoração de `Login.jsx` (<200 linhas) com `Field` de `ui/`, `PasswordField` local, remoção de `isMountedRef` (obsoleto no React 18) e tratamento assíncrono de promessas de navegação | `refactor(login): simplifica Login com Field, PasswordField local e trata promessas de navegacao` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |
