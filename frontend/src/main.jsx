@@ -2,6 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContextProvider";
+import { FavoritosProvider } from "@/context/FavoritosContextProvider";
+import { CarrinhoProvider } from "@/context/CarrinhoContextProvider";
 import "./styles/tokens.css";
 import "./styles/reset.css";
 import "./styles/global.css";
@@ -13,7 +15,11 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <FavoritosProvider>
+          <CarrinhoProvider>
+            <App />
+          </CarrinhoProvider>
+        </FavoritosProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

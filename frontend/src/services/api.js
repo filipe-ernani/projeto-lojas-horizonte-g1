@@ -80,6 +80,8 @@ export class ApiError extends Error {
     this.name = "ApiError";
     this.status = status;
     this.dados = dados;
+    this.isUnauthorized = status === 401;
+    this.sessaoExpirada = status === 401;
   }
 }
 
@@ -95,9 +97,19 @@ export async function apiFetch(caminho, opcoes = {}) {
 
   const headers = new Headers(opcoes.headers);
 
+  let body = opcoes.body;
   if (
-    opcoes.body &&
-    !(opcoes.body instanceof FormData) &&
+    body &&
+    typeof body === "object" &&
+    !(body instanceof FormData) &&
+    typeof body !== "string"
+  ) {
+    body = JSON.stringify(body);
+  }
+
+  if (
+    body &&
+    !(body instanceof FormData) &&
     !headers.has("Content-Type")
   ) {
     headers.set("Content-Type", "application/json");
@@ -121,6 +133,7 @@ export async function apiFetch(caminho, opcoes = {}) {
   try {
     resposta = await fetch(url, {
       ...opcoes,
+      body,
       headers,
     });
   } catch (error_) {
@@ -147,8 +160,14 @@ export async function apiFetch(caminho, opcoes = {}) {
   }
 
   if (!resposta.ok) {
+    if (resposta.status === 401 && typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("horizonte:sessao-expirada"));
+    }
     const mensagem =
-      dados?.erro || `Erro ${resposta.status} ao comunicar com o servidor.`;
+      dados?.erro ||
+      (resposta.status === 401
+        ? "Sessão expirada. Faça login novamente."
+        : `Erro ${resposta.status} ao comunicar com o servidor.`);
     throw new ApiError(mensagem, resposta.status, dados);
   }
 

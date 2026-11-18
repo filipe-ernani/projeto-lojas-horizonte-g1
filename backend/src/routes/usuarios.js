@@ -20,8 +20,8 @@ router.put("/usuarios/perfil", requireAuth, async (req, res, next) => {
   try {
     const { nome, telefone } = req.body || {};
     const perfil = await upsertPerfilQuery(req.usuarioId, req.usuarioEmail, {
-      nome: typeof nome === "string" ? nome.trim() : "",
-      telefone: typeof telefone === "string" ? telefone.trim() : "",
+      nome: typeof nome === "string" ? nome.trim() : (nome === undefined ? undefined : ""),
+      telefone: typeof telefone === "string" ? telefone.trim() : (telefone === undefined ? undefined : ""),
     });
     res.json(perfil);
   } catch (error_) {

@@ -1,18 +1,38 @@
 import { pool, query } from "../db.js";
 import { gravarEvento } from "../services/analyticsService.js";
+import {
+  formatarDataLocalSaoPaulo,
+  formatarDataSimples,
+  formatarIsoUtc,
+} from "../utils/datas.js";
 
 function formatarDataIso(data) {
-  return data ? new Date(data).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10);
+  return data
+    ? new Date(data).toISOString().slice(0, 10)
+    : new Date().toISOString().slice(0, 10);
 }
 
 export function formatarPedido(p, itens = [], endereco = null) {
   const resumo = endereco
     ? `${endereco.cidade}/${endereco.uf}`
-    : p.cidade && p.uf ? `${p.cidade}/${p.uf}` : "";
+    : p.cidade && p.uf
+      ? `${p.cidade}/${p.uf}`
+      : "";
+
+  const dataReferencia = p.finalizado_em || p.criado_em;
 
   return {
     id: Number(p.id),
-    data: formatarDataIso(p.finalizado_em || p.criado_em),
+    data:
+      formatarDataSimples(dataReferencia) || formatarDataIso(dataReferencia),
+    dataIso: formatarIsoUtc(dataReferencia),
+    dataLocal: formatarDataLocalSaoPaulo(dataReferencia),
+    criadoEm: formatarIsoUtc(p.criado_em),
+    criadoEmLocal: formatarDataLocalSaoPaulo(p.criado_em),
+    finalizadoEm: formatarIsoUtc(p.finalizado_em),
+    finalizadoEmLocal: formatarDataLocalSaoPaulo(p.finalizado_em),
+    canceladoEm: formatarIsoUtc(p.cancelado_em),
+    canceladoEmLocal: formatarDataLocalSaoPaulo(p.cancelado_em),
     status: p.status,
     total: Number(p.valor_total),
     qtdItens: itens.reduce((acc, i) => acc + Number(i.quantidade), 0),
@@ -35,7 +55,10 @@ export async function finalizarCarrinhoQuery(
   sessaoId = null,
 ) {
   if (!["PIX", "CARTAO", "BOLETO"].includes(formaPagamento)) {
-    return { erro: "Forma de pagamento inválida. Opções: PIX, CARTAO, BOLETO.", status: 400 };
+    return {
+      erro: "Forma de pagamento inválida. Opções: PIX, CARTAO, BOLETO.",
+      status: 400,
+    };
   }
 
   const client = await pool.connect();
@@ -79,14 +102,16 @@ export async function finalizarCarrinhoQuery(
     for (const item of itensRes.rows) {
       const precoCentavos = Math.round(Number(item.preco_atual) * 100);
       subtotalCentavos += precoCentavos * Number(item.quantidade);
-      await client.query("UPDATE loja.pedido_itens SET preco_unitario = $1 WHERE id = $2;", [
-        (precoCentavos / 100).toFixed(2),
-        item.id,
-      ]);
+      await client.query(
+        "UPDATE loja.pedido_itens SET preco_unitario = $1 WHERE id = $2;",
+        [(precoCentavos / 100).toFixed(2), item.id],
+      );
       item.preco_unitario = (precoCentavos / 100).toFixed(2);
     }
 
-    const freteCentavos = Math.round((Number(process.env.FRETE_SIMULADO) || 15.0) * 100);
+    const freteCentavos = Math.round(
+      (Number(process.env.FRETE_SIMULADO) || 15.0) * 100,
+    );
     const totalCentavos = subtotalCentavos + freteCentavos;
 
     const subtotal = (subtotalCentavos / 100).toFixed(2);
@@ -104,7 +129,7 @@ export async function finalizarCarrinhoQuery(
     await client.query("COMMIT;");
 
     if (sessaoId) {
-      gravarEvento({
+      void gravarEvento({
         evento: "purchase",
         sessaoId,
         usuarioId,
@@ -145,7 +170,8 @@ export async function listarMeusPedidosQuery(usuarioId) {
 
   const itensPorPedido = new Map();
   itensRes.rows.forEach((item) => {
-    if (!itensPorPedido.has(item.pedido_id)) itensPorPedido.set(item.pedido_id, []);
+    if (!itensPorPedido.has(item.pedido_id))
+      itensPorPedido.set(item.pedido_id, []);
     itensPorPedido.get(item.pedido_id).push(item);
   });
 
@@ -160,10 +186,15 @@ export async function cancelarPedidoQuery(id, usuarioId) {
     [id, usuarioId],
   );
 
-  if (pedRes.rows.length === 0) return { erro: "Pedido não encontrado.", status: 404 };
-  if (pedRes.rows[0].status === "CANCELADO") return { erro: "Pedido já está cancelado.", status: 409 };
+  if (pedRes.rows.length === 0)
+    return { erro: "Pedido não encontrado.", status: 404 };
+  if (pedRes.rows[0].status === "CANCELADO")
+    return { erro: "Pedido já está cancelado.", status: 409 };
   if (pedRes.rows[0].status !== "FINALIZADO") {
-    return { erro: "Apenas pedidos finalizados podem ser cancelados.", status: 400 };
+    return {
+      erro: "Apenas pedidos finalizados podem ser cancelados.",
+      status: 400,
+    };
   }
 
   const updateRes = await query(
@@ -172,5 +203,12 @@ export async function cancelarPedidoQuery(id, usuarioId) {
     [id],
   );
 
-  return { sucesso: true, status: updateRes.rows[0].status };
+  const row = updateRes.rows[0];
+  return {
+    sucesso: true,
+    status: row.status,
+    canceladoEm: formatarIsoUtc(row.cancelado_em),
+    canceladoEmLocal: formatarDataLocalSaoPaulo(row.cancelado_em),
+    dataLocal: formatarDataLocalSaoPaulo(row.cancelado_em),
+  };
 }

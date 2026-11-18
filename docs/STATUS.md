@@ -58,7 +58,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 - [x] Confirmar `docs/API.md` com o formato real do dataset e API local
 - [x] Dados (Tarefa 4A): serviços (`services/api.js`, `services/produtosService.js`, `services/mapeadores.js`) e hooks de produtos (`useCategorias`, `useProdutos`, `useNovidades`, `useProduto`, `useSemelhantes`, `useAvaliacoes`)
-- [ ] Dados: `CartContext` e `FavoritesContext`
+- [x] Dados: `CartContext` e `FavoritesContext` (e camada de dados de rotas privadas: carrinho, favoritos, pedidos, perfil, endereços)
 - [x] UI (Tarefa 4A UI): ligar hooks às páginas (Home, Catálogo, Produto)
 - [ ] Chat: ligar à rota `/api/chat`
 
@@ -69,7 +69,18 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
-- _(Novo)_ De Dados para UI (Tarefa 4A UI): a camada de dados e hooks de produtos está pronta e validada contra a API real (`http://localhost:3000`). Os hooks `useCategorias`, `useProdutos(filtros)`, `useNovidades()`, `useProduto(id)`, `useSemelhantes(id)` e `useAvaliacoes(id)` estão disponíveis em `src/hooks/` devolvendo `{ dados, carregando, erro, recarregar }`. O `ProductCard` já repassa `produto={produto}` para o `ProductImage` sem alterar silhuetas. Ligar os hooks às páginas de Home, Catálogo e Produto.
+- _(Novo)_ De Dados para UI (Tarefa 4B UI): A camada de dados de rotas privadas está completa, tipada/mapeada e validada com sucesso contra a API real.
+  - Providers globais já plugados no `main.jsx`: `FavoritosProvider` e `CarrinhoProvider` envolvem `<App />`.
+  - Contextos & Hooks:
+    - `useFavoritos()`: `{ itens, favoritos, skus, total, isFavorito(sku), alternar(sku), carregando, erro, recarregar }`. Tem atualização otimista instantânea e rollback automático em falhas de API/rede. Se deslogado, retorna `{ precisaLogin: true }` sem chamar API.
+    - `useCarrinho()`: `{ itens, subtotal, frete, total, qtdTotal, adicionar({ produtoId, tamanho, cor, quantidade }), alterarQuantidade(sku, tamanho, cor, quantidade), remover(sku, tamanho, cor), limpar(), carregando, erro, recarregar }`. Tem atualização otimista e rollback automático. Totais vêm sempre do back-end (`/api/carrinho`). Se deslogado, retorna `{ precisaLogin: true }` sem chamar API.
+    - `usePedidos()`: `{ pedidos, cancelando, cancelarPedido(id), carregando, erro, recarregar }`.
+    - `usePerfil()`: `{ perfil, salvando, salvarPerfil({ nome, telefone }), carregando, erro, recarregar }`.
+    - `useEnderecos()`: `{ enderecos, salvando, criarEndereco, editarEndereco, excluirEndereco, definirPadrao, carregando, erro, recarregar }`.
+  - Serviços diretos em `src/services/` (`favoritosService`, `carrinhoService`, `pedidosService`, `perfilService`, `enderecosService`) usam `api.js` nativo com Bearer e `X-Sessao-Id`, suportam `signal` e tratam 401 com evento de sessão expirada.
+  - Próximo passo para UI: ligar as páginas privadas (`Favoritos.jsx`, `Carrinho.jsx`, `Checkout.jsx`, `Pedidos.jsx`, `Perfil.jsx`) aos respectivos hooks/contextos.
+
+- _(Resolvido em 18/11)_ De Dados para UI (Tarefa 4A UI): a camada de dados e hooks de produtos está pronta e validada contra a API real (`http://localhost:3000`). Os hooks `useCategorias`, `useProdutos(filtros)`, `useNovidades()`, `useProduto(id)`, `useSemelhantes(id)` e `useAvaliacoes(id)` estão disponíveis em `src/hooks/` devolvendo `{ dados, carregando, erro, recarregar }`. O `ProductCard` já repassa `produto={produto}` para o `ProductImage` sem alterar silhuetas. Ligar os hooks às páginas de Home, Catálogo e Produto.
 
 - _(Novo)_ Pedido ao Design: conferir estado desabilitado de Button primário (`src/components/ui/Button/Button.module.css` seletor `.primary:disabled`); caso a especificação do tema escuro exija que o botão primário desabilitado preserve texto com `--color-brand-contrast` (ex.: com `background: var(--color-brand)` e `opacity: 0.45`), atualizar a regra correspondente em `components/ui/`.
 - _(Resolvido em 17/11)_ De Design para UI: componente `ThemeToggle` criado e disponível em `src/components/ui/ThemeToggle/ThemeToggle.jsx` e logo SVG oficial integrada no Header e Footer.
@@ -138,7 +149,16 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 17/11 | Aprimoramento do placeholder de `ProductImage` em `components/ui/` com ícones por categoria, fundo derivado da cor (`color-mix`) e cálculo automático de contraste | `feat(design): aprimora placeholder de ProductImage com cor, categoria e contraste` | UI: integrar `cor` e `categoria` no ProductCard e ProductGallery |
 | 17/11 | Integração de cor e categoria em `ProductCard` e `ProductGallery` (com sincronização no `ColorSwatch`) e ajuste da regra D-07 em `Produto` (tamanho único e produtos sem cor) | `feat(ui): integra cor e categoria no ProductCard e ProductGallery e ajusta regra D-07` | UI: `ChatWidget` da Fase 2 |
 | 18/11 | Conexão da UI do Catálogo, Produto e Home com os hooks reais do agente Dados (Tarefa 4A UI), sincronização com URL, tratamento estrito de 404, novidades e ocultação de RatingPill sem avaliações | `feat(ui): conecta Catalogo, Produto e Home aos hooks da API real (tarefa 4A)` | Fase 4B: CartContext e FavoritesContext |
+| 18/11 | Revisão geral consolidada do projeto (Relatório 18/11), validação de B3b-fix (fuso America/Sao_Paulo e garantia de usuário no requireAuth), lint e build do front e testes do back | `docs: gera relatorio consolidado de revisao de 18/11/2026` | Fase 4B: CartContext e FavoritesContext |
 | 17/11 | Interface do `ChatWidget` (botão flutuante 60px, painel acessível com Esc/Tab trap, sessaoId em memória, boas-vindas e estados sem respostas fictícias) montada no `Layout` para usuário logado | `feat(ui): implementa interface acessivel do ChatWidget no Layout` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |
 | 17/11 | Refatoração de `Login.jsx` (<200 linhas) com `Field` de `ui/`, `PasswordField` local, remoção de `isMountedRef` (obsoleto no React 18) e tratamento assíncrono de promessas de navegação | `refactor(login): simplifica Login com Field, PasswordField local e trata promessas de navegacao` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |
 | 17/11 | Identidade visual Horizonte (D-24): tipografia Jost, temas claro e escuro em `tokens.css`, logo SVG, `ThemeToggle` acessível e refinamento de `Button`, `Field` e `Badge` | `feat(design): implementa identidade visual com temas claro/escuro, fonte Jost e ThemeToggle` | UI: integrar ThemeToggle e logo SVG no Header |
 | 17/11 | Atualização visual da interface e rotas legais (D-20 emendada, D-24, D-25, D-26): Header com logo SVG, navegação e `ThemeToggle`, Footer institucional, Home com seção `#novidades`, pilares sem prazos inventados e páginas `/institucional`, `/privacidade`, `/termos` e `/cookies` com aviso acadêmico | `feat(ui): atualiza Header, Footer, Home com novidades e cria rotas institucionais e legais` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |
+
+## Relatórios de evolução
+
+- [Relatório Consolidado 18/11/2026](file:///C:/projetos-lojas-horizonte/projeto-lojas-horizonte-g1/docs/relatorios/relatorio18-11-2026-consolidado.md) *(Novo)*
+- [Relatório Consolidado 17/11/2026](file:///C:/projetos-lojas-horizonte/projeto-lojas-horizonte-g1/docs/relatorios/relatorio17-11-2026-consolidado.md)
+- [Relatório Header 17/11/2026](file:///C:/projetos-lojas-horizonte/projeto-lojas-horizonte-g1/docs/relatorios/relatorio17-11-2026-header.md)
+- [Relatório Login 15/11/2026](file:///C:/projetos-lojas-horizonte/projeto-lojas-horizonte-g1/docs/relatorios/relatorio15-11-2026-login.md)
+- [Relatório Inicial 15/11/2026](file:///C:/projetos-lojas-horizonte/projeto-lojas-horizonte-g1/docs/relatorios/relatorio15-11-2026.md)

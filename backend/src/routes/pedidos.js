@@ -28,7 +28,13 @@ router.post("/pedidos/:id/cancelar", requireAuth, async (req, res, next) => {
       return res.status(resultado.status || 400).json({ erro: resultado.erro });
     }
 
-    res.json({ ok: true, id, status: resultado.status });
+    res.json({
+      ok: true,
+      id,
+      status: resultado.status,
+      canceladoEm: resultado.canceladoEm || null,
+      dataLocal: resultado.dataLocal || null,
+    });
   } catch (error_) {
     next(error_);
   }
