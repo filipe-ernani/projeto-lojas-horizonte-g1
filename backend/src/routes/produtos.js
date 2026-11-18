@@ -48,7 +48,7 @@ router.get("/produtos/:id", async (req, res, next) => {
     }
 
     if (req.sessaoId) {
-      gravarEvento({
+      void gravarEvento({
         evento: "view_product",
         sessaoId: req.sessaoId,
         usuarioId: req.usuarioId || null,
