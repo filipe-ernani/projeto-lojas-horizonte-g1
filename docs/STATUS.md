@@ -54,12 +54,12 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - [x] Perfil com endereços
 - [x] Meus pedidos
 
-### Fase 4. Ligar à API (BLOQUEADA até dataset e back-end)
+### Fase 4. Ligar à API
 
-- [ ] Confirmar `docs/API.md` com o formato real do dataset
-- [ ] Dados: `src/api/` e hooks por recurso (`criar-hook-api`)
+- [x] Confirmar `docs/API.md` com o formato real do dataset e API local
+- [x] Dados (Tarefa 4A): serviços (`services/api.js`, `services/produtosService.js`, `services/mapeadores.js`) e hooks de produtos (`useCategorias`, `useProdutos`, `useNovidades`, `useProduto`, `useSemelhantes`, `useAvaliacoes`)
 - [ ] Dados: `CartContext` e `FavoritesContext`
-- [ ] UI: ligar hooks às páginas
+- [ ] UI (Tarefa 4A UI): ligar hooks às páginas (Home, Catálogo, Produto)
 - [ ] Chat: ligar à rota `/api/chat`
 
 ### Fase 5. Acabamento
@@ -68,6 +68,8 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - [ ] README do projeto e roteiro da demo (3 minutos)
 
 ## Pedidos entre agentes
+
+- _(Novo)_ De Dados para UI (Tarefa 4A UI): a camada de dados e hooks de produtos está pronta e validada contra a API real (`http://localhost:3000`). Os hooks `useCategorias`, `useProdutos(filtros)`, `useNovidades()`, `useProduto(id)`, `useSemelhantes(id)` e `useAvaliacoes(id)` estão disponíveis em `src/hooks/` devolvendo `{ dados, carregando, erro, recarregar }`. O `ProductCard` já repassa `produto={produto}` para o `ProductImage` sem alterar silhuetas. Ligar os hooks às páginas de Home, Catálogo e Produto.
 
 - _(Novo)_ Pedido ao Design: conferir estado desabilitado de Button primário (`src/components/ui/Button/Button.module.css` seletor `.primary:disabled`); caso a especificação do tema escuro exija que o botão primário desabilitado preserve texto com `--color-brand-contrast` (ex.: com `background: var(--color-brand)` e `opacity: 0.45`), atualizar a regra correspondente em `components/ui/`.
 - _(Resolvido em 17/11)_ De Design para UI: componente `ThemeToggle` criado e disponível em `src/components/ui/ThemeToggle/ThemeToggle.jsx` e logo SVG oficial integrada no Header e Footer.

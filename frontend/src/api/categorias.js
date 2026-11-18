@@ -1,5 +1,7 @@
-import { request } from "./client";
+import { listarCategorias as listar } from "@/services/produtosService";
 
-export function listarCategorias() {
-  return request("/api/categorias");
+export function listarCategorias(opcoes) {
+  return listar(opcoes);
 }
+
+export default listarCategorias;

@@ -56,6 +56,7 @@ export default function ProductCard({
             alt={nome}
             cor={corHex}
             categoria={categoria}
+            produto={produto}
           />
         </div>
 

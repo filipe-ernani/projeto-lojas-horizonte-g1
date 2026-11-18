@@ -1,60 +1,48 @@
 import { useCallback, useEffect, useState } from "react";
-import { listarCategorias } from "@/api/categorias";
+import { listarCategorias } from "@/services/produtosService";
 
+/**
+ * Hook para carregar a lista de categorias do catálogo.
+ * Retorna { dados, carregando, erro, recarregar } com suporte a cancelamento via AbortController.
+ */
 export default function useCategorias() {
-  const [categorias, setCategorias] = useState([]);
+  const [dados, setDados] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+  const [versao, setVersao] = useState(0);
 
-  const carregar = useCallback(() => {
+  const recarregar = useCallback(() => {
     setCarregando(true);
     setErro(null);
-
-    listarCategorias()
-      .then((resposta) => {
-        const lista = Array.isArray(resposta)
-          ? resposta
-          : resposta?.categorias || [];
-        setCategorias(lista);
-      })
-      .catch((err) => {
-        setErro(err?.message || "Não foi possível carregar as categorias.");
-      })
-      .finally(() => {
-        setCarregando(false);
-      });
+    setVersao((v) => v + 1);
   }, []);
 
   useEffect(() => {
-    let cancelado = false;
+    const controller = new AbortController();
 
-    listarCategorias()
-      .then((resposta) => {
-        if (cancelado) return;
-        const lista = Array.isArray(resposta)
-          ? resposta
-          : resposta?.categorias || [];
-        setCategorias(lista);
+    listarCategorias({ signal: controller.signal })
+      .then((resultado) => {
+        setDados(resultado);
+        setCarregando(false);
       })
       .catch((err) => {
-        if (cancelado) return;
-        setErro(err?.message || "Não foi possível carregar as categorias.");
-      })
-      .finally(() => {
-        if (!cancelado) {
-          setCarregando(false);
+        if (err?.name === "AbortError" || controller.signal.aborted) {
+          return;
         }
+        setErro(err);
+        setCarregando(false);
       });
 
     return () => {
-      cancelado = true;
+      controller.abort();
     };
-  }, []);
+  }, [versao]);
 
   return {
-    categorias,
+    dados,
+    categorias: dados,
     carregando,
     erro,
-    recarregar: carregar,
+    recarregar,
   };
 }
