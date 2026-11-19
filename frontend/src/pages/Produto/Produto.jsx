@@ -139,6 +139,7 @@ function ProdutoConteudo({
     categoria = "",
     preco = 0,
     descricao = "",
+    ocasioes = [],
     imagemUrl = null,
     imagens = [],
     cores = [],
@@ -349,7 +350,7 @@ function ProdutoConteudo({
             />
           ) : null}
 
-          <ProductAccordions descricao={descricao} />
+          <ProductAccordions descricao={descricao} ocasioes={ocasioes} />
         </div>
       </div>
 

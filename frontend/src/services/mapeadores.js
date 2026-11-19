@@ -29,6 +29,8 @@ export function mapearProduto(apiProduto) {
     sku,
     nome: apiProduto.nome || "",
     modelo: apiProduto.modelo || null,
+    tipo: apiProduto.tipo || null,
+    variacao: apiProduto.variacao || null,
     descricao: apiProduto.descricao || null,
     categoria: apiProduto.categoria || "",
     preco:
@@ -42,8 +44,13 @@ export function mapearProduto(apiProduto) {
         : apiProduto.imagemUrl
           ? [apiProduto.imagemUrl]
           : [],
+    cor: apiProduto.cor ?? null,
+    corHex: apiProduto.corHex ?? null,
     tamanhos: Array.isArray(apiProduto.tamanhos) ? apiProduto.tamanhos : [],
     cores: Array.isArray(apiProduto.cores) ? apiProduto.cores : [],
+    ocasioes: Array.isArray(apiProduto.ocasioes)
+      ? apiProduto.ocasioes.filter(Boolean)
+      : [],
     notaMedia: apiProduto.notaMedia ?? null,
     qtdAvaliacoes: apiProduto.qtdAvaliacoes ?? 0,
   };
@@ -122,6 +129,11 @@ export function mapearItemCarrinho(item) {
     produtoId: sku,
     sku,
     nome: item.nome || "",
+    tipo: item.tipo || null,
+    variacao: item.variacao || null,
+    ocasioes: Array.isArray(item.ocasioes)
+      ? item.ocasioes.filter(Boolean)
+      : [],
     preco:
       typeof item.preco === "number"
         ? item.preco
