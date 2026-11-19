@@ -1,4 +1,10 @@
 import { Router } from "express";
+import { requireAuth } from "../middlewares/auth.js";
+import {
+  buscarMinhaAvaliacaoQuery,
+  listarAvaliacoesProdutoQuery,
+  validarPaginacaoAvaliacoes,
+} from "../queries/avaliacoesQueries.js";
 import {
   buscarProdutoPorSkuQuery,
   buscarSemelhantesQuery,
@@ -70,22 +76,34 @@ router.get("/produtos/:id/semelhantes", async (req, res, next) => {
 
 router.get("/produtos/:id/avaliacoes", async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const produto = await buscarProdutoPorSkuQuery(id);
+    const validacao = validarPaginacaoAvaliacoes(req.query);
+    if (validacao.erro) {
+      return res.status(400).json({ erro: validacao.erro });
+    }
 
-    if (!produto) {
+    const { id } = req.params;
+    const resultado = await listarAvaliacoesProdutoQuery(id, validacao.dados);
+
+    if (!resultado) {
       return res.status(404).json({ erro: "Produto não encontrado." });
     }
 
-    // Não há avaliações reais registradas para o catálogo; estrutura padronizada
-    res.json({
-      resumo: {
-        notaMedia: null,
-        total: 0,
-        distribuicao: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
-      },
-      itens: [],
-    });
+    res.json(resultado);
+  } catch (error_) {
+    next(error_);
+  }
+});
+
+router.get("/produtos/:id/avaliacoes/minha", requireAuth, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const resultado = await buscarMinhaAvaliacaoQuery(req.usuarioId, id);
+
+    if (!resultado) {
+      return res.status(404).json({ erro: "Produto não encontrado." });
+    }
+
+    res.json(resultado);
   } catch (error_) {
     next(error_);
   }

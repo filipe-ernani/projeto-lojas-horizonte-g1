@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireApiKey } from "../middlewares/authIntegracao.js";
 import {
   converterParaCsv,
+  exportarAvaliacoesQuery,
   exportarEventosQuery,
   exportarPedidoItensQuery,
   exportarPedidosQuery,
@@ -46,6 +47,18 @@ const COLUNAS_EVENTOS = [
   "quantidade",
   "valor",
   "pedido_id",
+  "updated_at",
+  "origem",
+];
+
+const COLUNAS_AVALIACOES = [
+  "avaliacao_id",
+  "pedido_id",
+  "usuario_hash",
+  "sku",
+  "nota",
+  "comentario",
+  "criado_em",
   "updated_at",
   "origem",
 ];
@@ -134,6 +147,22 @@ router.get("/integracao/eventos", requireApiKey, validarParametros, async (req, 
     if (formato === "csv") {
       res.setHeader("Content-Type", "text/csv; charset=utf-8");
       return res.send(converterParaCsv(COLUNAS_EVENTOS, resultado.itens));
+    }
+
+    res.json(resultado);
+  } catch (error_) {
+    next(error_);
+  }
+});
+
+router.get("/integracao/avaliacoes", requireApiKey, validarParametros, async (req, res, next) => {
+  try {
+    const { desde, limite, formato } = res.locals.parametros;
+    const resultado = await exportarAvaliacoesQuery(desde, limite);
+
+    if (formato === "csv") {
+      res.setHeader("Content-Type", "text/csv; charset=utf-8");
+      return res.send(converterParaCsv(COLUNAS_AVALIACOES, resultado.itens));
     }
 
     res.json(resultado);

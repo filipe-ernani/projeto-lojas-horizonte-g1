@@ -7,6 +7,12 @@ export function formatarProduto(p) {
     typeof p.cores === "string" ? JSON.parse(p.cores) : p.cores || [];
   const primeiraCor = coresLista[0] || null;
 
+  const totalAvaliacoes = Number(p.total_avaliacoes) || 0;
+  const notaMedia =
+    totalAvaliacoes > 0 && p.nota_media !== null && p.nota_media !== undefined
+      ? Math.round(Number(p.nota_media) * 10) / 10
+      : null;
+
   return {
     id: p.sku, // Decisão D-22: id público é o SKU
     sku: p.sku,
@@ -27,8 +33,9 @@ export function formatarProduto(p) {
       : p.ocasioes
         ? [p.ocasioes]
         : [],
-    notaMedia: null,
-    qtdAvaliacoes: 0,
+    notaMedia,
+    totalAvaliacoes,
+    qtdAvaliacoes: totalAvaliacoes,
   };
 }
 
@@ -203,8 +210,14 @@ export async function listarProdutosQuery({
         ${whereClause}
         ORDER BY categoria, ordem DESC
       )
-      SELECT * FROM novidades_cat
-      ORDER BY ordem DESC, sku ASC
+      SELECT nc.*, av.nota_media, av.total_avaliacoes
+      FROM novidades_cat nc
+      LEFT JOIN (
+        SELECT sku, ROUND(AVG(nota), 1) AS nota_media, COUNT(*)::int AS total_avaliacoes
+        FROM loja.avaliacoes
+        GROUP BY sku
+      ) av ON av.sku = nc.sku
+      ORDER BY nc.ordem DESC, nc.sku ASC
       LIMIT $${dataParams.length - 1} OFFSET $${dataParams.length};
     `;
 
@@ -220,15 +233,15 @@ export async function listarProdutosQuery({
   }
 
   // Ordenações padrão da loja
-  let orderClause = "ORDER BY popularidade DESC, sku ASC";
+  let orderClause = "ORDER BY p.popularidade DESC, p.sku ASC";
   if (ordenar === "menor-preco") {
-    orderClause = "ORDER BY preco ASC, sku ASC";
+    orderClause = "ORDER BY p.preco ASC, p.sku ASC";
   } else if (ordenar === "maior-preco") {
-    orderClause = "ORDER BY preco DESC, sku ASC";
+    orderClause = "ORDER BY p.preco DESC, p.sku ASC";
   } else if (ordenar === "recentes") {
-    orderClause = "ORDER BY ordem DESC, sku ASC";
+    orderClause = "ORDER BY p.ordem DESC, p.sku ASC";
   } else if (ordenar === "melhor-avaliados") {
-    orderClause = "ORDER BY popularidade DESC, sku ASC";
+    orderClause = "ORDER BY p.popularidade DESC, p.sku ASC";
   }
 
   const countQuery = `SELECT count(*)::int as total FROM loja.produtos ${whereClause};`;
@@ -237,7 +250,13 @@ export async function listarProdutosQuery({
 
   const dataParams = [...params, numLimite, offset];
   const dataQuery = `
-    SELECT * FROM loja.produtos
+    SELECT p.*, av.nota_media, av.total_avaliacoes
+    FROM loja.produtos p
+    LEFT JOIN (
+      SELECT sku, ROUND(AVG(nota), 1) AS nota_media, COUNT(*)::int AS total_avaliacoes
+      FROM loja.avaliacoes
+      GROUP BY sku
+    ) av ON av.sku = p.sku
     ${whereClause}
     ${orderClause}
     LIMIT $${dataParams.length - 1} OFFSET $${dataParams.length};
@@ -256,7 +275,16 @@ export async function listarProdutosQuery({
 
 export async function buscarProdutoPorSkuQuery(sku) {
   const res = await query(
-    "SELECT * FROM loja.produtos WHERE sku = $1 LIMIT 1;",
+    `SELECT p.*, av.nota_media, av.total_avaliacoes
+     FROM loja.produtos p
+     LEFT JOIN (
+       SELECT sku, ROUND(AVG(nota), 1) AS nota_media, COUNT(*)::int AS total_avaliacoes
+       FROM loja.avaliacoes
+       WHERE sku = $1
+       GROUP BY sku
+     ) av ON av.sku = p.sku
+     WHERE p.sku = $1
+     LIMIT 1;`,
     [sku],
   );
   if (res.rows.length === 0) return null;
@@ -265,9 +293,15 @@ export async function buscarProdutoPorSkuQuery(sku) {
 
 export async function buscarSemelhantesQuery(sku, categoria, limite = 4) {
   const res = await query(
-    `SELECT * FROM loja.produtos
-     WHERE categoria = $1 AND sku <> $2
-     ORDER BY popularidade DESC, sku ASC
+    `SELECT p.*, av.nota_media, av.total_avaliacoes
+     FROM loja.produtos p
+     LEFT JOIN (
+       SELECT sku, ROUND(AVG(nota), 1) AS nota_media, COUNT(*)::int AS total_avaliacoes
+       FROM loja.avaliacoes
+       GROUP BY sku
+     ) av ON av.sku = p.sku
+     WHERE p.categoria = $1 AND p.sku <> $2
+     ORDER BY p.popularidade DESC, p.sku ASC
      LIMIT $3;`,
     [categoria, sku, limite],
   );

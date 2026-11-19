@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { pool } from "../src/db.js";
 import {
   converterParaCsv,
+  exportarAvaliacoesQuery,
   exportarEventosQuery,
   exportarPedidoItensQuery,
   exportarPedidosQuery,
@@ -25,6 +26,11 @@ const COLUNAS_PEDIDO_ITENS = [
 const COLUNAS_EVENTOS = [
   "evento_id", "evento", "ocorrido_em", "sessao_id", "usuario_hash",
   "sku", "quantidade", "valor", "pedido_id", "updated_at", "origem",
+];
+
+const COLUNAS_AVALIACOES = [
+  "avaliacao_id", "pedido_id", "usuario_hash", "sku",
+  "nota", "comentario", "criado_em", "updated_at", "origem",
 ];
 
 // Relê um trecho anterior à marca para alcançar transações confirmadas com atraso.
@@ -75,7 +81,7 @@ function carregarMarcas(dir) {
       // Ignora erro de leitura e inicia vazio
     }
   }
-  return { pedidos: null, pedidoItens: null, eventos: null };
+  return { pedidos: null, pedidoItens: null, eventos: null, avaliacoes: null };
 }
 
 function salvarMarcas(dir, marcas) {
@@ -119,6 +125,13 @@ async function exportarNovos() {
       colunaId: "evento_id",
       colunas: COLUNAS_EVENTOS,
       queryFn: exportarEventosQuery,
+    },
+    {
+      tipo: "avaliacoes",
+      chaveMarca: "avaliacoes",
+      colunaId: "avaliacao_id",
+      colunas: COLUNAS_AVALIACOES,
+      queryFn: exportarAvaliacoesQuery,
     },
   ];
 

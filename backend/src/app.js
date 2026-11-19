@@ -11,6 +11,7 @@ import enderecosRouter from "./routes/enderecos.js";
 import favoritosRouter from "./routes/favoritos.js";
 import carrinhoRouter from "./routes/carrinho.js";
 import pedidosRouter from "./routes/pedidos.js";
+import avaliacoesRouter from "./routes/avaliacoes.js";
 import integracaoRouter from "./routes/integracao.js";
 import chatRouter from "./routes/chat.js";
 import { criarLimitador } from "./middlewares/limitador.js";
@@ -93,6 +94,7 @@ app.use("/api", enderecosRouter);
 app.use("/api", favoritosRouter);
 app.use("/api", carrinhoRouter);
 app.use("/api", pedidosRouter);
+app.use("/api", avaliacoesRouter);
 app.use("/api", integracaoRouter);
 app.use("/api", chatRouter);
 

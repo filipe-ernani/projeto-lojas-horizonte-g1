@@ -81,3 +81,20 @@ export async function exportarEventosQuery(desdeIso, limite) {
 
   return { itens, proximoDesde };
 }
+
+export async function exportarAvaliacoesQuery(desdeIso, limite) {
+  const dataDesde = desdeIso ? new Date(desdeIso) : new Date(0);
+  const res = await query(
+    `SELECT * FROM loja.vw_export_avaliacoes
+     WHERE updated_at >= $1
+     ORDER BY updated_at ASC
+     FETCH FIRST ($2::bigint) ROWS WITH TIES;`,
+    [dataDesde, limite],
+  );
+
+  const itens = res.rows.map(formatarLinha);
+  const proximoDesde =
+    itens.length > 0 ? itens[itens.length - 1].updated_at : null;
+
+  return { itens, proximoDesde };
+}

@@ -24,10 +24,11 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
   tamanhos: ["PP","P","M","G","GG"],        // calçados: ["34"…"44"]; Acessórios/Casa/Beleza: ["Único"]
   cores: [{ nome: "Marrom", hex: "#6B4E3D" }], // Beleza: [] (sem cor)
   ocasioes: ["dia a dia", "praia", "passeio", "verão"],
-  notaMedia: null, qtdAvaliacoes: 0 }       // sem avaliações fictícias (D-19)
+  notaMedia: null, totalAvaliacoes: 0, qtdAvaliacoes: 0 } // sem avaliações: null / 0
 
-// Avaliação (resumo neutro quando não houver avaliações reais)
-{ resumo: { notaMedia: null, total: 0, distribuicao: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } }, itens: [] }
+// Avaliação
+{ itens: [{ id: "AV-1", nota: 5, comentario: "…", autor: "Maria", criadoEm: "2026-11-19T12:00:00.000Z", dataLocal: "2026-11-19T09:00:00-03:00" }],
+  resumo: { media: null, total: 0, distribuicao: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } } }
 
 // Endereço
 { id: 3, apelido: "Casa", cep: "01000-000", logradouro: "Rua das Flores", numero: "123",
@@ -68,7 +69,10 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 | GET | `/api/categorias` | público | — | `["Acessórios", "Beleza", "Calçados", "Casa", "Esporte", "Feminino", "Infantil", "Masculino", "Moda íntima e praia"]` |
 | GET | `/api/produtos` | público | `categoria`, `busca`, `tamanho`, `precoMin`, `precoMax`, `pagina`, `limite`, `ordenar` (`relevancia`, `menor-preco`, `maior-preco`, `recentes`, `novidades`, `melhor-avaliados`). `limite`: padrão 12, máximo 48 | `{ itens: Produto[], total, pagina, limite }` |
 | GET | `/api/produtos/:id` | público | `:id = sku` (D-22) | `Produto` |
-| GET | `/api/produtos/:id/avaliacoes` | público | `:id = sku` (D-22) | `{ resumo: { notaMedia: null, total: 0, distribuicao: {5:0,4:0,3:0,2:0,1:0} }, itens: [] }` |
+| GET | `/api/produtos/:id/avaliacoes` | público | `:id = sku` (D-22), `pagina`, `limite` | `{ itens: [{ id, nota, comentario, autor, criadoEm, dataLocal }], resumo: { media, total, distribuicao: {1..5} } }` |
+| GET | `/api/produtos/:id/avaliacoes/minha` | privado | `:id = sku` (D-22) | `{ podeAvaliar, avaliacao }` |
+| PUT | `/api/avaliacoes/:sku` | privado | `{ nota, comentario? }` (`nota` inteiro 1..5; `comentario` até 1000) | `201` (criação) ou `200` (edição) com a avaliação; `403` sem compra finalizada |
+| GET | `/api/avaliacoes/pendentes` | privado | — | `[{ sku, nome, tipo, cor, corHex, pedidoId, finalizadoEm }]` |
 | GET | `/api/produtos/:id/semelhantes` | público | `:id = sku` (D-22) | `Produto[]` (até 4 da mesma categoria) |
 | GET | `/api/favoritos` | privado | — | `Produto[]`, cada um com `corHex` (hex da primeira cor do produto ou `null`) |
 | PUT | `/api/favoritos/:produtoId` | privado | — | `204` (`404` se o produto não existir) |
@@ -89,6 +93,7 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 | GET | `/api/integracao/pedidos` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
 | GET | `/api/integracao/pedido-itens` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
 | GET | `/api/integracao/eventos` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
+| GET | `/api/integracao/avaliacoes` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
 
 O preço e o total são **sempre calculados pelo servidor**; o front só exibe. A finalização cobra o preço atual do banco (D7).
 

@@ -3,13 +3,13 @@
 > Atualizado pelo workflow `/handoff` ao fim de cada sessão. Lido pelo `/retomar` no começo da próxima.
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
-**Última atualização:** 17/11/2026 (Correções visuais e de texto da Home e Layout: Logo em Header 40px e Footer 36px com .container unificado, Hero com arte geométrica contida e destaque "horizonte.", Banner Editorial alinhado, Faixa de pilares honestos com link de privacidade, scroll-margin-top em #novidades, categorias via useCategorias com mapa de ícones e sem mocks D-19, EmptyState de Favoritos com ícone Heart, favicon em public/favicon.svg)
+**Última atualização:** 19/11/2026 (Back-end de avaliações: migração `007_avaliacoes.sql`, rotas públicas/privadas de avaliações, exportação `vw_export_avaliacoes` / `/api/integracao/avaliacoes`, `export:novos` e carregador histórico `seed:avaliacoes`)
 **Fase atual:** 4. Ligar à API (Fases 0, 1, 2 e 3 concluídas; dataset e back-end disponíveis; falta ligar o chat à rota `/api/chat`)
 
 ## Bloqueios externos
 
 - **Dataset:** disponível em `data/catalogo.csv` (200 produtos), carregado com `npm run seed` na pasta `backend/`. **Não usamos mocks** (ver D-19).
-- **Back-end:** disponível em `backend/` (Express e PostgreSQL), com migrações de `001` a `005` em `backend/db/migrations/` (`npm run db:migrate`). Pagamento simulado com Pix, cartão de crédito (1 a 12 parcelas sem juros) e cartão de débito (D-12, revisão).
+- **Back-end:** disponível em `backend/` (Express e PostgreSQL), com migrações de `001` a `007` em `backend/db/migrations/` (`npm run db:migrate`). Pagamento simulado com Pix, cartão de crédito (1 a 12 parcelas sem juros) e cartão de débito (D-12, revisão).
 
 ## Em andamento
 
