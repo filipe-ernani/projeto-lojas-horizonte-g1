@@ -1,12 +1,13 @@
 import { SlidersHorizontal } from "lucide-react";
 import Button from "@/components/ui/Button/Button";
+import Select from "@/components/ui/Select/Select";
 import styles from "./CatalogoHeader.module.css";
 
 const OPCOES_ORDENACAO = [
-  { valor: "relevancia", rotulo: "Relevância" },
-  { valor: "menor-preco", rotulo: "Menor preço" },
-  { valor: "maior-preco", rotulo: "Maior preço" },
-  { valor: "recentes", rotulo: "Mais recentes" },
+  { value: "relevancia", label: "Relevância" },
+  { value: "menor-preco", label: "Menor preço" },
+  { value: "maior-preco", label: "Maior preço" },
+  { value: "recentes", label: "Mais recentes" },
 ];
 
 /**
@@ -59,18 +60,12 @@ export default function CatalogoHeader({
           <label htmlFor="ordenar-select" className={styles.sortLabel}>
             Ordenar por:
           </label>
-          <select
+          <Select
             id="ordenar-select"
             value={ordenar}
             onChange={(e) => onMudarOrdenacao && onMudarOrdenacao(e.target.value)}
-            className={styles.sortSelect}
-          >
-            {OPCOES_ORDENACAO.map((opcao) => (
-              <option key={opcao.valor} value={opcao.valor}>
-                {opcao.rotulo}
-              </option>
-            ))}
-          </select>
+            options={OPCOES_ORDENACAO}
+          />
         </div>
       </div>
     </div>

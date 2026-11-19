@@ -1,4 +1,5 @@
 .shell {
+  width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -6,5 +7,15 @@
 
 .main {
   flex: 1;
-  padding-block: var(--space-8);
+  width: 100%;
+  min-width: 0;
+  padding-top: var(--space-8);
+  /* Espaço inferior extra no celular para o botão flutuante do chat (48px + margem) */
+  padding-bottom: calc(var(--space-8) + 48px + var(--space-4));
+}
+
+@media (min-width: 640px) {
+  .main {
+    padding-bottom: var(--space-8);
+  }
 }

@@ -12,6 +12,7 @@ import { auth, GoogleAuthProvider } from "../firebase";
 import { AuthContext } from "./AuthContext";
 
 const provedorGoogle = new GoogleAuthProvider();
+provedorGoogle.setCustomParameters({ prompt: "select_account" });
 
 const MENSAGENS_ERRO_FIREBASE = {
   "auth/invalid-email": "E-mail inválido.",

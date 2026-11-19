@@ -1,39 +1,26 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+import {
+  CHAVE_TEMA_STORAGE,
+  EVENTO_TEMA,
+  aplicarTema,
+  obterTemaAtual,
+} from "@/utils/theme";
 import styles from "./ThemeToggle.module.css";
-
-const CHAVE_STORAGE = "horizonte-theme";
-
-function obterTemaAtual() {
-  if (typeof document !== "undefined") {
-    const temaAtributo = document.documentElement.getAttribute("data-theme");
-    if (temaAtributo) {
-      return temaAtributo;
-    }
-  }
-
-  if (typeof window !== "undefined") {
-    const temaSalvo = localStorage.getItem(CHAVE_STORAGE);
-    if (temaSalvo === "dark" || temaSalvo === "light") {
-      return temaSalvo;
-    }
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    }
-  }
-
-  return "light";
-}
 
 export default function ThemeToggle({ className = "", ...rest }) {
   const [tema, setTema] = useState(obterTemaAtual);
 
   useEffect(() => {
-    // Sincroniza com alterações do sistema quando não houver preferência salva
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     function aoMudarSistema(evento) {
-      const temSalvo = localStorage.getItem(CHAVE_STORAGE);
+      let temSalvo = null;
+      try {
+        temSalvo = localStorage.getItem(CHAVE_TEMA_STORAGE);
+      } catch {
+        // Ignora erro em modo privado
+      }
       if (!temSalvo) {
         const novo = evento.matches ? "dark" : "light";
         setTema(novo);
@@ -41,19 +28,24 @@ export default function ThemeToggle({ className = "", ...rest }) {
       }
     }
 
+    function aoMudarTema(evento) {
+      if (evento.detail === "dark" || evento.detail === "light") {
+        setTema(evento.detail);
+      }
+    }
+
     mediaQuery.addEventListener("change", aoMudarSistema);
-    return () => mediaQuery.removeEventListener("change", aoMudarSistema);
+    window.addEventListener(EVENTO_TEMA, aoMudarTema);
+    return () => {
+      mediaQuery.removeEventListener("change", aoMudarSistema);
+      window.removeEventListener(EVENTO_TEMA, aoMudarTema);
+    };
   }, []);
 
   function aoAlternar() {
     const proximoTema = tema === "dark" ? "light" : "dark";
+    aplicarTema(proximoTema);
     setTema(proximoTema);
-    document.documentElement.setAttribute("data-theme", proximoTema);
-    try {
-      localStorage.setItem(CHAVE_STORAGE, proximoTema);
-    } catch {
-      // Ignora erro em modo privado
-    }
   }
 
   const ehEscuro = tema === "dark";

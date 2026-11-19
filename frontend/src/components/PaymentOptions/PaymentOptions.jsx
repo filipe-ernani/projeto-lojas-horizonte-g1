@@ -1,5 +1,6 @@
 import { useId } from "react";
 import Radio from "@/components/ui/Radio/Radio";
+import Select from "@/components/ui/Select/Select";
 import { formatCurrency } from "@/utils/formatCurrency";
 import styles from "./PaymentOptions.module.css";
 
@@ -80,25 +81,20 @@ export default function PaymentOptions({
 
                 {isAtivo && forma.id === "CARTAO_CREDITO" ? (
                   <div className={styles.parcelas}>
-                    <label htmlFor={parcelasId} className={styles.parcelasLabel}>
-                      Parcelas
-                    </label>
-                    <select
+                    <Select
                       id={parcelasId}
-                      className={styles.parcelasSelect}
+                      label="Parcelas"
                       value={parcelas}
                       onChange={(e) =>
                         onSelecionarParcelas?.(Number(e.target.value))
                       }
-                    >
-                      {OPCOES_PARCELAS.map((numero) => (
-                        <option key={numero} value={numero}>
-                          {numero}x de{" "}
-                          {formatCurrency(calcularValorParcela(total, numero))}{" "}
-                          sem juros
-                        </option>
-                      ))}
-                    </select>
+                      options={OPCOES_PARCELAS.map((numero) => ({
+                        value: numero,
+                        label: `${numero}x de ${formatCurrency(
+                          calcularValorParcela(total, numero),
+                        )} sem juros`,
+                      }))}
+                    />
                   </div>
                 ) : null}
               </div>

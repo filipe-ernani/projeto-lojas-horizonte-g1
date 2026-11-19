@@ -49,12 +49,15 @@ export default function Header({ totalItensCesta: totalItensCestaProp }) {
   function renderAcoesDireita() {
     return (
       <div className={styles.actions}>
-        <ThemeToggle />
+        <ThemeToggle className={styles.tabletDesktopOnly} />
 
         {carregando ? (
-          <div className={styles.actionsLoading} aria-hidden="true" />
+          <div
+            className={`${styles.actionsLoading} ${styles.tabletDesktopOnly}`}
+            aria-hidden="true"
+          />
         ) : !usuario ? (
-          <div className={styles.authLinks}>
+          <div className={`${styles.authLinks} ${styles.tabletDesktopOnly}`}>
             <Link to="/login" className={styles.btnSecondary}>
               Entrar
             </Link>
@@ -69,16 +72,31 @@ export default function Header({ totalItensCesta: totalItensCestaProp }) {
               rotulo="Favoritos"
               para="/favoritos"
               contador={usuario ? totalFavoritos : 0}
+              className={styles.tabletDesktopOnly}
             />
             <IconButton
               icone={ShoppingBag}
               rotulo="Cesta de compras"
               para="/carrinho"
               contador={totalItensCesta}
+              className={styles.tabletDesktopOnly}
             />
-            <IconButton icone={User} rotulo="Minha conta" para="/perfil" />
+            <IconButton
+              icone={User}
+              rotulo="Minha conta"
+              para="/perfil"
+              className={styles.tabletDesktopOnly}
+            />
           </>
         )}
+
+        <IconButton
+          icone={ShoppingBag}
+          rotulo="Cesta de compras"
+          para="/carrinho"
+          contador={totalItensCesta}
+          className={styles.mobileOnly}
+        />
       </div>
     );
   }
@@ -91,9 +109,10 @@ export default function Header({ totalItensCesta: totalItensCestaProp }) {
             <HeaderMobileMenu
               links={LINKS_NAV}
               usuario={usuario}
-              carregando={carregando}
               aoClicarLink={aoClicarLink}
               location={location}
+              totalFavoritos={usuario ? totalFavoritos : 0}
+              totalItensCesta={totalItensCesta}
             />
 
             <Link to="/" className={styles.logoLink} aria-label="Horizonte - Início">

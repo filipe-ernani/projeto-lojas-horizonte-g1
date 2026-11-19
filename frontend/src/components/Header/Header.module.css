@@ -14,14 +14,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-2);
   min-height: var(--control-h-sm);
 }
 
 .leftGroup {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-1);
+  min-width: 0;
+  flex-shrink: 1;
 }
 
 .logoLink {
@@ -29,13 +31,29 @@
   align-items: center;
   height: var(--control-h-sm);
   text-decoration: none;
+  min-width: 0;
 }
 
 .logoImg {
-  height: 40px;
+  height: 36px;
   width: auto;
-  max-width: 180px;
+  max-width: 150px;
   object-fit: contain;
+}
+
+@media (min-width: 640px) {
+  .topRow {
+    gap: var(--space-3);
+  }
+
+  .leftGroup {
+    gap: var(--space-3);
+  }
+
+  .logoImg {
+    height: 40px;
+    max-width: 180px;
+  }
 }
 
 .desktopNav {
@@ -103,20 +121,21 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: 2px;
+  flex-shrink: 0;
 }
 
 .actionsLoading {
   display: flex;
   align-items: center;
   height: var(--control-h-sm);
-  min-width: 8.5rem;
+  min-width: 5.5rem;
 }
 
 .authLinks {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .btnSecondary,
@@ -125,9 +144,9 @@
   align-items: center;
   justify-content: center;
   height: var(--control-h-sm);
-  padding-inline: var(--space-3);
+  padding-inline: var(--space-2);
   border-radius: var(--radius-md);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   line-height: 1;
   text-decoration: none;
@@ -136,6 +155,26 @@
     background-color 0.15s ease,
     border-color 0.15s ease,
     opacity 0.15s ease;
+}
+
+@media (min-width: 640px) {
+  .actions {
+    gap: var(--space-1);
+  }
+
+  .actionsLoading {
+    min-width: 8.5rem;
+  }
+
+  .authLinks {
+    gap: var(--space-2);
+  }
+
+  .btnSecondary,
+  .btnPrimary {
+    padding-inline: var(--space-3);
+    font-size: var(--fs-sm);
+  }
 }
 
 .btnSecondary {
@@ -157,6 +196,29 @@
 
 .btnPrimary:hover {
   opacity: 0.88;
+}
+
+.tabletDesktopOnly {
+  display: none !important;
+}
+
+.mobileOnly {
+  display: inline-flex;
+}
+
+@media (min-width: 768px) {
+  .tabletDesktopOnly {
+    display: inline-flex !important;
+  }
+
+  .authLinks.tabletDesktopOnly,
+  .actionsLoading.tabletDesktopOnly {
+    display: flex !important;
+  }
+
+  .mobileOnly {
+    display: none !important;
+  }
 }
 
 @media (min-width: 1024px) {

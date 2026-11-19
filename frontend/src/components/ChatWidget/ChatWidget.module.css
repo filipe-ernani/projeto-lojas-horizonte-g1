@@ -6,22 +6,15 @@
 /* Botão flutuante no canto inferior direito */
 .floatingTrigger {
   position: fixed;
-  bottom: var(--space-6);
-  right: var(--space-6);
+  bottom: var(--space-4);
+  right: var(--space-4);
   z-index: 1000;
   outline: none;
 }
 
-@media (min-width: 640px) {
-  .floatingTrigger {
-    bottom: var(--space-8);
-    right: var(--space-8);
-  }
-}
-
 .floatingButton {
-  width: 60px !important;
-  height: 60px !important;
+  width: 48px !important;
+  height: 48px !important;
   background-color: var(--color-brand) !important;
   color: var(--color-brand-contrast) !important;
   border-radius: 50% !important;
@@ -32,6 +25,18 @@
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .floatingTrigger {
+    bottom: var(--space-8);
+    right: var(--space-8);
+  }
+
+  .floatingButton {
+    width: 60px !important;
+    height: 60px !important;
+  }
 }
 
 .floatingButton:hover {
