@@ -40,6 +40,8 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D21 | Recomendação conversacional no agente ADK | Aceita |
 | D22 | Consumidores leem a gold no workspace do pipeline, só com leitura | Aceita |
 | D23 | Premissas do gerador do histórico do site | Proposta |
+| D24 | Contrato da camada gold | Proposta |
+| D24 | Contrato da camada gold | Proposta |
 
 ---
 
@@ -313,3 +315,12 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
   - Sem sujeira plantada: o contrato exige consistência (toda sessão começa com `session_start`; todo pedido tem exatamente um `purchase` com o mesmo valor; `purchase` depois de `add_to_cart` e `begin_checkout`; SKUs do catálogo). O gerador verifica as quatro regras antes de salvar.
 - **Resultado** (seed 42; conteúdo idêntico a cada execução): 669.148 sessões, 1.816.833 eventos, 20.180 pedidos e 28.407 itens; conversão de 3,02%, abandono de 69,8%, cancelamento de 5,1%; receita dos pedidos finalizados sem frete de R$ 2.390.036,02; ticket médio de R$ 124,84 sem frete e R$ 141,26 com frete; 188 pedidos na Black Friday contra a mediana de 30 por dia.
 - **Limitações:** sem histórico de estoque do site (o giro de estoque fica só com a loja física por enquanto); avaliações vêm da fonte do Emanuel e do Henry, não deste gerador.
+
+## D24 · Contrato da camada gold
+
+- **Data:** 2026-11-19
+- **Status:** Proposta (validar com Henry e Emanuel)
+- **Decisão:** a gold tem uma tabela por assunto, sempre com a coluna `canal`, e só vendas válidas: `gold_vendas_diarias`, `gold_pedidos_diarios`, `gold_estoque_diario`, `gold_funil_diario`, `gold_catalogo` e, quando houver a fonte, `gold_avaliacoes`; e as dimensões `dim_data` e `dim_loja`, publicadas como views sobre a silver, para os consumidores continuarem lendo só a gold (D22). Colunas, fórmulas e consultas dos indicadores em `docs/dados/dicionario_gold.md`.
+- **Receita e ticket médio sem frete em todos os canais:** o ERP não tem frete e o marketplace foi tratado sem frete (D20); o contrato com a API calcula o ticket com frete, mas isso deixaria os canais incomparáveis. O frete do site continua disponível na silver.
+- **Ticket e taxas de um período** são calculados somando numerador e denominador, nunca pela média dos valores diários.
+- **Limitações:** estoque só da loja física (D23); margem do marketplace estimada (D20).
