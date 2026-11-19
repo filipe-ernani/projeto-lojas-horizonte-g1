@@ -295,3 +295,75 @@ erp:
     linhas_duplicadas: 0.002   # 0,2% das linhas de venda repetidas
     sku_nulo: 0.001            # 0,1% sem SKU
     quantidade_negativa: 0.001 # 0,1% com quantidade negativa
+
+# ---------------------------------------------------------------------------
+# SITE: histórico sintético do e-commerce (pedidos, itens e eventos de navegação)
+# Gerado por data/geradores/gera_site.py, no formato do contrato com a API do Caio
+# (SCHEMA_PIPELINE_v1): as mesmas colunas da exportação ao vivo.
+# ---------------------------------------------------------------------------
+site:
+  pasta_saida: data/saida/site        # ignorada pelo Git (.gitignore)
+  data_inicio: "2025-02-01"           # igual ao ERP
+  corte_utc: "2026-11-18T00:00:00Z"   # contrato: depois do corte, só dados ao vivo da API
+  fuso_horas: -3                      # horário de Brasília (sem horário de verão desde 2019)
+
+  # Volume: sessões num dia normal (índice 1,0). O índice do Olist é usado COM o efeito
+  # de dia da semana do online (D15: o site é canal online).
+  sessoes_dia: 1000
+  indice_minimo: 0.4
+  indice_maximo: 8.0
+  # Hora de início das sessões (distribuição triangular, pico à noite)
+  hora_min: 0
+  hora_pico: 20
+  hora_max: 24
+  segundos_entre_eventos: 45          # média do intervalo entre ações de uma sessão
+
+  # Funil (probabilidade de avançar para a etapa seguinte).
+  # 0,60 x 0,1667 x 0,45 x 0,667 = 3% de conversão; carrinhos que compram:
+  # 0,45 x 0,667 = 30%, ou seja, 70% de abandono (faixas do contrato).
+  funil:
+    ver_produto: 0.60          # sessões que abrem ao menos um produto
+    adicionar_carrinho: 0.1667 # das que viram produto
+    iniciar_checkout: 0.45     # das que adicionaram ao carrinho
+    comprar: 0.667             # das que iniciaram o checkout
+  produtos_vistos_media: 2.5   # produtos abertos por sessão que vê produtos
+  itens_carrinho_media: 1.4    # itens diferentes no carrinho
+  prob_quantidade_2: 0.15      # chance de um item ter quantidade 2
+
+  # Clientes: base fixa de clientes (usuario_hash) e visitantes anônimos.
+  # Quem chega ao checkout sempre se identifica (o pedido exige usuario_hash).
+  clientes: 30000
+  clientes_sigma: 1.0          # lognormal: alguns clientes voltam muito mais que outros
+  prob_anonimo: 0.5
+
+  # Peso de cada grupo na demanda do site (multiplica a popularidade do SKU).
+  # Casa é vendida no site (D16).
+  peso_grupo: {Vestuário: 1.0, Acessórios: 0.8, Esporte: 0.6, Beleza: 0.7, Casa: 0.5}
+
+  # Frete do pedido
+  frete_gratis_acima: 199.00
+  frete_fixo: 19.90
+
+  # Forma de pagamento (contrato v1; ajustar se a v1.1 confirmar CARTAO_CREDITO/CARTAO_DEBITO)
+  forma_pagamento: {PIX: 0.45, CARTAO: 0.45, BOLETO: 0.10}
+
+  # Cancelamento: fração dos pedidos e prazo entre a compra e o cancelamento
+  prob_cancelamento: 0.05
+  cancelamento_horas: [2, 72]
+
+  # Descontos em datas promocionais (mesma promoção do ERP)
+  promocoes:
+    - {nome: Black Friday 2025, inicio: "2025-11-28", fim: "2025-12-01", desconto: 0.25}
+
+  # Tamanhos por categoria; tipos com tamanho único
+  tamanhos:
+    Feminino: [PP, P, M, G, GG]
+    Masculino: [P, M, G, GG]
+    Infantil: ["2", "4", "6", "8", "10", "12"]
+    Calçados: ["34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44"]
+    Moda íntima e praia: [P, M, G, GG]
+    Esporte: [P, M, G, GG]
+    Acessórios: [Único]
+    Beleza: [Único]
+    Casa: [Único]
+  tamanho_unico_tipos: [Garrafa, Tapete de Yoga]
