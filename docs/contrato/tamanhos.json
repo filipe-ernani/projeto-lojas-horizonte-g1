@@ -1,0 +1,20 @@
+{
+  "regraPor": "categoria",
+  "dependeDeTipo": false,
+  "fonte": "backend/scripts/seed-catalogo.js#gerarTamanhosPorCategoria",
+  "decisao": "D-21",
+  "categorias": {
+    "Acessórios": ["Único"],
+    "Beleza": ["Único"],
+    "Calçados": ["34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44"],
+    "Casa": ["Único"],
+    "Esporte": ["PP", "P", "M", "G", "GG"],
+    "Feminino": ["PP", "P", "M", "G", "GG"],
+    "Infantil": ["2", "4", "6", "8", "10", "12"],
+    "Masculino": ["PP", "P", "M", "G", "GG"],
+    "Moda íntima e praia": ["PP", "P", "M", "G", "GG"]
+  },
+  "tamanhoUnico": ["Acessórios", "Beleza", "Casa"],
+  "semTamanho": [],
+  "observacao": "Nenhuma categoria fica sem tamanho: Acessórios, Casa, Beleza e qualquer fallback recebem [\"Único\"]. A categoria Beleza é a única que fica sem cor (cores: []), mas possui tamanho [\"Único\"]."
+}
