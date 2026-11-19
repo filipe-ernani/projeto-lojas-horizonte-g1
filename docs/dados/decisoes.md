@@ -41,7 +41,6 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D22 | Consumidores leem a gold no workspace do pipeline, só com leitura | Aceita |
 | D23 | Premissas do gerador do histórico do site | Proposta |
 | D24 | Contrato da camada gold | Proposta |
-| D24 | Contrato da camada gold | Proposta |
 
 ---
 
