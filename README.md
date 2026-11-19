@@ -39,13 +39,14 @@ Ambiente de testes utilizado para demonstrar a solução:
 - **FullStack (Caio):** API FastAPI (catálogo e carrinho), plano de autoscaling, testes de carga com Locust e integração de alertas no Gmail.
 - **BI & Analytics (Henry):** Dicionário de métricas, Databricks AI/BI Dashboard e relatórios automatizados consumindo a camada Gold.
 
-## 6. Governança e Cronograma Ágil (5 Dias)
-O acompanhamento do projeto é realizado através do Kanban neste repositório.
+## 6. Governança e Cronograma Ágil
+O acompanhamento do projeto é realizado através do Kanban neste repositório, com o desenvolvimento estruturado em 5 dias úteis de Sprint, culminando na apresentação final.
 
-| Dia | Foco | Entregáveis Principais |
+| Data | Foco | Entregáveis Reais |
 | :--- | :--- | :--- |
-| **Dia 1** | Planejamento | Setup do GitHub, contas Databricks, leitura inicial do Olist. |
-| **Dia 2** | Desenho e Contratos | Diagrama GCP, contrato da camada Gold, schema da API. |
-| **Dia 3** | Construção | Camadas Bronze/Silver prontas, API no ar, V1 do Dashboard. |
-| **Dia 4** | Integração | Camada Gold final, Agente IA conectado, teste de carga, documentação. |
-| **Dia 5** | Validação | Pitch Deck, ensaio da simulação de incidente e apresentação final. |
+| **13/11 (D1)** | Planejamento | Kick-off, Setup do GitHub, contas Databricks, leitura inicial do Olist. |
+| **16/11 (D2)** | Estruturação | Kanban padronizado, V1 do Frontend apresentada, decisão de arquitetura local. |
+| **17/11 (D3)** | Dados & Escopo | Camada Silver (ERP) concluída, Design visual aprovado, foco da IA definido em Recomendação de Produtos. |
+| **18/11 (D4)** | Integração | Fluxo de dados mapeado (5 KPIs), estrutura do Pitch Deck, desenvolvimento da Camada Gold. |
+| **19/11 (D5)** | Validação | Conclusão da Camada Gold e do modelo de IA, ensaio e preparação final. |
+| **23/11** | Apresentação | Apresentação oficial do MVP e proposta técnica para a banca avaliadora. |
