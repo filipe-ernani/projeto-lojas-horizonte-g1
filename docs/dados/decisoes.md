@@ -38,6 +38,7 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D19 | Recomendação de produtos como recurso de IA | Aceita |
 | D20 | Unificação dos canais na silver (fato e dimensões) | Aceita |
 | D21 | Recomendação conversacional no agente ADK | Aceita |
+| D22 | Consumidores leem a gold no workspace do pipeline, só com leitura | Aceita |
 
 ---
 
@@ -284,3 +285,16 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
   - Não há tabela de recomendações voltando para a API.
   - Unidades vendidas consideram loja física e site; o marketplace não tem SKU do catálogo (D12).
 - **Responsável:** Emanuel (agente); Diego (catálogo e tabelas gold).
+
+## D22 · Consumidores leem a gold no workspace do pipeline, só com leitura
+
+- **Data:** 2026-11-18
+- **Status:** Aceita
+- **Contexto:** o Henry (dashboard) e o Emanuel (agente) precisam dos dados da gold. Entregar CSVs por mensagem exigiria reenviar a cada atualização do pipeline.
+- **Decisão:** os dois foram adicionados ao workspace do Databricks com o mínimo necessário (menor privilégio):
+  - permissões da ferramenta: *Consumer access* e *Databricks SQL access*; sem *Workspace access* (notebooks e compute) e sem *Admin access*;
+  - uso do SQL warehouse (*Can use*);
+  - dados: `USE CATALOG` em `horizonte` e `USE SCHEMA, SELECT` em `horizonte.gold`. Sem acesso à bronze e à silver, e sem permissão de escrita.
+- **Equivalente no GCP:** papel `roles/bigquery.dataViewer` no dataset `gold` e `roles/bigquery.jobUser` no projeto, para executar consultas.
+- **Limitações:** no Free Edition, usuários adicionados não podem ser removidos da conta; as consultas deles usam a cota de compute do workspace do pipeline.
+- **Responsável:** Diego.
