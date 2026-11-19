@@ -48,8 +48,7 @@ kit-claude-horizonte
 data/saida/
 
 # Pastas solicitadas (e todos os seus conteúdos)
-docs/
-docs/**
+docs/analise/
 scripts/
 scripts/**
 **/scripts/

@@ -4,12 +4,12 @@
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
 **Última atualização:** 17/11/2026 (Correções visuais e de texto da Home e Layout: Logo em Header 40px e Footer 36px com .container unificado, Hero com arte geométrica contida e destaque "horizonte.", Banner Editorial alinhado, Faixa de pilares honestos com link de privacidade, scroll-margin-top em #novidades, categorias via useCategorias com mapa de ícones e sem mocks D-19, EmptyState de Favoritos com ícone Heart, favicon em public/favicon.svg)
-**Fase atual:** 3. Estrutura das telas (Fases 0, 1, 2 e 3 concluídas no front-end; rotas legais integradas; aguardando dataset/back-end para Fase 4)
+**Fase atual:** 4. Ligar à API (Fases 0, 1, 2 e 3 concluídas; dataset e back-end disponíveis; falta ligar o chat à rota `/api/chat`)
 
 ## Bloqueios externos
 
-- **Dataset (Diego):** ainda não chegou. Sem ele, não há dados reais nas telas. **Não usamos mocks** (ver D-19).
-- **Back-end (Caio):** será feito depois do front. Telas de dados ficam com estrutura e estados até lá.
+- **Dataset:** disponível em `data/catalogo.csv` (200 produtos), carregado com `npm run seed` na pasta `backend/`. **Não usamos mocks** (ver D-19).
+- **Back-end:** disponível em `backend/` (Express e PostgreSQL), com migrações de `001` a `005` em `backend/db/migrations/` (`npm run db:migrate`). Pagamento simulado com Pix, cartão de crédito (1 a 12 parcelas sem juros) e cartão de débito (D-12, revisão).
 
 ## Em andamento
 
@@ -70,7 +70,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 
 ## Pedidos entre agentes
 
-- _(Resolvido em 18/11)_ De Dados para UI (Tarefa 4B UI): A camada de dados de rotas privadas foi conectada com sucesso às páginas de interface (`ProductCard`, `Produto`, `Header`, `Favoritos`, `Carrinho`, `Checkout`, `Perfil`, `Pedidos`), com suporte total a feedback visual com `aria-live`, redirecionamento de login com preservação de rota (`location.state.from`), total e frete simulado vindos da API, CRUD de endereços, edição de dados e cancelamento de pedidos. Validação em Edge headless em 390px, 768px e 1440px nos temas claro e escuro.
+- _(Resolvido em 18/11)_ De Dados para UI (Tarefa 4B UI): A camada de dados de rotas privadas foi conectada com sucesso às páginas de interface (`ProductCard`, `Produto`, `Header`, `Favoritos`, `Carrinho`, `Checkout`, `Perfil`, `Pedidos`), com suporte total a feedback visual com `aria-live`, redirecionamento de login com preservação de rota (`location.state.from`), total e frete simulado vindos da API, CRUD de endereços, edição de dados e cancelamento de pedidos. A revisão responsiva segue pendente (Fase 5).
 
 - _(Resolvido em 18/11)_ De Dados para UI (Tarefa 4A UI): a camada de dados e hooks de produtos está pronta e validada contra a API real (`http://localhost:3000`). Os hooks `useCategorias`, `useProdutos(filtros)`, `useNovidades()`, `useProduto(id)`, `useSemelhantes(id)` e `useAvaliacoes(id)` estão disponíveis em `src/hooks/` devolvendo `{ dados, carregando, erro, recarregar }`. O `ProductCard` já repassa `produto={produto}` para o `ProductImage` sem alterar silhuetas. Ligar os hooks às páginas de Home, Catálogo e Produto.
 
@@ -122,7 +122,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 | 17/11 | Aprimoramento do placeholder de `ProductImage` em `components/ui/` com ícones por categoria, fundo derivado da cor (`color-mix`) e cálculo automático de contraste | `feat(design): aprimora placeholder de ProductImage com cor, categoria e contraste` | UI: integrar `cor` e `categoria` no ProductCard e ProductGallery |
 | 17/11 | Integração de cor e categoria em `ProductCard` e `ProductGallery` (com sincronização no `ColorSwatch`) e ajuste da regra D-07 em `Produto` (tamanho único e produtos sem cor) | `feat(ui): integra cor e categoria no ProductCard e ProductGallery e ajusta regra D-07` | UI: `ChatWidget` da Fase 2 |
 | 18/11 | Conexão da UI do Catálogo, Produto e Home com os hooks reais do agente Dados (Tarefa 4A UI), sincronização com URL, tratamento estrito de 404, novidades e ocultação de RatingPill sem avaliações | `feat(ui): conecta Catalogo, Produto e Home aos hooks da API real (tarefa 4A)` | Fase 4B: CartContext e FavoritesContext |
-| 18/11 | Tarefa 4B UI: ligadas telas privadas (`Favoritos`, `Carrinho`, `Checkout`, `Perfil`, `Pedidos`) e componentes (`ProductCard`, `ProductActionRow`, `Header`, `OrderCard`, `AddressCard`) aos contextos e hooks reais com feedback visual (`aria-live`), D-07, redirecionamento seguro ao login com retorno e testes em 390, 768 e 1440 px nos dois temas | `feat(ui): integra rotas privadas aos contextos e hooks da API` | Fase 4: Chat `/api/chat` |
+| 18/11 | Tarefa 4B UI: ligadas telas privadas (`Favoritos`, `Carrinho`, `Checkout`, `Perfil`, `Pedidos`) e componentes (`ProductCard`, `ProductActionRow`, `Header`, `OrderCard`, `AddressCard`) aos contextos e hooks reais com feedback visual (`aria-live`), D-07 e redirecionamento seguro ao login com retorno; revisão responsiva pendente (Fase 5) | `feat(ui): integra rotas privadas aos contextos e hooks da API` | Fase 4: Chat `/api/chat` |
 | 18/11 | Tarefa 4B Dados: camada de dados de rotas privadas (serviços de favoritos, carrinho, pedidos, perfil, endereços, contextos `FavoritosContext` e `CarrinhoContext` com otimismo e rollback, hooks com AbortController) sem mocks D-19 | `feat(dados): implementa camada de dados de rotas privadas e contextos` | UI: ligar rotas privadas aos hooks |
 | 18/11 | Revisão geral consolidada do projeto (Relatório 18/11), validação de B3b-fix (fuso America/Sao_Paulo e garantia de usuário no requireAuth), lint e build do front e testes do back | `docs: gera relatorio consolidado de revisao de 18/11/2026` | Fase 4B: CartContext e FavoritesContext |
 | 17/11 | Interface do `ChatWidget` (botão flutuante 60px, painel acessível com Esc/Tab trap, sessaoId em memória, boas-vindas e estados sem respostas fictícias) montada no `Layout` para usuário logado | `feat(ui): implementa interface acessivel do ChatWidget no Layout` | Fase 4: Ligar front à API (ou Design: Breadcrumb) |

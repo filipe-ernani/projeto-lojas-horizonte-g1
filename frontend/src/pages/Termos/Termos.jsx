@@ -25,8 +25,8 @@ export default function Termos() {
           fictícios ou gerados para fins de demonstração do sistema.
         </p>
         <p>
-          <strong>Atenção:</strong> Os fluxos de pagamento (Pix, Cartão de Crédito
-          e Boleto Bancário) no checkout são totalmente simulados. Nenhuma
+          <strong>Atenção:</strong> Os fluxos de pagamento (Pix, cartão de crédito
+          e cartão de débito) no checkout são totalmente simulados. Nenhuma
           cobrança monetária real é efetuada e nenhum produto físico será
           entregue.
         </p>
