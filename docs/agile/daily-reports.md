@@ -35,3 +35,17 @@
 * **Decisões Estratégicas:** 
   1. **IA:** Alteração de escopo. A equipa focará primeiro na **Recomendação de Produtos** baseada no carrinho. A "Previsão de Demanda" foi rebaixada a funcionalidade opcional (condicionada ao tempo).
   2. **Regra de Negócio (Abandono):** Decidido que o abandono de carrinho não será um evento gravado diretamente na base de dados, mas sim um cálculo de BI (Henry) cruzando carrinhos abertos ("add to cart") vs carrinhos finalizados ("purchase").
+  
+---
+
+## Daily 04 - 18/11/2026 (Integração de Dados & Pitch Deck)
+**Status do Projeto:** 🔴 Risco de Prazo (Desenvolvimento avança para o fim de semana)
+
+* **O que foi feito:** Apresentação da interface funcional (Frontend/Caio) com simulação de Pix, carrinho e listagem. Diagrama de fluxo de dados desenhado pelo Diego identificando os 5 KPIs obrigatórios. Estrutura da apresentação (Pitch Deck) definida.
+* **Em andamento:** 
+  * Diego (Dados): Construção da Camada Gold para unificar as métricas de receita, ticket médio, conversão e abandono.
+  * Emanuel (IA) e Henry (BI): Geração de reviews sintéticos em conjunto para popular o RAG e o Dashboard.
+* **Bloqueios/Riscos:** Agenda do Diego foi bloqueada por reuniões matinais, atrasando a entrega da Camada Gold. Este é um gargalo direto para Caio, Henry e Emanuel, o que forçará a equipa a codificar durante o final de semana para fechar a entrega.
+* **Decisões Arquiteturais e de Escopo:** 
+  1. Devido à complexidade e cota, a equipa não irá gerar as 200 imagens de produtos via IA. O Frontend usará *placeholders* (imagens genéricas em SVG) para fins de demonstração.
+  2. Os dados da API do Frontend servirão apenas para simulação local; a camada Gold do Databricks será a verdadeira "fonte da verdade" do projeto.
