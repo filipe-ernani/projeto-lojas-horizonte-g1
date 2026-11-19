@@ -30,7 +30,6 @@ Desenho projetado para suportar produção real com alta disponibilidade:
 Ambiente de testes utilizado para demonstrar a solução:
 - **Dados e BI:** Databricks Free Edition com Unity Catalog (Pipeline Medallion).
 - **IA e Modelagem:** Agent Development Kit (ADK) via `adk web` e MLflow.
-- **Testes de Carga:** Locust e Workspace API (Gmail) para health check.
 - **Dataset:** Brazilian E-Commerce Public Dataset by Olist e geradores sintéticos em Python.
 
 ## 5. Equipe e Responsabilidades
