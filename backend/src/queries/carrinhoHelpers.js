@@ -51,6 +51,13 @@ export function formatarCarrinho(pedido, itens = []) {
       nome: i.nome,
       preco: precoCentavos / 100,
       imagemUrl: i.imagem_url || null,
+      tipo: i.tipo || null,
+      variacao: i.variacao || null,
+      ocasioes: Array.isArray(i.ocasioes)
+        ? i.ocasioes
+        : i.ocasioes
+          ? [i.ocasioes]
+          : [],
       tamanho: i.tamanho || null,
       cor: i.cor || null,
       corHex: corHexPorNome(i.cores, i.cor),
@@ -153,7 +160,14 @@ export function validarItemCarrinho(item, produto) {
       cor: corFinal,
       corHex: corHexFinal,
       nome: produto.nome,
-      imagemUrl: produto.imagem_url,
+      imagemUrl: produto.imagem_url || null,
+      tipo: produto.tipo || null,
+      variacao: produto.variacao || null,
+      ocasioes: Array.isArray(produto.ocasioes)
+        ? produto.ocasioes
+        : produto.ocasioes
+          ? [produto.ocasioes]
+          : [],
     },
   };
 }

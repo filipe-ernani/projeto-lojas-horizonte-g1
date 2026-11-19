@@ -13,14 +13,17 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 
 ## Formatos
 
-> **Catálogo e dados de produtos:** o catálogo de produtos vem de `data/catalogo.csv` (200 produtos, 9 categorias: Feminino, Masculino, Infantil, Calçados, Moda íntima e praia, Acessórios, Esporte, Beleza, Casa). Tamanhos, cores e descrições são derivados e **SIMULADOS** no seed do catálogo (`npm run seed`, na pasta `backend/`). O campo de estoque está fora do escopo do MVP (D-21).
+> **Catálogo e dados de produtos:** o catálogo de produtos vem de `data/catalogo.csv` (200 produtos, 9 categorias: Feminino, Masculino, Infantil, Calçados, Moda íntima e praia, Acessórios, Esporte, Beleza, Casa). Tamanhos e cores são derivados e **SIMULADOS** no seed do catálogo (`npm run seed`, na pasta `backend/`). O campo de estoque está fora do escopo do MVP (D-21).
 
 ```js
-// Produto (D-21 e D-22: id é o sku; estoque fora do escopo; tamanhos, cores e descrição gerados como SIMULADO)
-{ id: "HZ-FEM-001", sku: "HZ-FEM-001", nome: "Short Feminino Viscose Marrom", modelo: "Short Feminino Viscose", descricao: "…", categoria: "Feminino",
+// Produto (D-21 e D-22: id é o sku; estoque fora do escopo; tamanhos e cores gerados como SIMULADO)
+{ id: "HZ-FEM-001", sku: "HZ-FEM-001", nome: "Short Feminino Viscose Marrom", modelo: "Short Feminino Viscose",
+  tipo: "Short", variacao: "Viscose", descricao: "…", categoria: "Feminino",
   preco: 26.90, imagemUrl: null,            // null => placeholder nativo
+  cor: "Marrom", corHex: "#6B4E3D",         // Beleza: null (sem cor)
   tamanhos: ["PP","P","M","G","GG"],        // calçados: ["34"…"44"]; Acessórios/Casa/Beleza: ["Único"]
   cores: [{ nome: "Marrom", hex: "#6B4E3D" }], // Beleza: [] (sem cor)
+  ocasioes: ["dia a dia", "praia", "passeio", "verão"],
   notaMedia: null, qtdAvaliacoes: 0 }       // sem avaliações fictícias (D-19)
 
 // Avaliação (resumo neutro quando não houver avaliações reais)
@@ -32,7 +35,8 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 
 // Carrinho (frete fixo simulado D-27; produtoId é o sku; preco é sempre o preço atual do produto, D7)
 { itens: [{ produtoId: "HZ-FEM-001", nome: "…", preco: 26.9, imagemUrl: null,
-            tamanho: "M", cor: "Marrom", corHex: "#6B4E3D", quantidade: 1 }], // corHex: null se não houver
+            tipo: "Short", variacao: "Viscose", ocasioes: ["…"],
+            tamanho: "M", cor: "Marrom", corHex: "#6B4E3D", quantidade: 1 }], // cor e corHex: null se não houver
   subtotal: 26.9, frete: 15.0, total: 41.9 } // cesta vazia: itens [] e subtotal, frete e total 0
 
 // Perfil (criadoEm, dataLocal, updatedAt e updatedAtLocal são null antes do primeiro cadastro)

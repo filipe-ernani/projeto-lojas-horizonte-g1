@@ -61,6 +61,13 @@ export function formatarPedido(p, itens = [], endereco = null) {
       nome: i.nome,
       preco: Number(i.preco_unitario),
       imagemUrl: i.imagem_url || null,
+      tipo: i.tipo || null,
+      variacao: i.variacao || null,
+      ocasioes: Array.isArray(i.ocasioes)
+        ? i.ocasioes
+        : i.ocasioes
+          ? [i.ocasioes]
+          : [],
       tamanho: i.tamanho || null,
       cor: i.cor || null,
       corHex: corHexPorNome(i.cores, i.cor),
@@ -161,7 +168,7 @@ export async function finalizarCarrinhoQuery(
     const pedido = pedRes.rows[0];
 
     const itensRes = await client.query(
-      `SELECT i.*, p.preco as preco_atual, p.nome, p.imagem_url, p.cores
+      `SELECT i.*, p.preco as preco_atual, p.nome, p.imagem_url, p.tipo, p.variacao, p.ocasioes, p.cores
        FROM loja.pedido_itens i
        JOIN loja.produtos p ON p.sku = i.sku
        WHERE i.pedido_id = $1 ORDER BY i.id ASC;`,
@@ -248,7 +255,7 @@ export async function listarMeusPedidosQuery(usuarioId) {
   if (pedidosRes.rows.length === 0) return [];
 
   const itensRes = await query(
-    `SELECT i.*, p.nome, p.imagem_url, p.cores FROM loja.pedido_itens i
+    `SELECT i.*, p.nome, p.imagem_url, p.tipo, p.variacao, p.ocasioes, p.cores FROM loja.pedido_itens i
      JOIN loja.produtos p ON p.sku = i.sku
      WHERE i.pedido_id = ANY($1) ORDER BY i.id ASC;`,
     [pedidosRes.rows.map((p) => p.id)],

@@ -24,7 +24,10 @@ CREATE TABLE IF NOT EXISTS loja.produtos (
   preco        NUMERIC(10,2) NOT NULL,
   custo        NUMERIC(10,2),
   popularidade NUMERIC(6,2),
+  tipo         TEXT,
+  variacao     TEXT,
   descricao    TEXT,
+  ocasioes     TEXT[] NOT NULL DEFAULT '{}',
   tamanhos     TEXT[] NOT NULL DEFAULT '{}',   -- {PP,P,M,G,GG} | {34..44} | {Único} (D-21)
   cores        JSONB  NOT NULL DEFAULT '[]',   -- [{"nome":"Marrom","hex":"#6B4E3D"}] (D-21)
   imagem_url   TEXT,                           -- nulo: o front mostra placeholder nativo

@@ -25,7 +25,7 @@ export async function obterCarrinhoQuery(usuarioId) {
 
   const pedido = pedRes.rows[0];
   const itensRes = await query(
-    `SELECT i.*, p.nome, p.imagem_url, p.cores, p.preco AS preco_atual
+    `SELECT i.*, p.nome, p.imagem_url, p.tipo, p.variacao, p.ocasioes, p.cores, p.preco AS preco_atual
      FROM loja.pedido_itens i
      JOIN loja.produtos p ON p.sku = i.sku
      WHERE i.pedido_id = $1 ORDER BY i.id ASC;`,
@@ -187,6 +187,9 @@ export async function substituirCarrinhoQuery(
           nome: i.nome,
           preco: Number(i.precoUnitario),
           imagemUrl: i.imagemUrl,
+          tipo: i.tipo,
+          variacao: i.variacao,
+          ocasioes: i.ocasioes,
           tamanho: i.tamanho,
           cor: i.cor,
           corHex: i.corHex,

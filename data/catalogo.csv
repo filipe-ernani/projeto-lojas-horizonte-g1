@@ -1,201 +1,201 @@
-sku,nome,modelo,categoria,grupo,preco,custo,popularidade
-HZ-FEM-001,Short Feminino Viscose Marrom,Short Feminino Viscose,Feminino,Vestuário,26.90,10.76,1.20
-HZ-FEM-002,Short Feminino Viscose Vinho,Short Feminino Viscose,Feminino,Vestuário,26.90,10.76,1.10
-HZ-FEM-003,Short Feminino Tricô Cinza,Short Feminino Tricô,Feminino,Vestuário,27.90,11.16,1.19
-HZ-FEM-004,Short Feminino Tricô Off-white,Short Feminino Tricô,Feminino,Vestuário,27.90,11.16,2.01
-HZ-FEM-005,Short Feminino Tricô Verde,Short Feminino Tricô,Feminino,Vestuário,27.90,11.16,1.20
-HZ-FEM-006,Short Feminino Linho Preto,Short Feminino Linho,Feminino,Vestuário,28.90,11.56,1.72
-HZ-FEM-007,Short Feminino Cetim Marrom,Short Feminino Cetim,Feminino,Vestuário,29.90,11.96,1.06
-HZ-FEM-008,Blusa Feminino Jeans Branco,Blusa Feminino Jeans,Feminino,Vestuário,31.90,12.76,1.26
-HZ-FEM-009,Blusa Feminino Jeans Marrom,Blusa Feminino Jeans,Feminino,Vestuário,31.90,12.76,1.66
-HZ-FEM-010,Blusa Feminino Viscose Vinho,Blusa Feminino Viscose,Feminino,Vestuário,32.90,13.16,0.31
-HZ-FEM-011,Blusa Feminino Linho Verde,Blusa Feminino Linho,Feminino,Vestuário,35.90,14.36,0.77
-HZ-FEM-012,Saia Feminino Algodão Bege,Saia Feminino Algodão,Feminino,Vestuário,35.90,14.36,0.69
-HZ-FEM-013,Saia Feminino Linho Marrom,Saia Feminino Linho,Feminino,Vestuário,42.90,17.16,0.60
-HZ-FEM-014,Saia Feminino Linho Off-white,Saia Feminino Linho,Feminino,Vestuário,42.90,17.16,0.80
-HZ-FEM-015,Camisa Feminino Malha Marrom,Camisa Feminino Malha,Feminino,Vestuário,39.90,15.96,3.31
-HZ-FEM-016,Camisa Feminino Algodão Rosa,Camisa Feminino Algodão,Feminino,Vestuário,41.90,16.76,0.50
-HZ-FEM-017,Camisa Feminino Algodão Vinho,Camisa Feminino Algodão,Feminino,Vestuário,41.90,16.76,2.17
-HZ-FEM-018,Camisa Feminino Viscose Branco,Camisa Feminino Viscose,Feminino,Vestuário,45.90,18.36,0.26
-HZ-FEM-019,Camisa Feminino Viscose Preto,Camisa Feminino Viscose,Feminino,Vestuário,45.90,18.36,0.76
-HZ-FEM-020,Camisa Feminino Viscose Vinho,Camisa Feminino Viscose,Feminino,Vestuário,45.90,18.36,1.14
-HZ-FEM-021,Camisa Feminino Linho Marrom,Camisa Feminino Linho,Feminino,Vestuário,49.90,19.96,1.60
-HZ-FEM-022,Camisa Feminino Cetim Bege,Camisa Feminino Cetim,Feminino,Vestuário,51.90,20.76,1.77
-HZ-FEM-023,Camisa Feminino Cetim Cinza,Camisa Feminino Cetim,Feminino,Vestuário,51.90,20.76,1.89
-HZ-FEM-024,Calça Feminino Algodão Cinza,Calça Feminino Algodão,Feminino,Vestuário,48.90,19.56,0.76
-HZ-FEM-025,Calça Feminino Jeans Verde,Calça Feminino Jeans,Feminino,Vestuário,50.90,20.36,0.69
-HZ-FEM-026,Calça Feminino Linho Off-white,Calça Feminino Linho,Feminino,Vestuário,57.90,23.16,1.99
-HZ-FEM-027,Calça Feminino Cetim Marrom,Calça Feminino Cetim,Feminino,Vestuário,59.90,23.96,0.86
-HZ-FEM-028,Macacão Feminino Malha Preto,Macacão Feminino Malha,Feminino,Vestuário,54.90,21.96,0.36
-HZ-FEM-029,Macacão Feminino Algodão Verde,Macacão Feminino Algodão,Feminino,Vestuário,56.90,22.76,0.40
-HZ-FEM-030,Macacão Feminino Viscose Marrom,Macacão Feminino Viscose,Feminino,Vestuário,61.90,24.76,0.48
-HZ-FEM-031,Macacão Feminino Viscose Preto,Macacão Feminino Viscose,Feminino,Vestuário,61.90,24.76,1.49
-HZ-FEM-032,Macacão Feminino Tricô Preto,Macacão Feminino Tricô,Feminino,Vestuário,64.90,25.96,1.12
-HZ-FEM-033,Macacão Feminino Linho Azul,Macacão Feminino Linho,Feminino,Vestuário,67.90,27.16,1.74
-HZ-FEM-034,Macacão Feminino Linho Preto,Macacão Feminino Linho,Feminino,Vestuário,67.90,27.16,0.71
-HZ-FEM-035,Macacão Feminino Cetim Rosa,Macacão Feminino Cetim,Feminino,Vestuário,69.90,27.96,1.14
-HZ-FEM-036,Vestido Feminino Malha Azul,Vestido Feminino Malha,Feminino,Vestuário,64.90,25.96,1.65
-HZ-FEM-037,Vestido Feminino Jeans Cinza,Vestido Feminino Jeans,Feminino,Vestuário,70.90,28.36,0.78
-HZ-FEM-038,Vestido Feminino Jeans Marrom,Vestido Feminino Jeans,Feminino,Vestuário,70.90,28.36,1.44
-HZ-FEM-039,Vestido Feminino Jeans Rosa,Vestido Feminino Jeans,Feminino,Vestuário,70.90,28.36,0.59
-HZ-FEM-040,Vestido Feminino Viscose Rosa,Vestido Feminino Viscose,Feminino,Vestuário,73.90,29.56,0.75
-HZ-FEM-041,Vestido Feminino Linho Bege,Vestido Feminino Linho,Feminino,Vestuário,79.90,31.96,0.74
-HZ-FEM-042,Vestido Feminino Cetim Marrom,Vestido Feminino Cetim,Feminino,Vestuário,82.90,33.16,0.38
-HZ-FEM-043,Jaqueta Feminino Malha Off-white,Jaqueta Feminino Malha,Feminino,Vestuário,79.90,31.96,1.48
-HZ-FEM-044,Jaqueta Feminino Jeans Verde,Jaqueta Feminino Jeans,Feminino,Vestuário,87.90,35.16,0.69
-HZ-FEM-045,Jaqueta Feminino Cetim Cinza,Jaqueta Feminino Cetim,Feminino,Vestuário,102.90,41.16,1.01
-HZ-MAS-001,Camiseta Masculino Sarja Vinho,Camiseta Masculino Sarja,Masculino,Vestuário,25.90,10.36,1.19
-HZ-MAS-002,Camiseta Masculino Jeans Rosa,Camiseta Masculino Jeans,Masculino,Vestuário,26.90,10.76,2.97
-HZ-MAS-003,Camiseta Masculino Linho Off-white,Camiseta Masculino Linho,Masculino,Vestuário,27.90,11.16,1.95
-HZ-MAS-004,Bermuda Masculino Malha Vinho,Bermuda Masculino Malha,Masculino,Vestuário,30.90,12.36,1.33
-HZ-MAS-005,Bermuda Masculino Sarja Verde,Bermuda Masculino Sarja,Masculino,Vestuário,36.90,14.76,3.22
-HZ-MAS-006,Bermuda Masculino Jeans Marrom,Bermuda Masculino Jeans,Masculino,Vestuário,38.90,15.56,0.39
-HZ-MAS-007,Bermuda Masculino Jeans Off-white,Bermuda Masculino Jeans,Masculino,Vestuário,38.90,15.56,0.60
-HZ-MAS-008,Bermuda Masculino Linho Off-white,Bermuda Masculino Linho,Masculino,Vestuário,39.90,15.96,0.48
-HZ-MAS-009,Polo Masculino Algodão Marrom,Polo Masculino Algodão,Masculino,Vestuário,43.90,17.56,0.73
-HZ-MAS-010,Polo Masculino Algodão Rosa,Polo Masculino Algodão,Masculino,Vestuário,43.90,17.56,0.33
-HZ-MAS-011,Polo Masculino Piquet Off-white,Polo Masculino Piquet,Masculino,Vestuário,45.90,18.36,1.66
-HZ-MAS-012,Polo Masculino Piquet Verde,Polo Masculino Piquet,Masculino,Vestuário,45.90,18.36,0.84
-HZ-MAS-013,Polo Masculino Sarja Preto,Polo Masculino Sarja,Masculino,Vestuário,48.90,19.56,0.31
-HZ-MAS-014,Polo Masculino Linho Verde,Polo Masculino Linho,Masculino,Vestuário,52.90,21.16,0.44
-HZ-MAS-015,Camisa Masculino Malha Marrom,Camisa Masculino Malha,Masculino,Vestuário,52.90,21.16,1.29
-HZ-MAS-016,Camisa Masculino Malha Rosa,Camisa Masculino Malha,Masculino,Vestuário,52.90,21.16,1.96
-HZ-MAS-017,Camisa Masculino Algodão Bege,Camisa Masculino Algodão,Masculino,Vestuário,55.90,22.36,4.94
-HZ-MAS-018,Camisa Masculino Piquet Azul,Camisa Masculino Piquet,Masculino,Vestuário,58.90,23.56,10.29
-HZ-MAS-019,Calça Masculino Malha Azul,Calça Masculino Malha,Masculino,Vestuário,68.90,27.56,1.39
-HZ-MAS-020,Calça Masculino Algodão Preto,Calça Masculino Algodão,Masculino,Vestuário,71.90,28.76,0.45
-HZ-MAS-021,Calça Masculino Sarja Branco,Calça Masculino Sarja,Masculino,Vestuário,79.90,31.96,0.18
-HZ-MAS-022,Calça Masculino Jeans Cinza,Calça Masculino Jeans,Masculino,Vestuário,83.90,33.56,1.24
-HZ-MAS-023,Calça Masculino Linho Off-white,Calça Masculino Linho,Masculino,Vestuário,87.90,35.16,0.52
-HZ-MAS-024,Moletom Masculino Algodão Vinho,Moletom Masculino Algodão,Masculino,Vestuário,94.90,37.96,0.72
-HZ-MAS-025,Moletom Masculino Piquet Bege,Moletom Masculino Piquet,Masculino,Vestuário,100.90,40.36,0.61
-HZ-MAS-026,Moletom Masculino Piquet Branco,Moletom Masculino Piquet,Masculino,Vestuário,100.90,40.36,0.89
-HZ-MAS-027,Moletom Masculino Sarja Preto,Moletom Masculino Sarja,Masculino,Vestuário,105.90,42.36,2.35
-HZ-MAS-028,Jaqueta Masculino Malha Bege,Jaqueta Masculino Malha,Masculino,Vestuário,127.90,51.16,1.13
-HZ-MAS-029,Jaqueta Masculino Algodão Preto,Jaqueta Masculino Algodão,Masculino,Vestuário,134.90,53.96,0.88
-HZ-MAS-030,Jaqueta Masculino Piquet Verde,Jaqueta Masculino Piquet,Masculino,Vestuário,141.90,56.76,0.44
-HZ-MAS-031,Jaqueta Masculino Sarja Cinza,Jaqueta Masculino Sarja,Masculino,Vestuário,149.90,59.96,0.26
-HZ-MAS-032,Jaqueta Masculino Sarja Preto,Jaqueta Masculino Sarja,Masculino,Vestuário,149.90,59.96,0.68
-HZ-MAS-033,Jaqueta Masculino Jeans Branco,Jaqueta Masculino Jeans,Masculino,Vestuário,156.90,62.76,0.96
-HZ-MAS-034,Jaqueta Masculino Jeans Vinho,Jaqueta Masculino Jeans,Masculino,Vestuário,156.90,62.76,4.11
-HZ-MAS-035,Jaqueta Masculino Linho Verde,Jaqueta Masculino Linho,Masculino,Vestuário,163.90,65.56,1.11
-HZ-INF-001,Body Infantil Malha Marrom,Body Infantil Malha,Infantil,Vestuário,23.90,10.04,1.14
-HZ-INF-002,Body Infantil Estampado Bege,Body Infantil Estampado,Infantil,Vestuário,27.90,11.72,0.91
-HZ-INF-003,Body Infantil Moletom Azul,Body Infantil Moletom,Infantil,Vestuário,29.90,12.56,1.26
-HZ-INF-004,Camiseta Infantil Malha Marrom,Camiseta Infantil Malha,Infantil,Vestuário,31.90,13.40,2.84
-HZ-INF-005,Camiseta Infantil Algodão Azul,Camiseta Infantil Algodão,Infantil,Vestuário,34.90,14.66,1.19
-HZ-INF-006,Camiseta Infantil Algodão Bege,Camiseta Infantil Algodão,Infantil,Vestuário,34.90,14.66,0.72
-HZ-INF-007,Camiseta Infantil Moletom Azul,Camiseta Infantil Moletom,Infantil,Vestuário,40.90,17.18,2.42
-HZ-INF-008,Camiseta Infantil Moletom Preto,Camiseta Infantil Moletom,Infantil,Vestuário,40.90,17.18,1.41
-HZ-INF-009,Camiseta Infantil Moletom Vinho,Camiseta Infantil Moletom,Infantil,Vestuário,40.90,17.18,3.42
-HZ-INF-010,Bermuda Infantil Malha Cinza,Bermuda Infantil Malha,Infantil,Vestuário,39.90,16.76,1.16
-HZ-INF-011,Bermuda Infantil Estampado Marrom,Bermuda Infantil Estampado,Infantil,Vestuário,46.90,19.70,0.38
-HZ-INF-012,Pijama Infantil Malha Cinza,Pijama Infantil Malha,Infantil,Vestuário,48.90,20.54,0.33
-HZ-INF-013,Pijama Infantil Malha Rosa,Pijama Infantil Malha,Infantil,Vestuário,48.90,20.54,3.75
-HZ-INF-014,Pijama Infantil Algodão Rosa,Pijama Infantil Algodão,Infantil,Vestuário,53.90,22.64,3.97
-HZ-INF-015,Vestido Infantil Moletom Preto,Vestido Infantil Moletom,Infantil,Vestuário,79.90,33.56,0.87
-HZ-INF-016,Vestido Infantil Moletom Verde,Vestido Infantil Moletom,Infantil,Vestuário,79.90,33.56,0.74
-HZ-INF-017,Conjunto Infantil Malha Vinho,Conjunto Infantil Malha,Infantil,Vestuário,82.90,34.82,3.22
-HZ-INF-018,Conjunto Infantil Algodão Off-white,Conjunto Infantil Algodão,Infantil,Vestuário,90.90,38.18,0.41
-HZ-INF-019,Conjunto Infantil Estampado Marrom,Conjunto Infantil Estampado,Infantil,Vestuário,98.90,41.54,0.49
-HZ-INF-020,Conjunto Infantil Moletom Off-white,Conjunto Infantil Moletom,Infantil,Vestuário,106.90,44.90,1.67
-HZ-CAL-001,Chinelo Casual Bege,Chinelo Casual,Calçados,Vestuário,31.90,15.95,0.57
-HZ-CAL-002,Chinelo Casual Vinho,Chinelo Casual,Calçados,Vestuário,31.90,15.95,0.84
-HZ-CAL-003,Chinelo Esportivo Rosa,Chinelo Esportivo,Calçados,Vestuário,38.90,19.45,1.21
-HZ-CAL-004,Chinelo Esportivo Vinho,Chinelo Esportivo,Calçados,Vestuário,38.90,19.45,1.15
-HZ-CAL-005,Chinelo Couro Off-white,Chinelo Couro,Calçados,Vestuário,40.90,20.45,0.42
-HZ-CAL-006,Chinelo Couro Preto,Chinelo Couro,Calçados,Vestuário,40.90,20.45,1.08
-HZ-CAL-007,Sapatilha Casual Off-white,Sapatilha Casual,Calçados,Vestuário,46.90,23.45,1.20
-HZ-CAL-008,Sapatilha Tressê Vinho,Sapatilha Tressê,Calçados,Vestuário,49.90,24.95,7.49
-HZ-CAL-009,Sapatilha Esportivo Cinza,Sapatilha Esportivo,Calçados,Vestuário,56.90,28.45,4.49
-HZ-CAL-010,Sapatilha Esportivo Marrom,Sapatilha Esportivo,Calçados,Vestuário,56.90,28.45,0.51
-HZ-CAL-011,Sapatilha Esportivo Preto,Sapatilha Esportivo,Calçados,Vestuário,56.90,28.45,0.79
-HZ-CAL-012,Sandália Confort Branco,Sandália Confort,Calçados,Vestuário,70.90,35.45,0.31
-HZ-CAL-013,Sandália Confort Verde,Sandália Confort,Calçados,Vestuário,70.90,35.45,0.62
-HZ-CAL-014,Sandália Esportivo Off-white,Sandália Esportivo,Calçados,Vestuário,75.90,37.95,1.29
-HZ-CAL-015,Sandália Couro Marrom,Sandália Couro,Calçados,Vestuário,79.90,39.95,2.62
-HZ-CAL-016,Sandália Couro Preto,Sandália Couro,Calçados,Vestuário,79.90,39.95,0.56
-HZ-CAL-017,Tênis Confort Bege,Tênis Confort,Calçados,Vestuário,92.90,46.45,0.59
-HZ-CAL-018,Tênis Couro Cinza,Tênis Couro,Calçados,Vestuário,104.90,52.45,0.18
-HZ-CAL-019,Mocassim Casual Cinza,Mocassim Casual,Calçados,Vestuário,108.90,54.45,0.88
-HZ-CAL-020,Mocassim Casual Vinho,Mocassim Casual,Calçados,Vestuário,108.90,54.45,0.43
-HZ-CAL-021,Mocassim Confort Rosa,Mocassim Confort,Calçados,Vestuário,123.90,61.95,0.65
-HZ-CAL-022,Bota Tressê Verde,Bota Tressê,Calçados,Vestuário,167.90,83.95,0.50
-HZ-CAL-023,Bota Confort Bege,Bota Confort,Calçados,Vestuário,178.90,89.45,0.93
-HZ-CAL-024,Bota Confort Preto,Bota Confort,Calçados,Vestuário,178.90,89.45,0.25
-HZ-CAL-025,Bota Esportivo Azul,Bota Esportivo,Calçados,Vestuário,189.90,94.95,0.31
-HZ-INT-001,Calcinha Microfibra Vinho,Calcinha Microfibra,Moda íntima e praia,Vestuário,40.90,15.54,0.33
-HZ-INT-002,Calcinha Estampado Verde,Calcinha Estampado,Moda íntima e praia,Vestuário,43.90,16.68,0.83
-HZ-INT-003,Cueca Microfibra Cinza,Cueca Microfibra,Moda íntima e praia,Vestuário,47.90,18.20,0.81
-HZ-INT-004,Cueca Microfibra Verde,Cueca Microfibra,Moda íntima e praia,Vestuário,47.90,18.20,1.20
-HZ-INT-005,Cueca Estampado Branco,Cueca Estampado,Moda íntima e praia,Vestuário,51.90,19.72,0.64
-HZ-INT-006,Sutiã Básico Vinho,Sutiã Básico,Moda íntima e praia,Vestuário,49.90,18.96,1.46
-HZ-INT-007,Sutiã Renda Bege,Sutiã Renda,Moda íntima e praia,Vestuário,63.90,24.28,2.25
-HZ-INT-008,Sunga Básico Preto,Sunga Básico,Moda íntima e praia,Vestuário,56.90,21.62,1.13
-HZ-INT-009,Sunga Estampado Azul,Sunga Estampado,Moda íntima e praia,Vestuário,66.90,25.42,1.32
-HZ-INT-010,Biquíni Microfibra Azul,Biquíni Microfibra,Moda íntima e praia,Vestuário,70.90,26.94,1.04
-HZ-INT-011,Biquíni Renda Preto,Biquíni Renda,Moda íntima e praia,Vestuário,82.90,31.50,1.00
-HZ-INT-012,Biquíni Renda Vinho,Biquíni Renda,Moda íntima e praia,Vestuário,82.90,31.50,0.56
-HZ-INT-013,Maiô Básico Marrom,Maiô Básico,Moda íntima e praia,Vestuário,76.90,29.22,1.29
-HZ-INT-014,Maiô Estampado Marrom,Maiô Estampado,Moda íntima e praia,Vestuário,90.90,34.54,0.93
-HZ-INT-015,Maiô Estampado Verde,Maiô Estampado,Moda íntima e praia,Vestuário,90.90,34.54,5.34
-HZ-ACE-001,Carteira Sintético Azul,Carteira Sintético,Acessórios,Acessórios,33.90,15.25,1.27
-HZ-ACE-002,Carteira Casual Cinza,Carteira Casual,Acessórios,Acessórios,35.90,16.15,0.74
-HZ-ACE-003,Carteira Casual Rosa,Carteira Casual,Acessórios,Acessórios,35.90,16.15,0.25
-HZ-ACE-004,Carteira Clássico Branco,Carteira Clássico,Acessórios,Acessórios,40.90,18.40,1.30
-HZ-ACE-005,Carteira Clássico Cinza,Carteira Clássico,Acessórios,Acessórios,40.90,18.40,3.98
-HZ-ACE-006,Carteira Clássico Verde,Carteira Clássico,Acessórios,Acessórios,40.90,18.40,0.29
-HZ-ACE-007,Cinto Sintético Preto,Cinto Sintético,Acessórios,Acessórios,50.90,22.90,2.00
-HZ-ACE-008,Cinto Couro Bege,Cinto Couro,Acessórios,Acessórios,64.90,29.20,0.77
-HZ-ACE-009,Óculos de Sol Viagem Verde,Óculos de Sol Viagem,Acessórios,Acessórios,78.90,35.51,0.95
-HZ-ACE-010,Óculos de Sol Clássico Marrom,Óculos de Sol Clássico,Acessórios,Acessórios,83.90,37.75,0.43
-HZ-ACE-011,Óculos de Sol Clássico Rosa,Óculos de Sol Clássico,Acessórios,Acessórios,83.90,37.75,0.77
-HZ-ACE-012,Mochila Viagem Vinho,Mochila Viagem,Acessórios,Acessórios,104.90,47.20,2.83
-HZ-ACE-013,Mochila Clássico Rosa,Mochila Clássico,Acessórios,Acessórios,110.90,49.91,1.59
-HZ-ACE-014,Bolsa Casual Preto,Bolsa Casual,Acessórios,Acessórios,130.90,58.90,4.00
-HZ-ACE-015,Bolsa Clássico Rosa,Bolsa Clássico,Acessórios,Acessórios,147.90,66.55,2.56
-HZ-ACE-016,Relógio Viagem Off-white,Relógio Viagem,Acessórios,Acessórios,189.90,85.45,1.42
-HZ-ACE-017,Relógio Clássico Bege,Relógio Clássico,Acessórios,Acessórios,201.90,90.85,4.04
-HZ-ACE-018,Relógio Couro Bege,Relógio Couro,Acessórios,Acessórios,212.90,95.80,1.42
-HZ-ACE-019,Relógio Couro Preto,Relógio Couro,Acessórios,Acessórios,212.90,95.80,1.94
-HZ-ACE-020,Mala Sintético Branco,Mala Sintético,Acessórios,Acessórios,247.90,111.55,0.79
-HZ-ACE-021,Mala Casual Azul,Mala Casual,Acessórios,Acessórios,264.90,119.20,1.05
-HZ-ACE-022,Mala Casual Marrom,Mala Casual,Acessórios,Acessórios,264.90,119.20,0.57
-HZ-ACE-023,Mala Casual Preto,Mala Casual,Acessórios,Acessórios,264.90,119.20,2.21
-HZ-ACE-024,Mala Casual Vinho,Mala Casual,Acessórios,Acessórios,264.90,119.20,0.39
-HZ-ACE-025,Mala Couro Vinho,Mala Couro,Acessórios,Acessórios,316.90,142.60,1.87
-HZ-ESP-001,Garrafa Running Azul,Garrafa Running,Esporte,Esporte,35.90,19.75,0.38
-HZ-ESP-002,Garrafa Running Preto,Garrafa Running,Esporte,Esporte,35.90,19.75,0.58
-HZ-ESP-003,Garrafa Performance Preto,Garrafa Performance,Esporte,Esporte,37.90,20.85,1.28
-HZ-ESP-004,Camiseta Dry Performance Bege,Camiseta Dry Performance,Esporte,Esporte,76.90,42.30,2.52
-HZ-ESP-005,Bermuda Treino Verde,Bermuda Treino,Esporte,Esporte,79.90,43.95,1.63
-HZ-ESP-006,Bermuda Fitness Rosa,Bermuda Fitness,Esporte,Esporte,87.90,48.35,0.16
-HZ-ESP-007,Bermuda Running Branco,Bermuda Running,Esporte,Esporte,94.90,52.20,1.28
-HZ-ESP-008,Bermuda Running Rosa,Bermuda Running,Esporte,Esporte,94.90,52.20,1.06
-HZ-ESP-009,Bermuda Running Vinho,Bermuda Running,Esporte,Esporte,94.90,52.20,1.39
-HZ-ESP-010,Legging Fitness Bege,Legging Fitness,Esporte,Esporte,118.90,65.40,3.64
-HZ-ESP-011,Legging Fitness Preto,Legging Fitness,Esporte,Esporte,118.90,65.40,0.19
-HZ-ESP-012,Legging Performance Vinho,Legging Performance,Esporte,Esporte,138.90,76.40,0.62
-HZ-ESP-013,Tapete de Yoga Treino Off-white,Tapete de Yoga Treino,Esporte,Esporte,160.90,88.50,1.60
-HZ-ESP-014,Tapete de Yoga Fitness Off-white,Tapete de Yoga Fitness,Esporte,Esporte,174.90,96.20,0.28
-HZ-ESP-015,Tapete de Yoga Running Bege,Tapete de Yoga Running,Esporte,Esporte,189.90,104.45,3.26
-HZ-BEL-001,Sabonete Líquido Floral,Sabonete Líquido Floral,Beleza,Beleza,34.90,20.94,1.36
-HZ-BEL-002,Sabonete Líquido Amadeirado,Sabonete Líquido Amadeirado,Beleza,Beleza,37.90,22.74,2.23
-HZ-BEL-003,Hidratante Suave,Hidratante Suave,Beleza,Beleza,48.90,29.34,0.43
-HZ-BEL-004,Hidratante Cítrico,Hidratante Cítrico,Beleza,Beleza,52.90,31.74,0.90
-HZ-BEL-005,Hidratante Floral,Hidratante Floral,Beleza,Beleza,57.90,34.74,3.27
-HZ-BEL-006,Hidratante Amadeirado,Hidratante Amadeirado,Beleza,Beleza,61.90,37.14,0.55
-HZ-BEL-007,Body Splash Suave,Body Splash Suave,Beleza,Beleza,70.90,42.54,0.52
-HZ-BEL-008,Body Splash Amadeirado,Body Splash Amadeirado,Beleza,Beleza,90.90,54.54,1.18
-HZ-BEL-009,Kit Maquiagem Suave,Kit Maquiagem Suave,Beleza,Beleza,104.90,62.94,1.97
-HZ-BEL-010,Kit Maquiagem Cítrico,Kit Maquiagem Cítrico,Beleza,Beleza,114.90,68.94,1.01
-HZ-BEL-011,Kit Maquiagem Floral,Kit Maquiagem Floral,Beleza,Beleza,124.90,74.94,2.90
-HZ-BEL-012,Perfume Suave,Perfume Suave,Beleza,Beleza,171.90,103.14,1.98
-HZ-CAS-001,Almofada Linho Bege,Almofada Linho,Casa,Casa,42.90,21.45,2.85
-HZ-CAS-002,Toalha de Banho Algodão Bege,Toalha de Banho Algodão,Casa,Casa,57.90,28.95,0.28
-HZ-CAS-003,Manta Microfibra Azul,Manta Microfibra,Casa,Casa,70.90,35.45,0.37
-HZ-CAS-004,Cortina Microfibra Rosa,Cortina Microfibra,Casa,Casa,95.90,47.95,0.28
-HZ-CAS-005,Jogo de Cama Microfibra Bege,Jogo de Cama Microfibra,Casa,Casa,140.90,70.45,0.53
-HZ-CAS-006,Jogo de Cama Microfibra Marrom,Jogo de Cama Microfibra,Casa,Casa,140.90,70.45,1.42
-HZ-CAS-007,Jogo de Cama Algodão Verde,Jogo de Cama Algodão,Casa,Casa,153.90,76.95,1.52
-HZ-CAS-008,Jogo de Cama Linho Verde,Jogo de Cama Linho,Casa,Casa,166.90,83.45,1.25
+sku,nome,modelo,categoria,grupo,preco,custo,popularidade,tipo,variacao,cor,descricao,ocasioes,imagem_url
+HZ-FEM-001,Short Feminino Viscose Marrom,Short Feminino Viscose,Feminino,Vestuário,26.90,10.76,1.20,Short,Viscose,Marrom,"Short feminino de cintura média, confortável para o calor. Em viscose leve, de bom caimento. Cor: marrom.",dia a dia;praia;passeio;verão,imagens/feminino/short.png
+HZ-FEM-002,Short Feminino Viscose Vinho,Short Feminino Viscose,Feminino,Vestuário,26.90,10.76,1.10,Short,Viscose,Vinho,"Short feminino de cintura média, confortável para o calor. Em viscose leve, de bom caimento. Cor: vinho.",dia a dia;praia;passeio;verão,imagens/feminino/short.png
+HZ-FEM-003,Short Feminino Tricô Cinza,Short Feminino Tricô,Feminino,Vestuário,27.90,11.16,1.19,Short,Tricô,Cinza,"Short feminino de cintura média, confortável para o calor. Em tricô, aconchegante. Cor: cinza.",dia a dia;praia;passeio;frio,imagens/feminino/short.png
+HZ-FEM-004,Short Feminino Tricô Off-white,Short Feminino Tricô,Feminino,Vestuário,27.90,11.16,2.01,Short,Tricô,Off-white,"Short feminino de cintura média, confortável para o calor. Em tricô, aconchegante. Cor: off-white.",dia a dia;praia;passeio;frio,imagens/feminino/short.png
+HZ-FEM-005,Short Feminino Tricô Verde,Short Feminino Tricô,Feminino,Vestuário,27.90,11.16,1.20,Short,Tricô,Verde,"Short feminino de cintura média, confortável para o calor. Em tricô, aconchegante. Cor: verde.",dia a dia;praia;passeio;frio,imagens/feminino/short.png
+HZ-FEM-006,Short Feminino Linho Preto,Short Feminino Linho,Feminino,Vestuário,28.90,11.56,1.72,Short,Linho,Preto,"Short feminino de cintura média, confortável para o calor. Em linho, fresco para dias quentes. Cor: preto.",dia a dia;praia;passeio;verão,imagens/feminino/short.png
+HZ-FEM-007,Short Feminino Cetim Marrom,Short Feminino Cetim,Feminino,Vestuário,29.90,11.96,1.06,Short,Cetim,Marrom,"Short feminino de cintura média, confortável para o calor. Em cetim, com brilho suave. Cor: marrom.",dia a dia;praia;passeio;festa,imagens/feminino/short.png
+HZ-FEM-008,Blusa Feminina Jeans Branco,Blusa Feminina Jeans,Feminino,Vestuário,31.90,12.76,1.26,Blusa,Jeans,Branco,"Blusa feminina de modelagem solta, fácil de combinar. Em jeans resistente. Cor: branco.",dia a dia;trabalho;casual,imagens/feminino/blusa.png
+HZ-FEM-009,Blusa Feminina Jeans Marrom,Blusa Feminina Jeans,Feminino,Vestuário,31.90,12.76,1.66,Blusa,Jeans,Marrom,"Blusa feminina de modelagem solta, fácil de combinar. Em jeans resistente. Cor: marrom.",dia a dia;trabalho;casual,imagens/feminino/blusa.png
+HZ-FEM-010,Blusa Feminina Viscose Vinho,Blusa Feminina Viscose,Feminino,Vestuário,32.90,13.16,0.31,Blusa,Viscose,Vinho,"Blusa feminina de modelagem solta, fácil de combinar. Em viscose leve, de bom caimento. Cor: vinho.",dia a dia;trabalho;verão,imagens/feminino/blusa.png
+HZ-FEM-011,Blusa Feminina Linho Verde,Blusa Feminina Linho,Feminino,Vestuário,35.90,14.36,0.77,Blusa,Linho,Verde,"Blusa feminina de modelagem solta, fácil de combinar. Em linho, fresco para dias quentes. Cor: verde.",dia a dia;trabalho;verão,imagens/feminino/blusa.png
+HZ-FEM-012,Saia Feminina Algodão Bege,Saia Feminina Algodão,Feminino,Vestuário,35.90,14.36,0.69,Saia,Algodão,Bege,"Saia feminina na altura dos joelhos. Feito de algodão, respirável. Cor: bege.",trabalho;passeio,imagens/feminino/saia.png
+HZ-FEM-013,Saia Feminina Linho Marrom,Saia Feminina Linho,Feminino,Vestuário,42.90,17.16,0.60,Saia,Linho,Marrom,"Saia feminina na altura dos joelhos. Em linho, fresco para dias quentes. Cor: marrom.",trabalho;passeio;verão,imagens/feminino/saia.png
+HZ-FEM-014,Saia Feminina Linho Off-white,Saia Feminina Linho,Feminino,Vestuário,42.90,17.16,0.80,Saia,Linho,Off-white,"Saia feminina na altura dos joelhos. Em linho, fresco para dias quentes. Cor: off-white.",trabalho;passeio;verão,imagens/feminino/saia.png
+HZ-FEM-015,Camisa Feminina Malha Marrom,Camisa Feminina Malha,Feminino,Vestuário,39.90,15.96,3.31,Camisa,Malha,Marrom,"Camisa feminina de botões, com caimento estruturado. Tecido de malha, macio e com elasticidade. Cor: marrom.",trabalho;ocasiões especiais,imagens/feminino/camisa.png
+HZ-FEM-016,Camisa Feminina Algodão Rosa,Camisa Feminina Algodão,Feminino,Vestuário,41.90,16.76,0.50,Camisa,Algodão,Rosa,"Camisa feminina de botões, com caimento estruturado. Feito de algodão, respirável. Cor: rosa.",trabalho;ocasiões especiais,imagens/feminino/camisa.png
+HZ-FEM-017,Camisa Feminina Algodão Vinho,Camisa Feminina Algodão,Feminino,Vestuário,41.90,16.76,2.17,Camisa,Algodão,Vinho,"Camisa feminina de botões, com caimento estruturado. Feito de algodão, respirável. Cor: vinho.",trabalho;ocasiões especiais,imagens/feminino/camisa.png
+HZ-FEM-018,Camisa Feminina Viscose Branco,Camisa Feminina Viscose,Feminino,Vestuário,45.90,18.36,0.26,Camisa,Viscose,Branco,"Camisa feminina de botões, com caimento estruturado. Em viscose leve, de bom caimento. Cor: branco.",trabalho;ocasiões especiais;verão,imagens/feminino/camisa.png
+HZ-FEM-019,Camisa Feminina Viscose Preto,Camisa Feminina Viscose,Feminino,Vestuário,45.90,18.36,0.76,Camisa,Viscose,Preto,"Camisa feminina de botões, com caimento estruturado. Em viscose leve, de bom caimento. Cor: preto.",trabalho;ocasiões especiais;verão,imagens/feminino/camisa.png
+HZ-FEM-020,Camisa Feminina Viscose Vinho,Camisa Feminina Viscose,Feminino,Vestuário,45.90,18.36,1.14,Camisa,Viscose,Vinho,"Camisa feminina de botões, com caimento estruturado. Em viscose leve, de bom caimento. Cor: vinho.",trabalho;ocasiões especiais;verão,imagens/feminino/camisa.png
+HZ-FEM-021,Camisa Feminina Linho Marrom,Camisa Feminina Linho,Feminino,Vestuário,49.90,19.96,1.60,Camisa,Linho,Marrom,"Camisa feminina de botões, com caimento estruturado. Em linho, fresco para dias quentes. Cor: marrom.",trabalho;ocasiões especiais;verão,imagens/feminino/camisa.png
+HZ-FEM-022,Camisa Feminina Cetim Bege,Camisa Feminina Cetim,Feminino,Vestuário,51.90,20.76,1.77,Camisa,Cetim,Bege,"Camisa feminina de botões, com caimento estruturado. Em cetim, com brilho suave. Cor: bege.",trabalho;ocasiões especiais;festa,imagens/feminino/camisa.png
+HZ-FEM-023,Camisa Feminina Cetim Cinza,Camisa Feminina Cetim,Feminino,Vestuário,51.90,20.76,1.89,Camisa,Cetim,Cinza,"Camisa feminina de botões, com caimento estruturado. Em cetim, com brilho suave. Cor: cinza.",trabalho;ocasiões especiais;festa,imagens/feminino/camisa.png
+HZ-FEM-024,Calça Feminina Algodão Cinza,Calça Feminina Algodão,Feminino,Vestuário,48.90,19.56,0.76,Calça,Algodão,Cinza,"Calça feminina de cintura alta e corte reto. Feito de algodão, respirável. Cor: cinza.",trabalho;dia a dia,imagens/feminino/calca.png
+HZ-FEM-025,Calça Feminina Jeans Verde,Calça Feminina Jeans,Feminino,Vestuário,50.90,20.36,0.69,Calça,Jeans,Verde,Calça feminina de cintura alta e corte reto. Em jeans resistente. Cor: verde.,trabalho;dia a dia;casual,imagens/feminino/calca.png
+HZ-FEM-026,Calça Feminina Linho Off-white,Calça Feminina Linho,Feminino,Vestuário,57.90,23.16,1.99,Calça,Linho,Off-white,"Calça feminina de cintura alta e corte reto. Em linho, fresco para dias quentes. Cor: off-white.",trabalho;dia a dia;verão,imagens/feminino/calca.png
+HZ-FEM-027,Calça Feminina Cetim Marrom,Calça Feminina Cetim,Feminino,Vestuário,59.90,23.96,0.86,Calça,Cetim,Marrom,"Calça feminina de cintura alta e corte reto. Em cetim, com brilho suave. Cor: marrom.",trabalho;dia a dia;festa,imagens/feminino/calca.png
+HZ-FEM-028,Macacão Feminino Malha Preto,Macacão Feminino Malha,Feminino,Vestuário,54.90,21.96,0.36,Macacão,Malha,Preto,"Macacão feminino de peça única, prático e versátil. Tecido de malha, macio e com elasticidade. Cor: preto.",passeio;festa,imagens/feminino/macacao.png
+HZ-FEM-029,Macacão Feminino Algodão Verde,Macacão Feminino Algodão,Feminino,Vestuário,56.90,22.76,0.40,Macacão,Algodão,Verde,"Macacão feminino de peça única, prático e versátil. Feito de algodão, respirável. Cor: verde.",passeio;festa,imagens/feminino/macacao.png
+HZ-FEM-030,Macacão Feminino Viscose Marrom,Macacão Feminino Viscose,Feminino,Vestuário,61.90,24.76,0.48,Macacão,Viscose,Marrom,"Macacão feminino de peça única, prático e versátil. Em viscose leve, de bom caimento. Cor: marrom.",passeio;festa;verão,imagens/feminino/macacao.png
+HZ-FEM-031,Macacão Feminino Viscose Preto,Macacão Feminino Viscose,Feminino,Vestuário,61.90,24.76,1.49,Macacão,Viscose,Preto,"Macacão feminino de peça única, prático e versátil. Em viscose leve, de bom caimento. Cor: preto.",passeio;festa;verão,imagens/feminino/macacao.png
+HZ-FEM-032,Macacão Feminino Tricô Preto,Macacão Feminino Tricô,Feminino,Vestuário,64.90,25.96,1.12,Macacão,Tricô,Preto,"Macacão feminino de peça única, prático e versátil. Em tricô, aconchegante. Cor: preto.",passeio;festa;frio,imagens/feminino/macacao.png
+HZ-FEM-033,Macacão Feminino Linho Azul,Macacão Feminino Linho,Feminino,Vestuário,67.90,27.16,1.74,Macacão,Linho,Azul,"Macacão feminino de peça única, prático e versátil. Em linho, fresco para dias quentes. Cor: azul.",passeio;festa;verão,imagens/feminino/macacao.png
+HZ-FEM-034,Macacão Feminino Linho Preto,Macacão Feminino Linho,Feminino,Vestuário,67.90,27.16,0.71,Macacão,Linho,Preto,"Macacão feminino de peça única, prático e versátil. Em linho, fresco para dias quentes. Cor: preto.",passeio;festa;verão,imagens/feminino/macacao.png
+HZ-FEM-035,Macacão Feminino Cetim Rosa,Macacão Feminino Cetim,Feminino,Vestuário,69.90,27.96,1.14,Macacão,Cetim,Rosa,"Macacão feminino de peça única, prático e versátil. Em cetim, com brilho suave. Cor: rosa.",passeio;festa,imagens/feminino/macacao.png
+HZ-FEM-036,Vestido Feminino Malha Azul,Vestido Feminino Malha,Feminino,Vestuário,64.90,25.96,1.65,Vestido,Malha,Azul,"Vestido feminino midi, leve e fluido. Tecido de malha, macio e com elasticidade. Cor: azul.",passeio;festa,imagens/feminino/vestido.png
+HZ-FEM-037,Vestido Feminino Jeans Cinza,Vestido Feminino Jeans,Feminino,Vestuário,70.90,28.36,0.78,Vestido,Jeans,Cinza,"Vestido feminino midi, leve e fluido. Em jeans resistente. Cor: cinza.",passeio;festa;casual,imagens/feminino/vestido.png
+HZ-FEM-038,Vestido Feminino Jeans Marrom,Vestido Feminino Jeans,Feminino,Vestuário,70.90,28.36,1.44,Vestido,Jeans,Marrom,"Vestido feminino midi, leve e fluido. Em jeans resistente. Cor: marrom.",passeio;festa;casual,imagens/feminino/vestido.png
+HZ-FEM-039,Vestido Feminino Jeans Rosa,Vestido Feminino Jeans,Feminino,Vestuário,70.90,28.36,0.59,Vestido,Jeans,Rosa,"Vestido feminino midi, leve e fluido. Em jeans resistente. Cor: rosa.",passeio;festa;casual,imagens/feminino/vestido.png
+HZ-FEM-040,Vestido Feminino Viscose Rosa,Vestido Feminino Viscose,Feminino,Vestuário,73.90,29.56,0.75,Vestido,Viscose,Rosa,"Vestido feminino midi, leve e fluido. Em viscose leve, de bom caimento. Cor: rosa.",passeio;festa;verão,imagens/feminino/vestido.png
+HZ-FEM-041,Vestido Feminino Linho Bege,Vestido Feminino Linho,Feminino,Vestuário,79.90,31.96,0.74,Vestido,Linho,Bege,"Vestido feminino midi, leve e fluido. Em linho, fresco para dias quentes. Cor: bege.",passeio;festa;verão,imagens/feminino/vestido.png
+HZ-FEM-042,Vestido Feminino Cetim Marrom,Vestido Feminino Cetim,Feminino,Vestuário,82.90,33.16,0.38,Vestido,Cetim,Marrom,"Vestido feminino midi, leve e fluido. Em cetim, com brilho suave. Cor: marrom.",passeio;festa,imagens/feminino/vestido.png
+HZ-FEM-043,Jaqueta Feminina Malha Off-white,Jaqueta Feminina Malha,Feminino,Vestuário,79.90,31.96,1.48,Jaqueta,Malha,Off-white,"Jaqueta feminina para dias mais frescos. Tecido de malha, macio e com elasticidade. Cor: off-white.",frio;passeio,imagens/feminino/jaqueta.png
+HZ-FEM-044,Jaqueta Feminina Jeans Verde,Jaqueta Feminina Jeans,Feminino,Vestuário,87.90,35.16,0.69,Jaqueta,Jeans,Verde,Jaqueta feminina para dias mais frescos. Em jeans resistente. Cor: verde.,frio;passeio;casual,imagens/feminino/jaqueta.png
+HZ-FEM-045,Jaqueta Feminina Cetim Cinza,Jaqueta Feminina Cetim,Feminino,Vestuário,102.90,41.16,1.01,Jaqueta,Cetim,Cinza,"Jaqueta feminina para dias mais frescos. Em cetim, com brilho suave. Cor: cinza.",frio;passeio;festa,imagens/feminino/jaqueta.png
+HZ-MAS-001,Camiseta Masculina Sarja Vinho,Camiseta Masculina Sarja,Masculino,Vestuário,25.90,10.36,1.19,Camiseta,Sarja,Vinho,"Camiseta masculina de gola careca e manga curta. Em sarja, tecido firme e durável. Cor: vinho.",dia a dia;casual;trabalho,imagens/masculino/camiseta.png
+HZ-MAS-002,Camiseta Masculina Jeans Rosa,Camiseta Masculina Jeans,Masculino,Vestuário,26.90,10.76,2.97,Camiseta,Jeans,Rosa,Camiseta masculina de gola careca e manga curta. Em jeans resistente. Cor: rosa.,dia a dia;casual,imagens/masculino/camiseta.png
+HZ-MAS-003,Camiseta Masculina Linho Off-white,Camiseta Masculina Linho,Masculino,Vestuário,27.90,11.16,1.95,Camiseta,Linho,Off-white,"Camiseta masculina de gola careca e manga curta. Em linho, fresco para dias quentes. Cor: off-white.",dia a dia;casual;verão,imagens/masculino/camiseta.png
+HZ-MAS-004,Bermuda Masculina Malha Vinho,Bermuda Masculina Malha,Masculino,Vestuário,30.90,12.36,1.33,Bermuda,Malha,Vinho,"Bermuda masculina com bolsos, na altura dos joelhos. Tecido de malha, macio e com elasticidade. Cor: vinho.",dia a dia;praia;passeio,imagens/masculino/bermuda.png
+HZ-MAS-005,Bermuda Masculina Sarja Verde,Bermuda Masculina Sarja,Masculino,Vestuário,36.90,14.76,3.22,Bermuda,Sarja,Verde,"Bermuda masculina com bolsos, na altura dos joelhos. Em sarja, tecido firme e durável. Cor: verde.",dia a dia;praia;passeio;trabalho,imagens/masculino/bermuda.png
+HZ-MAS-006,Bermuda Masculina Jeans Marrom,Bermuda Masculina Jeans,Masculino,Vestuário,38.90,15.56,0.39,Bermuda,Jeans,Marrom,"Bermuda masculina com bolsos, na altura dos joelhos. Em jeans resistente. Cor: marrom.",dia a dia;praia;passeio;casual,imagens/masculino/bermuda.png
+HZ-MAS-007,Bermuda Masculina Jeans Off-white,Bermuda Masculina Jeans,Masculino,Vestuário,38.90,15.56,0.60,Bermuda,Jeans,Off-white,"Bermuda masculina com bolsos, na altura dos joelhos. Em jeans resistente. Cor: off-white.",dia a dia;praia;passeio;casual,imagens/masculino/bermuda.png
+HZ-MAS-008,Bermuda Masculina Linho Off-white,Bermuda Masculina Linho,Masculino,Vestuário,39.90,15.96,0.48,Bermuda,Linho,Off-white,"Bermuda masculina com bolsos, na altura dos joelhos. Em linho, fresco para dias quentes. Cor: off-white.",dia a dia;praia;passeio;verão,imagens/masculino/bermuda.png
+HZ-MAS-009,Polo Masculina Algodão Marrom,Polo Masculina Algodão,Masculino,Vestuário,43.90,17.56,0.73,Polo,Algodão,Marrom,"Camisa polo masculina, com gola e botões. Feito de algodão, respirável. Cor: marrom.",trabalho;casual,imagens/masculino/polo.png
+HZ-MAS-010,Polo Masculina Algodão Rosa,Polo Masculina Algodão,Masculino,Vestuário,43.90,17.56,0.33,Polo,Algodão,Rosa,"Camisa polo masculina, com gola e botões. Feito de algodão, respirável. Cor: rosa.",trabalho;casual,imagens/masculino/polo.png
+HZ-MAS-011,Polo Masculina Piquet Off-white,Polo Masculina Piquet,Masculino,Vestuário,45.90,18.36,1.66,Polo,Piquet,Off-white,"Camisa polo masculina, com gola e botões. Em malha piquet, de textura discreta. Cor: off-white.",trabalho;casual,imagens/masculino/polo.png
+HZ-MAS-012,Polo Masculina Piquet Verde,Polo Masculina Piquet,Masculino,Vestuário,45.90,18.36,0.84,Polo,Piquet,Verde,"Camisa polo masculina, com gola e botões. Em malha piquet, de textura discreta. Cor: verde.",trabalho;casual,imagens/masculino/polo.png
+HZ-MAS-013,Polo Masculina Sarja Preto,Polo Masculina Sarja,Masculino,Vestuário,48.90,19.56,0.31,Polo,Sarja,Preto,"Camisa polo masculina, com gola e botões. Em sarja, tecido firme e durável. Cor: preto.",trabalho;casual,imagens/masculino/polo.png
+HZ-MAS-014,Polo Masculina Linho Verde,Polo Masculina Linho,Masculino,Vestuário,52.90,21.16,0.44,Polo,Linho,Verde,"Camisa polo masculina, com gola e botões. Em linho, fresco para dias quentes. Cor: verde.",trabalho;casual;verão,imagens/masculino/polo.png
+HZ-MAS-015,Camisa Masculina Malha Marrom,Camisa Masculina Malha,Masculino,Vestuário,52.90,21.16,1.29,Camisa,Malha,Marrom,"Camisa masculina de botões e manga longa. Tecido de malha, macio e com elasticidade. Cor: marrom.",trabalho;ocasiões especiais,imagens/masculino/camisa.png
+HZ-MAS-016,Camisa Masculina Malha Rosa,Camisa Masculina Malha,Masculino,Vestuário,52.90,21.16,1.96,Camisa,Malha,Rosa,"Camisa masculina de botões e manga longa. Tecido de malha, macio e com elasticidade. Cor: rosa.",trabalho;ocasiões especiais,imagens/masculino/camisa.png
+HZ-MAS-017,Camisa Masculina Algodão Bege,Camisa Masculina Algodão,Masculino,Vestuário,55.90,22.36,4.94,Camisa,Algodão,Bege,"Camisa masculina de botões e manga longa. Feito de algodão, respirável. Cor: bege.",trabalho;ocasiões especiais,imagens/masculino/camisa.png
+HZ-MAS-018,Camisa Masculina Piquet Azul,Camisa Masculina Piquet,Masculino,Vestuário,58.90,23.56,10.29,Camisa,Piquet,Azul,"Camisa masculina de botões e manga longa. Em malha piquet, de textura discreta. Cor: azul.",trabalho;ocasiões especiais,imagens/masculino/camisa.png
+HZ-MAS-019,Calça Masculina Malha Azul,Calça Masculina Malha,Masculino,Vestuário,68.90,27.56,1.39,Calça,Malha,Azul,"Calça masculina de corte reto. Tecido de malha, macio e com elasticidade. Cor: azul.",trabalho;dia a dia,imagens/masculino/calca.png
+HZ-MAS-020,Calça Masculina Algodão Preto,Calça Masculina Algodão,Masculino,Vestuário,71.90,28.76,0.45,Calça,Algodão,Preto,"Calça masculina de corte reto. Feito de algodão, respirável. Cor: preto.",trabalho;dia a dia,imagens/masculino/calca.png
+HZ-MAS-021,Calça Masculina Sarja Branco,Calça Masculina Sarja,Masculino,Vestuário,79.90,31.96,0.18,Calça,Sarja,Branco,"Calça masculina de corte reto. Em sarja, tecido firme e durável. Cor: branco.",trabalho;dia a dia,imagens/masculino/calca.png
+HZ-MAS-022,Calça Masculina Jeans Cinza,Calça Masculina Jeans,Masculino,Vestuário,83.90,33.56,1.24,Calça,Jeans,Cinza,Calça masculina de corte reto. Em jeans resistente. Cor: cinza.,trabalho;dia a dia;casual,imagens/masculino/calca.png
+HZ-MAS-023,Calça Masculina Linho Off-white,Calça Masculina Linho,Masculino,Vestuário,87.90,35.16,0.52,Calça,Linho,Off-white,"Calça masculina de corte reto. Em linho, fresco para dias quentes. Cor: off-white.",trabalho;dia a dia;verão,imagens/masculino/calca.png
+HZ-MAS-024,Moletom Masculino Algodão Vinho,Moletom Masculino Algodão,Masculino,Vestuário,94.90,37.96,0.72,Moletom,Algodão,Vinho,"Blusa de moletom masculina, quente e confortável. Feito de algodão, respirável. Cor: vinho.",frio;casual,imagens/masculino/moletom.png
+HZ-MAS-025,Moletom Masculino Piquet Bege,Moletom Masculino Piquet,Masculino,Vestuário,100.90,40.36,0.61,Moletom,Piquet,Bege,"Blusa de moletom masculina, quente e confortável. Em malha piquet, de textura discreta. Cor: bege.",frio;casual,imagens/masculino/moletom.png
+HZ-MAS-026,Moletom Masculino Piquet Branco,Moletom Masculino Piquet,Masculino,Vestuário,100.90,40.36,0.89,Moletom,Piquet,Branco,"Blusa de moletom masculina, quente e confortável. Em malha piquet, de textura discreta. Cor: branco.",frio;casual,imagens/masculino/moletom.png
+HZ-MAS-027,Moletom Masculino Sarja Preto,Moletom Masculino Sarja,Masculino,Vestuário,105.90,42.36,2.35,Moletom,Sarja,Preto,"Blusa de moletom masculina, quente e confortável. Em sarja, tecido firme e durável. Cor: preto.",frio;casual;trabalho,imagens/masculino/moletom.png
+HZ-MAS-028,Jaqueta Masculina Malha Bege,Jaqueta Masculina Malha,Masculino,Vestuário,127.90,51.16,1.13,Jaqueta,Malha,Bege,"Jaqueta masculina para dias mais frescos. Tecido de malha, macio e com elasticidade. Cor: bege.",frio;passeio,imagens/masculino/jaqueta.png
+HZ-MAS-029,Jaqueta Masculina Algodão Preto,Jaqueta Masculina Algodão,Masculino,Vestuário,134.90,53.96,0.88,Jaqueta,Algodão,Preto,"Jaqueta masculina para dias mais frescos. Feito de algodão, respirável. Cor: preto.",frio;passeio,imagens/masculino/jaqueta.png
+HZ-MAS-030,Jaqueta Masculina Piquet Verde,Jaqueta Masculina Piquet,Masculino,Vestuário,141.90,56.76,0.44,Jaqueta,Piquet,Verde,"Jaqueta masculina para dias mais frescos. Em malha piquet, de textura discreta. Cor: verde.",frio;passeio,imagens/masculino/jaqueta.png
+HZ-MAS-031,Jaqueta Masculina Sarja Cinza,Jaqueta Masculina Sarja,Masculino,Vestuário,149.90,59.96,0.26,Jaqueta,Sarja,Cinza,"Jaqueta masculina para dias mais frescos. Em sarja, tecido firme e durável. Cor: cinza.",frio;passeio;trabalho,imagens/masculino/jaqueta.png
+HZ-MAS-032,Jaqueta Masculina Sarja Preto,Jaqueta Masculina Sarja,Masculino,Vestuário,149.90,59.96,0.68,Jaqueta,Sarja,Preto,"Jaqueta masculina para dias mais frescos. Em sarja, tecido firme e durável. Cor: preto.",frio;passeio;trabalho,imagens/masculino/jaqueta.png
+HZ-MAS-033,Jaqueta Masculina Jeans Branco,Jaqueta Masculina Jeans,Masculino,Vestuário,156.90,62.76,0.96,Jaqueta,Jeans,Branco,Jaqueta masculina para dias mais frescos. Em jeans resistente. Cor: branco.,frio;passeio;casual,imagens/masculino/jaqueta.png
+HZ-MAS-034,Jaqueta Masculina Jeans Vinho,Jaqueta Masculina Jeans,Masculino,Vestuário,156.90,62.76,4.11,Jaqueta,Jeans,Vinho,Jaqueta masculina para dias mais frescos. Em jeans resistente. Cor: vinho.,frio;passeio;casual,imagens/masculino/jaqueta.png
+HZ-MAS-035,Jaqueta Masculina Linho Verde,Jaqueta Masculina Linho,Masculino,Vestuário,163.90,65.56,1.11,Jaqueta,Linho,Verde,"Jaqueta masculina para dias mais frescos. Em linho, fresco para dias quentes. Cor: verde.",frio;passeio;verão,imagens/masculino/jaqueta.png
+HZ-INF-001,Body Infantil Malha Marrom,Body Infantil Malha,Infantil,Vestuário,23.90,10.04,1.14,Body,Malha,Marrom,"Body infantil com fechamento de botões, fácil de trocar. Tecido de malha, macio e com elasticidade. Cor: marrom.",dia a dia;bebê,imagens/infantil/body.png
+HZ-INF-002,Body Infantil Estampado Bege,Body Infantil Estampado,Infantil,Vestuário,27.90,11.72,0.91,Body,Estampado,Bege,"Body infantil com fechamento de botões, fácil de trocar. Com estampa colorida. Cor: bege.",dia a dia;bebê,imagens/infantil/body.png
+HZ-INF-003,Body Infantil Moletom Azul,Body Infantil Moletom,Infantil,Vestuário,29.90,12.56,1.26,Body,Moletom,Azul,"Body infantil com fechamento de botões, fácil de trocar. Em moletom felpado. Cor: azul.",dia a dia;bebê;frio,imagens/infantil/body.png
+HZ-INF-004,Camiseta Infantil Malha Marrom,Camiseta Infantil Malha,Infantil,Vestuário,31.90,13.40,2.84,Camiseta,Malha,Marrom,"Camiseta infantil confortável para brincar. Tecido de malha, macio e com elasticidade. Cor: marrom.",dia a dia;escola,imagens/infantil/camiseta.png
+HZ-INF-005,Camiseta Infantil Algodão Azul,Camiseta Infantil Algodão,Infantil,Vestuário,34.90,14.66,1.19,Camiseta,Algodão,Azul,"Camiseta infantil confortável para brincar. Feito de algodão, respirável. Cor: azul.",dia a dia;escola,imagens/infantil/camiseta.png
+HZ-INF-006,Camiseta Infantil Algodão Bege,Camiseta Infantil Algodão,Infantil,Vestuário,34.90,14.66,0.72,Camiseta,Algodão,Bege,"Camiseta infantil confortável para brincar. Feito de algodão, respirável. Cor: bege.",dia a dia;escola,imagens/infantil/camiseta.png
+HZ-INF-007,Camiseta Infantil Moletom Azul,Camiseta Infantil Moletom,Infantil,Vestuário,40.90,17.18,2.42,Camiseta,Moletom,Azul,Camiseta infantil confortável para brincar. Em moletom felpado. Cor: azul.,dia a dia;escola;frio,imagens/infantil/camiseta.png
+HZ-INF-008,Camiseta Infantil Moletom Preto,Camiseta Infantil Moletom,Infantil,Vestuário,40.90,17.18,1.41,Camiseta,Moletom,Preto,Camiseta infantil confortável para brincar. Em moletom felpado. Cor: preto.,dia a dia;escola;frio,imagens/infantil/camiseta.png
+HZ-INF-009,Camiseta Infantil Moletom Vinho,Camiseta Infantil Moletom,Infantil,Vestuário,40.90,17.18,3.42,Camiseta,Moletom,Vinho,Camiseta infantil confortável para brincar. Em moletom felpado. Cor: vinho.,dia a dia;escola;frio,imagens/infantil/camiseta.png
+HZ-INF-010,Bermuda Infantil Malha Cinza,Bermuda Infantil Malha,Infantil,Vestuário,39.90,16.76,1.16,Bermuda,Malha,Cinza,"Bermuda infantil com elástico na cintura. Tecido de malha, macio e com elasticidade. Cor: cinza.",dia a dia;praia,imagens/infantil/bermuda.png
+HZ-INF-011,Bermuda Infantil Estampada Marrom,Bermuda Infantil Estampada,Infantil,Vestuário,46.90,19.70,0.38,Bermuda,Estampada,Marrom,Bermuda infantil com elástico na cintura. Com estampa colorida. Cor: marrom.,dia a dia;praia,imagens/infantil/bermuda.png
+HZ-INF-012,Pijama Infantil Malha Cinza,Pijama Infantil Malha,Infantil,Vestuário,48.90,20.54,0.33,Pijama,Malha,Cinza,"Pijama infantil de duas peças. Tecido de malha, macio e com elasticidade. Cor: cinza.",dormir,imagens/infantil/pijama.png
+HZ-INF-013,Pijama Infantil Malha Rosa,Pijama Infantil Malha,Infantil,Vestuário,48.90,20.54,3.75,Pijama,Malha,Rosa,"Pijama infantil de duas peças. Tecido de malha, macio e com elasticidade. Cor: rosa.",dormir,imagens/infantil/pijama.png
+HZ-INF-014,Pijama Infantil Algodão Rosa,Pijama Infantil Algodão,Infantil,Vestuário,53.90,22.64,3.97,Pijama,Algodão,Rosa,"Pijama infantil de duas peças. Feito de algodão, respirável. Cor: rosa.",dormir,imagens/infantil/pijama.png
+HZ-INF-015,Vestido Infantil Moletom Preto,Vestido Infantil Moletom,Infantil,Vestuário,79.90,33.56,0.87,Vestido,Moletom,Preto,"Vestido infantil leve, para passeios e festas. Em moletom felpado. Cor: preto.",passeio;festa;frio,imagens/infantil/vestido.png
+HZ-INF-016,Vestido Infantil Moletom Verde,Vestido Infantil Moletom,Infantil,Vestuário,79.90,33.56,0.74,Vestido,Moletom,Verde,"Vestido infantil leve, para passeios e festas. Em moletom felpado. Cor: verde.",passeio;festa;frio,imagens/infantil/vestido.png
+HZ-INF-017,Conjunto Infantil Malha Vinho,Conjunto Infantil Malha,Infantil,Vestuário,82.90,34.82,3.22,Conjunto,Malha,Vinho,"Conjunto infantil de blusa e short. Tecido de malha, macio e com elasticidade. Cor: vinho.",dia a dia;passeio,imagens/infantil/conjunto.png
+HZ-INF-018,Conjunto Infantil Algodão Off-white,Conjunto Infantil Algodão,Infantil,Vestuário,90.90,38.18,0.41,Conjunto,Algodão,Off-white,"Conjunto infantil de blusa e short. Feito de algodão, respirável. Cor: off-white.",dia a dia;passeio,imagens/infantil/conjunto.png
+HZ-INF-019,Conjunto Infantil Estampado Marrom,Conjunto Infantil Estampado,Infantil,Vestuário,98.90,41.54,0.49,Conjunto,Estampado,Marrom,Conjunto infantil de blusa e short. Com estampa colorida. Cor: marrom.,dia a dia;passeio,imagens/infantil/conjunto.png
+HZ-INF-020,Conjunto Infantil Moletom Off-white,Conjunto Infantil Moletom,Infantil,Vestuário,106.90,44.90,1.67,Conjunto,Moletom,Off-white,Conjunto infantil de blusa e short. Em moletom felpado. Cor: off-white.,dia a dia;passeio;frio,imagens/infantil/conjunto.png
+HZ-CAL-001,Chinelo Casual Bege,Chinelo Casual,Calçados,Vestuário,31.90,15.95,0.57,Chinelo,Casual,Bege,Chinelo de dedo com solado de borracha. De estilo casual. Cor: bege.,praia;casa;dia a dia,imagens/calcados/chinelo.png
+HZ-CAL-002,Chinelo Casual Vinho,Chinelo Casual,Calçados,Vestuário,31.90,15.95,0.84,Chinelo,Casual,Vinho,Chinelo de dedo com solado de borracha. De estilo casual. Cor: vinho.,praia;casa;dia a dia,imagens/calcados/chinelo.png
+HZ-CAL-003,Chinelo Esportivo Rosa,Chinelo Esportivo,Calçados,Vestuário,38.90,19.45,1.21,Chinelo,Esportivo,Rosa,"Chinelo de dedo com solado de borracha. Versão esportiva, com solado antiderrapante. Cor: rosa.",praia;casa;treino;caminhada,imagens/calcados/chinelo.png
+HZ-CAL-004,Chinelo Esportivo Vinho,Chinelo Esportivo,Calçados,Vestuário,38.90,19.45,1.15,Chinelo,Esportivo,Vinho,"Chinelo de dedo com solado de borracha. Versão esportiva, com solado antiderrapante. Cor: vinho.",praia;casa;treino;caminhada,imagens/calcados/chinelo.png
+HZ-CAL-005,Chinelo Couro Off-white,Chinelo Couro,Calçados,Vestuário,40.90,20.45,0.42,Chinelo,Couro,Off-white,Chinelo de dedo com solado de borracha. Em couro. Cor: off-white.,praia;casa;trabalho,imagens/calcados/chinelo.png
+HZ-CAL-006,Chinelo Couro Preto,Chinelo Couro,Calçados,Vestuário,40.90,20.45,1.08,Chinelo,Couro,Preto,Chinelo de dedo com solado de borracha. Em couro. Cor: preto.,praia;casa;trabalho,imagens/calcados/chinelo.png
+HZ-CAL-007,Sapatilha Casual Off-white,Sapatilha Casual,Calçados,Vestuário,46.90,23.45,1.20,Sapatilha,Casual,Off-white,"Sapatilha leve e flexível, fácil de calçar. De estilo casual. Cor: off-white.",dia a dia;trabalho,imagens/calcados/sapatilha.png
+HZ-CAL-008,Sapatilha Tressê Vinho,Sapatilha Tressê,Calçados,Vestuário,49.90,24.95,7.49,Sapatilha,Tressê,Vinho,"Sapatilha leve e flexível, fácil de calçar. Com detalhes em tressê. Cor: vinho.",dia a dia;trabalho;verão,imagens/calcados/sapatilha.png
+HZ-CAL-009,Sapatilha Esportiva Cinza,Sapatilha Esportiva,Calçados,Vestuário,56.90,28.45,4.49,Sapatilha,Esportiva,Cinza,"Sapatilha leve e flexível, fácil de calçar. Versão esportiva, com solado antiderrapante. Cor: cinza.",dia a dia;trabalho;treino;caminhada,imagens/calcados/sapatilha.png
+HZ-CAL-010,Sapatilha Esportiva Marrom,Sapatilha Esportiva,Calçados,Vestuário,56.90,28.45,0.51,Sapatilha,Esportiva,Marrom,"Sapatilha leve e flexível, fácil de calçar. Versão esportiva, com solado antiderrapante. Cor: marrom.",dia a dia;trabalho;treino;caminhada,imagens/calcados/sapatilha.png
+HZ-CAL-011,Sapatilha Esportiva Preto,Sapatilha Esportiva,Calçados,Vestuário,56.90,28.45,0.79,Sapatilha,Esportiva,Preto,"Sapatilha leve e flexível, fácil de calçar. Versão esportiva, com solado antiderrapante. Cor: preto.",dia a dia;trabalho;treino;caminhada,imagens/calcados/sapatilha.png
+HZ-CAL-012,Sandália Confort Branco,Sandália Confort,Calçados,Vestuário,70.90,35.45,0.31,Sandália,Confort,Branco,"Sandália aberta, fresca para o calor. Com palmilha extra macia. Cor: branco.",passeio;verão;dia a dia,imagens/calcados/sandalia.png
+HZ-CAL-013,Sandália Confort Verde,Sandália Confort,Calçados,Vestuário,70.90,35.45,0.62,Sandália,Confort,Verde,"Sandália aberta, fresca para o calor. Com palmilha extra macia. Cor: verde.",passeio;verão;dia a dia,imagens/calcados/sandalia.png
+HZ-CAL-014,Sandália Esportiva Off-white,Sandália Esportiva,Calçados,Vestuário,75.90,37.95,1.29,Sandália,Esportiva,Off-white,"Sandália aberta, fresca para o calor. Versão esportiva, com solado antiderrapante. Cor: off-white.",passeio;verão;treino;caminhada,imagens/calcados/sandalia.png
+HZ-CAL-015,Sandália Couro Marrom,Sandália Couro,Calçados,Vestuário,79.90,39.95,2.62,Sandália,Couro,Marrom,"Sandália aberta, fresca para o calor. Em couro. Cor: marrom.",passeio;verão;trabalho,imagens/calcados/sandalia.png
+HZ-CAL-016,Sandália Couro Preto,Sandália Couro,Calçados,Vestuário,79.90,39.95,0.56,Sandália,Couro,Preto,"Sandália aberta, fresca para o calor. Em couro. Cor: preto.",passeio;verão;trabalho,imagens/calcados/sandalia.png
+HZ-CAL-017,Tênis Confort Bege,Tênis Confort,Calçados,Vestuário,92.90,46.45,0.59,Tênis,Confort,Bege,Tênis com amortecimento no solado. Com palmilha extra macia. Cor: bege.,dia a dia;caminhada,imagens/calcados/tenis.png
+HZ-CAL-018,Tênis Couro Cinza,Tênis Couro,Calçados,Vestuário,104.90,52.45,0.18,Tênis,Couro,Cinza,Tênis com amortecimento no solado. Em couro. Cor: cinza.,dia a dia;caminhada;trabalho,imagens/calcados/tenis.png
+HZ-CAL-019,Mocassim Casual Cinza,Mocassim Casual,Calçados,Vestuário,108.90,54.45,0.88,Mocassim,Casual,Cinza,"Mocassim sem cadarço, de visual mais social. De estilo casual. Cor: cinza.",trabalho;ocasiões especiais;dia a dia,imagens/calcados/mocassim.png
+HZ-CAL-020,Mocassim Casual Vinho,Mocassim Casual,Calçados,Vestuário,108.90,54.45,0.43,Mocassim,Casual,Vinho,"Mocassim sem cadarço, de visual mais social. De estilo casual. Cor: vinho.",trabalho;ocasiões especiais;dia a dia,imagens/calcados/mocassim.png
+HZ-CAL-021,Mocassim Confort Rosa,Mocassim Confort,Calçados,Vestuário,123.90,61.95,0.65,Mocassim,Confort,Rosa,"Mocassim sem cadarço, de visual mais social. Com palmilha extra macia. Cor: rosa.",trabalho;ocasiões especiais;dia a dia,imagens/calcados/mocassim.png
+HZ-CAL-022,Bota Tressê Verde,Bota Tressê,Calçados,Vestuário,167.90,83.95,0.50,Bota,Tressê,Verde,"Bota de cano curto, para dias frios. Com detalhes em tressê. Cor: verde.",frio;passeio;verão,imagens/calcados/bota.png
+HZ-CAL-023,Bota Confort Bege,Bota Confort,Calçados,Vestuário,178.90,89.45,0.93,Bota,Confort,Bege,"Bota de cano curto, para dias frios. Com palmilha extra macia. Cor: bege.",frio;passeio;dia a dia,imagens/calcados/bota.png
+HZ-CAL-024,Bota Confort Preto,Bota Confort,Calçados,Vestuário,178.90,89.45,0.25,Bota,Confort,Preto,"Bota de cano curto, para dias frios. Com palmilha extra macia. Cor: preto.",frio;passeio;dia a dia,imagens/calcados/bota.png
+HZ-CAL-025,Bota Esportiva Azul,Bota Esportiva,Calçados,Vestuário,189.90,94.95,0.31,Bota,Esportiva,Azul,"Bota de cano curto, para dias frios. Versão esportiva, com solado antiderrapante. Cor: azul.",frio;passeio;treino;caminhada,imagens/calcados/bota.png
+HZ-INT-001,Calcinha Microfibra Vinho,Calcinha Microfibra,Moda íntima e praia,Vestuário,40.90,15.54,0.33,Calcinha,Microfibra,Vinho,"Calcinha de cós confortável. Em microfibra, leve e macia. Cor: vinho.",dia a dia,imagens/moda-intima-e-praia/calcinha.png
+HZ-INT-002,Calcinha Estampada Verde,Calcinha Estampada,Moda íntima e praia,Vestuário,43.90,16.68,0.83,Calcinha,Estampada,Verde,Calcinha de cós confortável. Com estampa colorida. Cor: verde.,dia a dia,imagens/moda-intima-e-praia/calcinha.png
+HZ-INT-003,Cueca Microfibra Cinza,Cueca Microfibra,Moda íntima e praia,Vestuário,47.90,18.20,0.81,Cueca,Microfibra,Cinza,"Cueca boxer de cós elástico. Em microfibra, leve e macia. Cor: cinza.",dia a dia,imagens/moda-intima-e-praia/cueca.png
+HZ-INT-004,Cueca Microfibra Verde,Cueca Microfibra,Moda íntima e praia,Vestuário,47.90,18.20,1.20,Cueca,Microfibra,Verde,"Cueca boxer de cós elástico. Em microfibra, leve e macia. Cor: verde.",dia a dia,imagens/moda-intima-e-praia/cueca.png
+HZ-INT-005,Cueca Estampada Branco,Cueca Estampada,Moda íntima e praia,Vestuário,51.90,19.72,0.64,Cueca,Estampada,Branco,Cueca boxer de cós elástico. Com estampa colorida. Cor: branco.,dia a dia,imagens/moda-intima-e-praia/cueca.png
+HZ-INT-006,Sutiã Básico Vinho,Sutiã Básico,Moda íntima e praia,Vestuário,49.90,18.96,1.46,Sutiã,Básico,Vinho,"Sutiã com bojo e alças reguláveis. Modelo básico, sem detalhes. Cor: vinho.",dia a dia,imagens/moda-intima-e-praia/sutia.png
+HZ-INT-007,Sutiã Renda Bege,Sutiã Renda,Moda íntima e praia,Vestuário,63.90,24.28,2.25,Sutiã,Renda,Bege,Sutiã com bojo e alças reguláveis. Com detalhes em renda. Cor: bege.,dia a dia;ocasiões especiais,imagens/moda-intima-e-praia/sutia.png
+HZ-INT-008,Sunga Básica Preto,Sunga Básica,Moda íntima e praia,Vestuário,56.90,21.62,1.13,Sunga,Básica,Preto,"Sunga com forro interno. Modelo básico, sem detalhes. Cor: preto.",praia;piscina,imagens/moda-intima-e-praia/sunga.png
+HZ-INT-009,Sunga Estampada Azul,Sunga Estampada,Moda íntima e praia,Vestuário,66.90,25.42,1.32,Sunga,Estampada,Azul,Sunga com forro interno. Com estampa colorida. Cor: azul.,praia;piscina,imagens/moda-intima-e-praia/sunga.png
+HZ-INT-010,Biquíni Microfibra Azul,Biquíni Microfibra,Moda íntima e praia,Vestuário,70.90,26.94,1.04,Biquíni,Microfibra,Azul,"Biquíni de duas peças, com amarração. Em microfibra, leve e macia. Cor: azul.",praia;piscina,imagens/moda-intima-e-praia/biquini.png
+HZ-INT-011,Biquíni Renda Preto,Biquíni Renda,Moda íntima e praia,Vestuário,82.90,31.50,1.00,Biquíni,Renda,Preto,"Biquíni de duas peças, com amarração. Com detalhes em renda. Cor: preto.",praia;piscina;ocasiões especiais,imagens/moda-intima-e-praia/biquini.png
+HZ-INT-012,Biquíni Renda Vinho,Biquíni Renda,Moda íntima e praia,Vestuário,82.90,31.50,0.56,Biquíni,Renda,Vinho,"Biquíni de duas peças, com amarração. Com detalhes em renda. Cor: vinho.",praia;piscina;ocasiões especiais,imagens/moda-intima-e-praia/biquini.png
+HZ-INT-013,Maiô Básico Marrom,Maiô Básico,Moda íntima e praia,Vestuário,76.90,29.22,1.29,Maiô,Básico,Marrom,"Maiô de peça única, com costas abertas. Modelo básico, sem detalhes. Cor: marrom.",praia;piscina,imagens/moda-intima-e-praia/maio.png
+HZ-INT-014,Maiô Estampado Marrom,Maiô Estampado,Moda íntima e praia,Vestuário,90.90,34.54,0.93,Maiô,Estampado,Marrom,"Maiô de peça única, com costas abertas. Com estampa colorida. Cor: marrom.",praia;piscina,imagens/moda-intima-e-praia/maio.png
+HZ-INT-015,Maiô Estampado Verde,Maiô Estampado,Moda íntima e praia,Vestuário,90.90,34.54,5.34,Maiô,Estampado,Verde,"Maiô de peça única, com costas abertas. Com estampa colorida. Cor: verde.",praia;piscina,imagens/moda-intima-e-praia/maio.png
+HZ-ACE-001,Carteira Sintética Azul,Carteira Sintética,Acessórios,Acessórios,33.90,15.25,1.27,Carteira,Sintética,Azul,"Carteira com divisórias para cartões e notas. Em material sintético, fácil de limpar. Cor: azul.",dia a dia;presente,imagens/acessorios/carteira.png
+HZ-ACE-002,Carteira Casual Cinza,Carteira Casual,Acessórios,Acessórios,35.90,16.15,0.74,Carteira,Casual,Cinza,Carteira com divisórias para cartões e notas. De estilo casual. Cor: cinza.,dia a dia;presente,imagens/acessorios/carteira.png
+HZ-ACE-003,Carteira Casual Rosa,Carteira Casual,Acessórios,Acessórios,35.90,16.15,0.25,Carteira,Casual,Rosa,Carteira com divisórias para cartões e notas. De estilo casual. Cor: rosa.,dia a dia;presente,imagens/acessorios/carteira.png
+HZ-ACE-004,Carteira Clássica Branco,Carteira Clássica,Acessórios,Acessórios,40.90,18.40,1.30,Carteira,Clássica,Branco,Carteira com divisórias para cartões e notas. De design clássico. Cor: branco.,dia a dia;presente;trabalho,imagens/acessorios/carteira.png
+HZ-ACE-005,Carteira Clássica Cinza,Carteira Clássica,Acessórios,Acessórios,40.90,18.40,3.98,Carteira,Clássica,Cinza,Carteira com divisórias para cartões e notas. De design clássico. Cor: cinza.,dia a dia;presente;trabalho,imagens/acessorios/carteira.png
+HZ-ACE-006,Carteira Clássica Verde,Carteira Clássica,Acessórios,Acessórios,40.90,18.40,0.29,Carteira,Clássica,Verde,Carteira com divisórias para cartões e notas. De design clássico. Cor: verde.,dia a dia;presente;trabalho,imagens/acessorios/carteira.png
+HZ-ACE-007,Cinto Sintético Preto,Cinto Sintético,Acessórios,Acessórios,50.90,22.90,2.00,Cinto,Sintético,Preto,"Cinto com fivela de metal. Em material sintético, fácil de limpar. Cor: preto.",trabalho;dia a dia,imagens/acessorios/cinto.png
+HZ-ACE-008,Cinto Couro Bege,Cinto Couro,Acessórios,Acessórios,64.90,29.20,0.77,Cinto,Couro,Bege,Cinto com fivela de metal. Em couro. Cor: bege.,trabalho;dia a dia,imagens/acessorios/cinto.png
+HZ-ACE-009,Óculos de Sol Viagem Verde,Óculos de Sol Viagem,Acessórios,Acessórios,78.90,35.51,0.95,Óculos de Sol,Viagem,Verde,"Óculos de sol com proteção UV. Versão para viagem, mais espaçosa. Cor: verde.",praia;verão;viagem,imagens/acessorios/oculos-de-sol.png
+HZ-ACE-010,Óculos de Sol Clássicos Marrom,Óculos de Sol Clássicos,Acessórios,Acessórios,83.90,37.75,0.43,Óculos de Sol,Clássicos,Marrom,Óculos de sol com proteção UV. De design clássico. Cor: marrom.,praia;verão;viagem;trabalho,imagens/acessorios/oculos-de-sol.png
+HZ-ACE-011,Óculos de Sol Clássicos Rosa,Óculos de Sol Clássicos,Acessórios,Acessórios,83.90,37.75,0.77,Óculos de Sol,Clássicos,Rosa,Óculos de sol com proteção UV. De design clássico. Cor: rosa.,praia;verão;viagem;trabalho,imagens/acessorios/oculos-de-sol.png
+HZ-ACE-012,Mochila Viagem Vinho,Mochila Viagem,Acessórios,Acessórios,104.90,47.20,2.83,Mochila,Viagem,Vinho,"Mochila com compartimento para notebook. Versão para viagem, mais espaçosa. Cor: vinho.",trabalho;escola;viagem,imagens/acessorios/mochila.png
+HZ-ACE-013,Mochila Clássica Rosa,Mochila Clássica,Acessórios,Acessórios,110.90,49.91,1.59,Mochila,Clássica,Rosa,Mochila com compartimento para notebook. De design clássico. Cor: rosa.,trabalho;escola;viagem,imagens/acessorios/mochila.png
+HZ-ACE-014,Bolsa Casual Preto,Bolsa Casual,Acessórios,Acessórios,130.90,58.90,4.00,Bolsa,Casual,Preto,Bolsa de ombro com alça regulável. De estilo casual. Cor: preto.,trabalho;passeio;dia a dia,imagens/acessorios/bolsa.png
+HZ-ACE-015,Bolsa Clássica Rosa,Bolsa Clássica,Acessórios,Acessórios,147.90,66.55,2.56,Bolsa,Clássica,Rosa,Bolsa de ombro com alça regulável. De design clássico. Cor: rosa.,trabalho;passeio,imagens/acessorios/bolsa.png
+HZ-ACE-016,Relógio Viagem Off-white,Relógio Viagem,Acessórios,Acessórios,189.90,85.45,1.42,Relógio,Viagem,Off-white,"Relógio analógico com pulseira ajustável. Versão para viagem, mais espaçosa. Cor: off-white.",trabalho;presente;viagem,imagens/acessorios/relogio.png
+HZ-ACE-017,Relógio Clássico Bege,Relógio Clássico,Acessórios,Acessórios,201.90,90.85,4.04,Relógio,Clássico,Bege,Relógio analógico com pulseira ajustável. De design clássico. Cor: bege.,trabalho;presente,imagens/acessorios/relogio.png
+HZ-ACE-018,Relógio Couro Bege,Relógio Couro,Acessórios,Acessórios,212.90,95.80,1.42,Relógio,Couro,Bege,Relógio analógico com pulseira ajustável. Em couro. Cor: bege.,trabalho;presente,imagens/acessorios/relogio.png
+HZ-ACE-019,Relógio Couro Preto,Relógio Couro,Acessórios,Acessórios,212.90,95.80,1.94,Relógio,Couro,Preto,Relógio analógico com pulseira ajustável. Em couro. Cor: preto.,trabalho;presente,imagens/acessorios/relogio.png
+HZ-ACE-020,Mala Sintética Branco,Mala Sintética,Acessórios,Acessórios,247.90,111.55,0.79,Mala,Sintética,Branco,"Mala de mão com rodinhas. Em material sintético, fácil de limpar. Cor: branco.",viagem,imagens/acessorios/mala.png
+HZ-ACE-021,Mala Casual Azul,Mala Casual,Acessórios,Acessórios,264.90,119.20,1.05,Mala,Casual,Azul,Mala de mão com rodinhas. De estilo casual. Cor: azul.,viagem;dia a dia,imagens/acessorios/mala.png
+HZ-ACE-022,Mala Casual Marrom,Mala Casual,Acessórios,Acessórios,264.90,119.20,0.57,Mala,Casual,Marrom,Mala de mão com rodinhas. De estilo casual. Cor: marrom.,viagem;dia a dia,imagens/acessorios/mala.png
+HZ-ACE-023,Mala Casual Preto,Mala Casual,Acessórios,Acessórios,264.90,119.20,2.21,Mala,Casual,Preto,Mala de mão com rodinhas. De estilo casual. Cor: preto.,viagem;dia a dia,imagens/acessorios/mala.png
+HZ-ACE-024,Mala Casual Vinho,Mala Casual,Acessórios,Acessórios,264.90,119.20,0.39,Mala,Casual,Vinho,Mala de mão com rodinhas. De estilo casual. Cor: vinho.,viagem;dia a dia,imagens/acessorios/mala.png
+HZ-ACE-025,Mala Couro Vinho,Mala Couro,Acessórios,Acessórios,316.90,142.60,1.87,Mala,Couro,Vinho,Mala de mão com rodinhas. Em couro. Cor: vinho.,viagem;trabalho,imagens/acessorios/mala.png
+HZ-ESP-001,Garrafa Running Azul,Garrafa Running,Esporte,Esporte,35.90,19.75,0.38,Garrafa,Running,Azul,Garrafa reutilizável para levar água ao treino. Linha de corrida. Cor: azul.,treino;academia;corrida,imagens/esporte/garrafa.png
+HZ-ESP-002,Garrafa Running Preto,Garrafa Running,Esporte,Esporte,35.90,19.75,0.58,Garrafa,Running,Preto,Garrafa reutilizável para levar água ao treino. Linha de corrida. Cor: preto.,treino;academia;corrida,imagens/esporte/garrafa.png
+HZ-ESP-003,Garrafa Performance Preto,Garrafa Performance,Esporte,Esporte,37.90,20.85,1.28,Garrafa,Performance,Preto,"Garrafa reutilizável para levar água ao treino. Linha performance, para treinos intensos. Cor: preto.",treino;academia,imagens/esporte/garrafa.png
+HZ-ESP-004,Camiseta Dry Performance Bege,Camiseta Dry Performance,Esporte,Esporte,76.90,42.30,2.52,Camiseta Dry,Performance,Bege,"Camiseta de tecido que seca rápido. Linha performance, para treinos intensos. Cor: bege.",treino;corrida,imagens/esporte/camiseta-dry.png
+HZ-ESP-005,Bermuda Treino Verde,Bermuda Treino,Esporte,Esporte,79.90,43.95,1.63,Bermuda,Treino,Verde,"Bermuda esportiva leve, com elástico na cintura. Linha de treino. Cor: verde.",treino;corrida,imagens/esporte/bermuda.png
+HZ-ESP-006,Bermuda Fitness Rosa,Bermuda Fitness,Esporte,Esporte,87.90,48.35,0.16,Bermuda,Fitness,Rosa,"Bermuda esportiva leve, com elástico na cintura. Linha fitness. Cor: rosa.",treino;corrida;academia,imagens/esporte/bermuda.png
+HZ-ESP-007,Bermuda Running Branco,Bermuda Running,Esporte,Esporte,94.90,52.20,1.28,Bermuda,Running,Branco,"Bermuda esportiva leve, com elástico na cintura. Linha de corrida. Cor: branco.",treino;corrida,imagens/esporte/bermuda.png
+HZ-ESP-008,Bermuda Running Rosa,Bermuda Running,Esporte,Esporte,94.90,52.20,1.06,Bermuda,Running,Rosa,"Bermuda esportiva leve, com elástico na cintura. Linha de corrida. Cor: rosa.",treino;corrida,imagens/esporte/bermuda.png
+HZ-ESP-009,Bermuda Running Vinho,Bermuda Running,Esporte,Esporte,94.90,52.20,1.39,Bermuda,Running,Vinho,"Bermuda esportiva leve, com elástico na cintura. Linha de corrida. Cor: vinho.",treino;corrida,imagens/esporte/bermuda.png
+HZ-ESP-010,Legging Fitness Bege,Legging Fitness,Esporte,Esporte,118.90,65.40,3.64,Legging,Fitness,Bege,"Legging de cintura alta, com elasticidade. Linha fitness. Cor: bege.",treino;academia;yoga,imagens/esporte/legging.png
+HZ-ESP-011,Legging Fitness Preto,Legging Fitness,Esporte,Esporte,118.90,65.40,0.19,Legging,Fitness,Preto,"Legging de cintura alta, com elasticidade. Linha fitness. Cor: preto.",treino;academia;yoga,imagens/esporte/legging.png
+HZ-ESP-012,Legging Performance Vinho,Legging Performance,Esporte,Esporte,138.90,76.40,0.62,Legging,Performance,Vinho,"Legging de cintura alta, com elasticidade. Linha performance, para treinos intensos. Cor: vinho.",treino;academia;yoga,imagens/esporte/legging.png
+HZ-ESP-013,Tapete de Yoga Treino Off-white,Tapete de Yoga Treino,Esporte,Esporte,160.90,88.50,1.60,Tapete de Yoga,Treino,Off-white,Tapete antiderrapante para exercícios no chão. Linha de treino. Cor: off-white.,yoga;pilates;treino em casa;treino,imagens/esporte/tapete-de-yoga.png
+HZ-ESP-014,Tapete de Yoga Fitness Off-white,Tapete de Yoga Fitness,Esporte,Esporte,174.90,96.20,0.28,Tapete de Yoga,Fitness,Off-white,Tapete antiderrapante para exercícios no chão. Linha fitness. Cor: off-white.,yoga;pilates;treino em casa;academia,imagens/esporte/tapete-de-yoga.png
+HZ-ESP-015,Tapete de Yoga Running Bege,Tapete de Yoga Running,Esporte,Esporte,189.90,104.45,3.26,Tapete de Yoga,Running,Bege,Tapete antiderrapante para exercícios no chão. Linha de corrida. Cor: bege.,yoga;pilates;treino em casa;corrida,imagens/esporte/tapete-de-yoga.png
+HZ-BEL-001,Sabonete Líquido Floral,Sabonete Líquido Floral,Beleza,Beleza,34.90,20.94,1.36,Sabonete Líquido,Floral,,Sabonete líquido para o banho. Fragrância floral.,banho;cuidados diários,imagens/beleza/sabonete-liquido.png
+HZ-BEL-002,Sabonete Líquido Amadeirado,Sabonete Líquido Amadeirado,Beleza,Beleza,37.90,22.74,2.23,Sabonete Líquido,Amadeirado,,Sabonete líquido para o banho. Fragrância amadeirada.,banho;cuidados diários;noite,imagens/beleza/sabonete-liquido.png
+HZ-BEL-003,Hidratante Suave,Hidratante Suave,Beleza,Beleza,48.90,29.34,0.43,Hidratante,Suave,,Hidratante corporal de rápida absorção. Fragrância suave.,cuidados diários,imagens/beleza/hidratante.png
+HZ-BEL-004,Hidratante Cítrico,Hidratante Cítrico,Beleza,Beleza,52.90,31.74,0.90,Hidratante,Cítrico,,Hidratante corporal de rápida absorção. Fragrância cítrica.,cuidados diários;verão,imagens/beleza/hidratante.png
+HZ-BEL-005,Hidratante Floral,Hidratante Floral,Beleza,Beleza,57.90,34.74,3.27,Hidratante,Floral,,Hidratante corporal de rápida absorção. Fragrância floral.,cuidados diários,imagens/beleza/hidratante.png
+HZ-BEL-006,Hidratante Amadeirado,Hidratante Amadeirado,Beleza,Beleza,61.90,37.14,0.55,Hidratante,Amadeirado,,Hidratante corporal de rápida absorção. Fragrância amadeirada.,cuidados diários;noite,imagens/beleza/hidratante.png
+HZ-BEL-007,Body Splash Suave,Body Splash Suave,Beleza,Beleza,70.90,42.54,0.52,Body Splash,Suave,,Body splash de fragrância leve. Fragrância suave.,dia a dia;presente,imagens/beleza/body-splash.png
+HZ-BEL-008,Body Splash Amadeirado,Body Splash Amadeirado,Beleza,Beleza,90.90,54.54,1.18,Body Splash,Amadeirado,,Body splash de fragrância leve. Fragrância amadeirada.,dia a dia;presente;noite,imagens/beleza/body-splash.png
+HZ-BEL-009,Kit Maquiagem Suave,Kit Maquiagem Suave,Beleza,Beleza,104.90,62.94,1.97,Kit Maquiagem,Suave,,Kit de maquiagem com itens básicos. Fragrância suave.,festa;presente,imagens/beleza/kit-maquiagem.png
+HZ-BEL-010,Kit Maquiagem Cítrico,Kit Maquiagem Cítrico,Beleza,Beleza,114.90,68.94,1.01,Kit Maquiagem,Cítrico,,Kit de maquiagem com itens básicos. Fragrância cítrica.,festa;presente;verão,imagens/beleza/kit-maquiagem.png
+HZ-BEL-011,Kit Maquiagem Floral,Kit Maquiagem Floral,Beleza,Beleza,124.90,74.94,2.90,Kit Maquiagem,Floral,,Kit de maquiagem com itens básicos. Fragrância floral.,festa;presente,imagens/beleza/kit-maquiagem.png
+HZ-BEL-012,Perfume Suave,Perfume Suave,Beleza,Beleza,171.90,103.14,1.98,Perfume,Suave,,Perfume de longa duração. Fragrância suave.,ocasiões especiais;presente,imagens/beleza/perfume.png
+HZ-CAS-001,Almofada Linho Bege,Almofada Linho,Casa,Casa,42.90,21.45,2.85,Almofada,Linho,Bege,"Almofada decorativa com capa removível. Em linho, fresco para dias quentes. Cor: bege.",decoração;sala;verão,imagens/casa/almofada.png
+HZ-CAS-002,Toalha de Banho Algodão Bege,Toalha de Banho Algodão,Casa,Casa,57.90,28.95,0.28,Toalha de Banho,Algodão,Bege,"Toalha de banho macia e absorvente. Feito de algodão, respirável. Cor: bege.",banho,imagens/casa/toalha-de-banho.png
+HZ-CAS-003,Manta Microfibra Azul,Manta Microfibra,Casa,Casa,70.90,35.45,0.37,Manta,Microfibra,Azul,"Manta para sofá ou cama. Em microfibra, leve e macia. Cor: azul.",frio;decoração;sala,imagens/casa/manta.png
+HZ-CAS-004,Cortina Microfibra Rosa,Cortina Microfibra,Casa,Casa,95.90,47.95,0.28,Cortina,Microfibra,Rosa,"Cortina com ilhós para varão. Em microfibra, leve e macia. Cor: rosa.",decoração;quarto;sala,imagens/casa/cortina.png
+HZ-CAS-005,Jogo de Cama Microfibra Bege,Jogo de Cama Microfibra,Casa,Casa,140.90,70.45,0.53,Jogo de Cama,Microfibra,Bege,"Jogo de cama de casal com lençol e fronhas. Em microfibra, leve e macia. Cor: bege.",quarto,imagens/casa/jogo-de-cama.png
+HZ-CAS-006,Jogo de Cama Microfibra Marrom,Jogo de Cama Microfibra,Casa,Casa,140.90,70.45,1.42,Jogo de Cama,Microfibra,Marrom,"Jogo de cama de casal com lençol e fronhas. Em microfibra, leve e macia. Cor: marrom.",quarto,imagens/casa/jogo-de-cama.png
+HZ-CAS-007,Jogo de Cama Algodão Verde,Jogo de Cama Algodão,Casa,Casa,153.90,76.95,1.52,Jogo de Cama,Algodão,Verde,"Jogo de cama de casal com lençol e fronhas. Feito de algodão, respirável. Cor: verde.",quarto,imagens/casa/jogo-de-cama.png
+HZ-CAS-008,Jogo de Cama Linho Verde,Jogo de Cama Linho,Casa,Casa,166.90,83.45,1.25,Jogo de Cama,Linho,Verde,"Jogo de cama de casal com lençol e fronhas. Em linho, fresco para dias quentes. Cor: verde.",quarto;verão,imagens/casa/jogo-de-cama.png

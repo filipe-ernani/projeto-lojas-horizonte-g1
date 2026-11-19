@@ -3,17 +3,30 @@ import { query } from "../db.js";
 export function formatarProduto(p) {
   if (!p) return null;
 
+  const coresLista =
+    typeof p.cores === "string" ? JSON.parse(p.cores) : p.cores || [];
+  const primeiraCor = coresLista[0] || null;
+
   return {
     id: p.sku, // Decisão D-22: id público é o SKU
     sku: p.sku,
     nome: p.nome,
     modelo: p.modelo || null,
+    tipo: p.tipo || null,
+    variacao: p.variacao || null,
     descricao: p.descricao || null,
     categoria: p.categoria,
     preco: Number(p.preco),
     imagemUrl: p.imagem_url || null,
+    cor: primeiraCor?.nome || null,
+    corHex: primeiraCor?.hex || null,
     tamanhos: p.tamanhos || [],
-    cores: typeof p.cores === "string" ? JSON.parse(p.cores) : p.cores || [],
+    cores: coresLista,
+    ocasioes: Array.isArray(p.ocasioes)
+      ? p.ocasioes
+      : p.ocasioes
+        ? [p.ocasioes]
+        : [],
     notaMedia: null,
     qtdAvaliacoes: 0,
   };
@@ -147,7 +160,7 @@ export async function listarProdutosQuery({
     params.push(`%${busca}%`);
     const pIdx = params.length;
     condicoes.push(
-      `(nome ILIKE $${pIdx} OR modelo ILIKE $${pIdx} OR categoria ILIKE $${pIdx})`,
+      `(nome ILIKE $${pIdx} OR modelo ILIKE $${pIdx} OR categoria ILIKE $${pIdx} OR descricao ILIKE $${pIdx} OR tipo ILIKE $${pIdx})`,
     );
   }
 
