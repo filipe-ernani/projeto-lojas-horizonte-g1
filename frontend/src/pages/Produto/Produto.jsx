@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import useProduto from "@/hooks/useProduto";
 import useSemelhantes from "@/hooks/useSemelhantes";
 import useAvaliacoes from "@/hooks/useAvaliacoes";
+import useMinhaAvaliacao from "@/hooks/useMinhaAvaliacao";
 import useFavoritos from "@/hooks/useFavoritos";
 import useCarrinho from "@/hooks/useCarrinho";
 import RatingPill from "@/components/ui/RatingPill/RatingPill";
@@ -50,8 +51,26 @@ function ProdutoConteudo({
     recarregar: recarregarProduto,
   } = useProduto(id);
 
+  const [paginaAvaliacoes, setPaginaAvaliacoes] = useState(1);
+
   const { dados: semelhantesApi } = useSemelhantes(id);
-  const { dados: avaliacoesApi } = useAvaliacoes(id);
+  const {
+    avaliacoes: avaliacoesApi,
+    carregando: carregandoAvaliacoes,
+    carregandoMais: carregandoMaisAvaliacoes,
+    erro: erroAvaliacoes,
+    recarregar: recarregarAvaliacoes,
+  } = useAvaliacoes(id, paginaAvaliacoes);
+  const {
+    podeAvaliar,
+    avaliacao: minhaAvaliacao,
+    carregando: carregandoMinha,
+    erro: erroMinha,
+    salvar: salvarMinhaAvaliacao,
+    salvando: salvandoMinha,
+    erroSalvar: erroSalvarMinha,
+    recarregar: recarregarMinha,
+  } = useMinhaAvaliacao(id);
   const {
     isFavorito,
     alternar,
@@ -80,6 +99,13 @@ function ProdutoConteudo({
   const [tamanhoSelecionado, setTamanhoSelecionado] = useState(null);
   const [adicionando, setAdicionando] = useState(false);
   const [feedbackAdicao, setFeedbackAdicao] = useState("");
+
+  useEffect(() => {
+    if (!carregandoProduto && location.hash === "#avaliacoes") {
+      const el = document.getElementById("avaliacoes");
+      el?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [carregandoProduto, location.hash]);
 
   // 1. Estado Carregando
   if (carregandoProduto) {
@@ -145,8 +171,11 @@ function ProdutoConteudo({
     cores = [],
     tamanhos = [],
     notaMedia = null,
+    totalAvaliacoes,
     qtdAvaliacoes = 0,
   } = produto;
+
+  const totalAv = Number(totalAvaliacoes ?? qtdAvaliacoes ?? 0) || 0;
 
   // "Número (calçado)" vale só para a categoria Calçados
   const saoCalcados =
@@ -259,9 +288,9 @@ function ProdutoConteudo({
     }
   }
 
-  // Avaliações: omitir quando qtdAvaliacoes for 0 ou notaMedia for null
+  // Avaliações: omitir pílula no topo quando totalAv for 0 ou notaMedia for null
   const temAvaliacoesValidas =
-    notaMedia != null && Number(notaMedia) > 0 && Number(qtdAvaliacoes) > 0;
+    notaMedia != null && Number(notaMedia) > 0 && totalAv > 0;
 
   return (
     <div className={`container ${styles.container}`}>
@@ -290,7 +319,7 @@ function ProdutoConteudo({
 
           {temAvaliacoesValidas ? (
             <div className={styles.ratingRow}>
-              <RatingPill nota={notaMedia} qtdAvaliacoes={qtdAvaliacoes} />
+              <RatingPill nota={notaMedia} qtdAvaliacoes={totalAv} />
             </div>
           ) : null}
 
@@ -354,9 +383,27 @@ function ProdutoConteudo({
         </div>
       </div>
 
-      {temAvaliacoesValidas ? (
-        <ProductReviews avaliacoes={avaliacoes} />
-      ) : null}
+      <ProductReviews
+        avaliacoes={avaliacoes}
+        carregando={produtoProp ? false : carregandoAvaliacoes}
+        carregandoMais={carregandoMaisAvaliacoes}
+        erro={produtoProp ? null : erroAvaliacoes}
+        onRecarregar={() => {
+          setPaginaAvaliacoes(1);
+          recarregarAvaliacoes();
+          recarregarProduto();
+        }}
+        onVerMais={() => setPaginaAvaliacoes((p) => p + 1)}
+        usuario={usuario}
+        podeAvaliar={podeAvaliar}
+        minhaAvaliacao={minhaAvaliacao}
+        carregandoMinha={carregandoMinha}
+        erroMinha={erroMinha}
+        onRecarregarMinha={recarregarMinha}
+        onSalvarMinha={salvarMinhaAvaliacao}
+        salvandoMinha={salvandoMinha}
+        erroSalvarMinha={erroSalvarMinha}
+      />
 
       <ProductSimilarSection produtos={produtosSemelhantes} />
     </div>

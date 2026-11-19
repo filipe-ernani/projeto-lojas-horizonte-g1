@@ -1,0 +1,64 @@
+.exibicao,
+.entrada {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.starBox {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.starOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.starPreenchida {
+  color: var(--color-star);
+  fill: var(--color-star);
+  flex-shrink: 0;
+}
+
+.starVazia {
+  color: var(--color-field-border);
+  fill: transparent;
+  flex-shrink: 0;
+}
+
+.starButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+  padding: var(--space-1);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.starButton:hover:not(:disabled) {
+  transform: scale(1.08);
+}
+
+.starButton:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.starButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

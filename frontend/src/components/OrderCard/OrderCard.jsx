@@ -156,6 +156,14 @@ export default function OrderCard({
                       </Link>
 
                       <p className={styles.itemMeta}>{atributosItem}</p>
+                      {!isCancelado && item.produtoId ? (
+                        <Link
+                          to={`/produto/${item.produtoId}#avaliacoes`}
+                          className={styles.itemAvaliarLink}
+                        >
+                          Avaliar
+                        </Link>
+                      ) : null}
                     </div>
 
                     <span className={styles.itemPrice}>{precoItemFormatado}</span>

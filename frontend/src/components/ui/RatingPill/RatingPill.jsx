@@ -10,7 +10,7 @@ export default function RatingPill({ nota, qtdAvaliacoes, className = "" }) {
     return null;
   }
 
-  const notaFormatada = Number(nota).toFixed(1);
+  const notaFormatada = Number(nota).toFixed(1).replace(".", ",");
 
   return (
     <div

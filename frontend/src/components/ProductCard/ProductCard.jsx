@@ -38,7 +38,18 @@ export default function ProductCard({
     return null;
   }
 
-  const { id, nome, categoria, preco, imagemUrl, notaMedia, cores } = produto;
+  const {
+    id,
+    nome,
+    categoria,
+    preco,
+    imagemUrl,
+    notaMedia,
+    totalAvaliacoes,
+    qtdAvaliacoes,
+    cores,
+  } = produto;
+  const totalAv = Number(totalAvaliacoes ?? qtdAvaliacoes ?? 0) || 0;
   const precoFormatado = formatCurrency(preco);
   const corHex = produto.corHex || cores?.[0]?.hex;
 
@@ -102,7 +113,9 @@ export default function ProductCard({
         <div className={styles.content}>
           <div className={styles.priceRow}>
             <span className={styles.price}>{precoFormatado}</span>
-            {notaMedia != null ? <RatingPill nota={notaMedia} /> : null}
+            {totalAv > 0 && notaMedia != null ? (
+              <RatingPill nota={notaMedia} qtdAvaliacoes={totalAv} />
+            ) : null}
           </div>
 
           <h3 className={styles.name}>{nome}</h3>

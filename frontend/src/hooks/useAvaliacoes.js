@@ -1,38 +1,70 @@
 import { useCallback, useEffect, useState } from "react";
-import { avaliacoes } from "@/services/produtosService";
+import { listarAvaliacoesProduto } from "@/services/avaliacoesService";
+
+const RESUMO_VAZIO = {
+  media: null,
+  notaMedia: null,
+  total: 0,
+  distribuicao: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+};
 
 /**
- * Hook para consultar o resumo e lista de avaliações de um produto.
- * Retorna { dados, notaMedia, qtdAvaliacoes, carregando, erro, recarregar } preservando null/0 reais da API.
+ * Hook para consultar o resumo e a lista paginada de avaliações de um produto.
  */
-export default function useAvaliacoes(id) {
-  const [dados, setDados] = useState(null);
-  const [notaMedia, setNotaMedia] = useState(null);
-  const [qtdAvaliacoes, setQtdAvaliacoes] = useState(0);
-  const [carregando, setCarregando] = useState(Boolean(id));
+export default function useAvaliacoes(sku, pagina = 1, limite = 10) {
+  const [skuAtual, setSkuAtual] = useState(sku);
+  const [itens, setItens] = useState([]);
+  const [resumo, setResumo] = useState(RESUMO_VAZIO);
+  const [carregando, setCarregando] = useState(Boolean(sku));
+  const [carregandoMais, setCarregandoMais] = useState(false);
   const [erro, setErro] = useState(null);
   const [versao, setVersao] = useState(0);
 
-  const recarregar = useCallback(() => {
-    if (!id) return;
-    setCarregando(true);
+  if (sku !== skuAtual) {
+    setSkuAtual(sku);
+    setItens([]);
+    setResumo(RESUMO_VAZIO);
     setErro(null);
+    setCarregando(Boolean(sku));
+    setCarregandoMais(false);
+  }
+
+  const recarregar = useCallback(() => {
+    if (!sku) return;
+    setErro(null);
+    if (pagina <= 1) {
+      setCarregando(true);
+    } else {
+      setCarregandoMais(true);
+    }
     setVersao((v) => v + 1);
-  }, [id]);
+  }, [sku, pagina]);
 
   useEffect(() => {
-    if (!id) {
+    if (!sku) {
       return;
     }
 
     const controller = new AbortController();
 
-    avaliacoes(id, { signal: controller.signal })
+    listarAvaliacoesProduto(sku, {
+      pagina,
+      limite,
+      signal: controller.signal,
+    })
       .then((resposta) => {
-        setDados(resposta);
-        setNotaMedia(resposta.notaMedia ?? null);
-        setQtdAvaliacoes(resposta.qtdAvaliacoes ?? 0);
+        if (controller.signal.aborted) return;
+
+        const novosItens = Array.isArray(resposta.itens) ? resposta.itens : [];
+        setResumo(resposta.resumo || RESUMO_VAZIO);
+        setItens((prev) => {
+          if (pagina <= 1) return novosItens;
+          const ids = new Set(prev.map((i) => i.id));
+          return [...prev, ...novosItens.filter((i) => !ids.has(i.id))];
+        });
+        setErro(null);
         setCarregando(false);
+        setCarregandoMais(false);
       })
       .catch((err) => {
         if (err?.name === "AbortError" || controller.signal.aborted) {
@@ -40,19 +72,24 @@ export default function useAvaliacoes(id) {
         }
         setErro(err);
         setCarregando(false);
+        setCarregandoMais(false);
       });
 
     return () => {
       controller.abort();
     };
-  }, [id, versao]);
+  }, [sku, pagina, limite, versao]);
 
   return {
-    dados,
-    avaliacoes: dados,
-    notaMedia,
-    qtdAvaliacoes,
+    itens,
+    resumo,
+    dados: { resumo, itens },
+    avaliacoes: { resumo, itens },
+    notaMedia: resumo.media ?? null,
+    totalAvaliacoes: resumo.total ?? 0,
+    qtdAvaliacoes: resumo.total ?? 0,
     carregando,
+    carregandoMais,
     erro,
     recarregar,
   };

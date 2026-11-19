@@ -1,5 +1,5 @@
 import { useState } from "react";
-import RatingPill from "@/components/ui/RatingPill/RatingPill";
+import StarRating from "@/components/StarRating/StarRating";
 import { formatDate } from "@/utils/formatDate";
 import styles from "./ReviewCard.module.css";
 
@@ -7,7 +7,7 @@ const LIMITE_CARACTERES = 160;
 
 /**
  * Cartão de avaliação conforme docs/DESIGN.md:
- * Fundo --color-search, avatar redondo, nome, data, RatingPill, texto e "Ler mais".
+ * Fundo --color-search, avatar redondo, nome, data, StarRating, texto e "Ler mais".
  */
 export default function ReviewCard({ avaliacao, className = "" }) {
   const [expandido, setExpandido] = useState(false);
@@ -16,16 +16,25 @@ export default function ReviewCard({ avaliacao, className = "" }) {
     return null;
   }
 
-  const { autor = "Anônimo", nota = 5, comentario = "", data } = avaliacao;
+  const {
+    autor = "Cliente Horizonte",
+    nota = 5,
+    comentario = "",
+    dataLocal,
+    criadoEm,
+    data,
+  } = avaliacao;
 
-  const inicial = autor ? autor.trim().charAt(0).toUpperCase() : "U";
-  const dataFormatada = data ? formatDate(data) : "";
+  const textoComentario = comentario || "";
+  const inicial = autor ? autor.trim().charAt(0).toUpperCase() : "C";
+  const dataFonte = dataLocal || criadoEm || data;
+  const dataFormatada = dataFonte ? formatDate(dataFonte) : "";
 
-  const precisaTruncar = comentario.length > LIMITE_CARACTERES;
+  const precisaTruncar = textoComentario.length > LIMITE_CARACTERES;
   const textoExibido =
     precisaTruncar && !expandido
-      ? `${comentario.slice(0, LIMITE_CARACTERES).trim()}...`
-      : comentario;
+      ? `${textoComentario.slice(0, LIMITE_CARACTERES).trim()}...`
+      : textoComentario;
 
   return (
     <article className={`${styles.card} ${className}`.trim()}>
@@ -37,17 +46,17 @@ export default function ReviewCard({ avaliacao, className = "" }) {
           <div className={styles.meta}>
             <span className={styles.autor}>{autor}</span>
             {dataFormatada ? (
-              <time className={styles.data} dateTime={data}>
+              <time className={styles.data} dateTime={dataFonte}>
                 {dataFormatada}
               </time>
             ) : null}
           </div>
         </div>
 
-        <RatingPill nota={nota} />
+        <StarRating nota={nota} tamanho={16} />
       </header>
 
-      <p className={styles.comentario}>{textoExibido}</p>
+      {textoExibido ? <p className={styles.comentario}>{textoExibido}</p> : null}
 
       {precisaTruncar ? (
         <button

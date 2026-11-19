@@ -52,7 +52,8 @@ export function mapearProduto(apiProduto) {
       ? apiProduto.ocasioes.filter(Boolean)
       : [],
     notaMedia: apiProduto.notaMedia ?? null,
-    qtdAvaliacoes: apiProduto.qtdAvaliacoes ?? 0,
+    totalAvaliacoes: Number(apiProduto.totalAvaliacoes ?? apiProduto.qtdAvaliacoes ?? 0) || 0,
+    qtdAvaliacoes: Number(apiProduto.totalAvaliacoes ?? apiProduto.qtdAvaliacoes ?? 0) || 0,
   };
 }
 
@@ -86,34 +87,80 @@ export function mapearCategorias(resposta) {
 }
 
 /**
+ * Normaliza uma avaliação individual.
+ */
+export function mapAvaliacao(item) {
+  if (!item || typeof item !== "object") return null;
+
+  return {
+    id: item.id || item.avaliacao_id || "",
+    nota: Number(item.nota) || 0,
+    comentario: item.comentario ?? null,
+    autor: item.autor || "Cliente Horizonte",
+    criadoEm: item.criadoEm || null,
+    dataLocal: item.dataLocal || item.criadoEm || item.data || null,
+    updatedAt: item.updatedAt || null,
+  };
+}
+
+/**
+ * Normaliza um item pendente de avaliação (/api/avaliacoes/pendentes).
+ */
+export function mapAvaliacaoPendente(item) {
+  if (!item || typeof item !== "object") return null;
+
+  return {
+    sku: item.sku || item.produtoId || "",
+    nome: item.nome || "",
+    tipo: item.tipo || null,
+    cor: item.cor || null,
+    corHex: item.corHex || null,
+    pedidoId: item.pedidoId || null,
+    finalizadoEm: item.finalizadoEm || null,
+  };
+}
+
+/**
  * Normaliza a resposta de avaliações do produto (/api/produtos/:id/avaliacoes).
  */
 export function mapearAvaliacoes(resposta) {
   if (!resposta || typeof resposta !== "object") {
     return {
       resumo: {
+        media: null,
         notaMedia: null,
         total: 0,
         distribuicao: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
       },
       itens: [],
       notaMedia: null,
+      totalAvaliacoes: 0,
       qtdAvaliacoes: 0,
     };
   }
 
   const resumoOriginal = resposta.resumo || {};
   const total = typeof resumoOriginal.total === "number" ? resumoOriginal.total : 0;
-  const notaMedia = resumoOriginal.notaMedia !== undefined ? resumoOriginal.notaMedia : null;
+  const media =
+    resumoOriginal.media !== undefined
+      ? resumoOriginal.media
+      : resumoOriginal.notaMedia !== undefined
+        ? resumoOriginal.notaMedia
+        : null;
+  const itens = Array.isArray(resposta.itens)
+    ? resposta.itens.map(mapAvaliacao).filter(Boolean)
+    : [];
 
   return {
     resumo: {
-      notaMedia,
+      media,
+      notaMedia: media,
       total,
       distribuicao: resumoOriginal.distribuicao || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
     },
-    itens: Array.isArray(resposta.itens) ? resposta.itens : [],
-    notaMedia,
+    itens,
+    notaMedia: media,
+    totalAvaliacoes: total,
     qtdAvaliacoes: total,
   };
 }

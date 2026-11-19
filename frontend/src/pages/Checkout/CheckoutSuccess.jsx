@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2 } from "lucide-react";
 import Button from "@/components/ui/Button/Button";
+import ProductImage from "@/components/ui/ProductImage/ProductImage";
+import useAvaliacoesPendentes from "@/hooks/useAvaliacoesPendentes";
 import { formatCurrency } from "@/utils/formatCurrency";
 import styles from "./CheckoutSuccess.module.css";
 
@@ -61,6 +63,12 @@ function CampoCopiavel({ rotulo, valor }) {
  */
 export default function CheckoutSuccess({ pedido, formaPagamento }) {
   const navigate = useNavigate();
+  const {
+    itens: pendentes,
+    carregando: carregandoPendentes,
+    erro: erroPendentes,
+  } = useAvaliacoesPendentes();
+  const itensAvaliar = !carregandoPendentes && !erroPendentes ? pendentes.slice(0, 3) : [];
 
   const pedidoId = pedido?.id;
   const pix = pedido?.pix;
@@ -118,6 +126,38 @@ export default function CheckoutSuccess({ pedido, formaPagamento }) {
             processado e nenhum produto físico será enviado.
           </p>
         </div>
+
+        {itensAvaliar.length > 0 ? (
+          <section
+            className={styles.pendentesSection}
+            aria-labelledby="avalie-compras-heading"
+          >
+            <h2 id="avalie-compras-heading" className={styles.pendentesTitle}>
+              Avalie suas compras
+            </h2>
+            <ul className={styles.pendentesList}>
+              {itensAvaliar.map((item) => (
+                <li key={item.sku} className={styles.pendenteItem}>
+                  <div className={styles.pendenteThumb}>
+                    <ProductImage
+                      alt={item.nome}
+                      nome={item.nome}
+                      cor={item.corHex}
+                    />
+                  </div>
+                  <span className={styles.pendenteNome}>{item.nome}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/produto/${item.sku}#avaliacoes`)}
+                  >
+                    Avaliar
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         <div className={styles.actions}>
           <Button
