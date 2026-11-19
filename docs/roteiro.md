@@ -1,7 +1,7 @@
 # Roteiro da Apresentação (Pitch) - Lojas Horizonte
 *Tempo Total Estimado: 15 a 20 minutos*
 
-## 1. Abertura e Visão de Negócio (Filipe - PMO) - 3 min
+## 1. Abertura e Visão de Negócio (Filipe) - 3 min
 * A dor do cliente: Site instável na Black Friday e relatórios manuais da diretoria.
 * A Proposta de Valor do MVP: Plataforma de Dados unificada com recomendação inteligente.
 * A Arquitetura Proposta: Como seria no GCP (Cloud Run + BigQuery) vs O que fizemos no MVP.
@@ -24,6 +24,6 @@
 * Explicação da regra de negócio para calcular o "Abandono de Carrinho" cruzando cliques e checkouts.
 * Demonstração dos indicadores de Receita e Ticket Médio.
 
-## 6. Encerramento (Filipe - PMO) - 2 min
+## 6. Encerramento (Filipe) - 2 min
 * Simulação de Gestão de Incidentes (Como agiríamos se a API caísse na Black Friday).
 * Conclusões finais e agradecimentos à Banca.
