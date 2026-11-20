@@ -1,10 +1,11 @@
 # databricks/ · Configuração do ambiente de execução
 
-A pasta `pipeline/` guarda **o que** o pipeline faz (notebooks SQL). Esta pasta guarda **como** ele roda no Databricks: a definição do Job que executa os notebooks em ordem (issue #19, D26).
+A pasta `pipeline/` guarda **o que** o pipeline faz (notebooks SQL). Esta pasta guarda **como** ele roda no Databricks: a definição dos Jobs que executam os notebooks em ordem (issues #19 e #14, D26).
 
 | Arquivo | Conteúdo |
 |---|---|
-| `jobs/horizonte_pipeline.json` | Definição do Job `horizonte_pipeline` (tarefas, dependências, origem do código) |
+| `jobs/horizonte_pipeline.json` | Job completo `horizonte_pipeline`: as 3 fontes, da bronze à qualidade |
+| `jobs/horizonte_site_ao_vivo.json` | Job `horizonte_site_ao_vivo`: só o caminho do site, para a carga ao vivo da API |
 
 ## O Job `horizonte_pipeline`
 
@@ -26,12 +27,26 @@ A pasta `pipeline/` guarda **o que** o pipeline faz (notebooks SQL). Esta pasta 
 
 **Quando roda:** sob demanda (pelo botão *Run now* ou pelo `demo.sh` da issue #14). Não há agendamento: as fontes são arquivos que só mudam quando alguém envia um arquivo novo ao Volume.
 
+## O Job `horizonte_site_ao_vivo`
+
+```
+08_bronze_site → 09_silver_site → 10_silver_unificada → 11_gold → 12_qualidade
+```
+
+Mesmos notebooks, só com o caminho por onde passam os arquivos novos da API (`landing/site/api/`). O Olist e o ERP não mudam entre uma rodada e outra: o notebook 10 relê a silver deles, criada pela última execução do Job completo, e o resultado é o mesmo. A gold fica pronta em uns 2,7 minutos (fim do notebook 11), com metade das tarefas do Job completo (menos uso da cota do Free Edition).
+
+**Quando usar cada um:**
+- **`horizonte_pipeline` (completo):** quando muda algo além do site (catálogo, Olist, ERP, regras nos notebooks) e na preparação antes da demo.
+- **`horizonte_site_ao_vivo`:** a cada rodada da carga ao vivo (`demo.sh`, issue #14). Pressupõe que o Job completo já rodou pelo menos uma vez.
+- **Nunca os dois ao mesmo tempo:** os dois recriam as mesmas tabelas.
+
 ## Comandos (WSL, na raiz do repositório)
 
-Criar o Job (uma vez; devolve o `job_id`):
+Criar um Job (uma vez para cada arquivo; devolve o `job_id`):
 
 ```bash
 databricks jobs create --json @databricks/jobs/horizonte_pipeline.json
+databricks jobs create --json @databricks/jobs/horizonte_site_ao_vivo.json
 ```
 
 Atualizar o Job depois de mudar o JSON (substitui a definição inteira):
