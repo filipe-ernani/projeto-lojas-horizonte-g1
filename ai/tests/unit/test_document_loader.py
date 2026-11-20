@@ -273,6 +273,39 @@ def test_load_catalog_and_reviews_with_confirmed_field_mapping(databricks_loader
     reviews.assert_called_once_with(limit=None)
 
 
+def test_gold_reviews_index_title_or_comment_and_count_ratings_without_text(
+    monkeypatch, databricks_loader
+):
+    products, reviews = databricks_loader
+    monkeypatch.setenv("DATABRICKS_REVIEWS_TABLE", "horizonte.gold.gold_avaliacoes")
+    monkeypatch.setenv("DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN", "sku")
+    reviews.return_value = [
+        {
+            "avaliacao_id": "a-1",
+            "sku": "sku-1",
+            "nota": 5,
+            "titulo": "Perfeito",
+            "comentario": None,
+        },
+        {"avaliacao_id": "a-2", "sku": "sku-1", "nota": 4, "titulo": None, "comentario": "Macio"},
+        {"avaliacao_id": "a-3", "sku": "sku-1", "nota": 3, "titulo": None, "comentario": None},
+    ]
+    documents = load_documents_from_databricks(
+        review_id_field="avaliacao_id", review_text_fields=("titulo", "comentario")
+    )
+    assert [document["type"] for document in documents] == ["product", "review", "review"]
+    assert documents[0]["average_rating"] == 4
+    assert documents[0]["review_count"] == 3
+    retriever = BM25Retriever(documents)
+    for query, identifier in (("perfeito", "a-1"), ("macio", "a-2")):
+        result = retriever.search(query)[0]
+        assert result["review_id"] == identifier
+        assert result["source"]["row"]["avaliacao_id"] == identifier
+        assert result["source"]["table"] == "horizonte.gold.gold_avaliacoes"
+    products.assert_called_once_with(limit=None)
+    reviews.assert_called_once_with(limit=None)
+
+
 @pytest.mark.parametrize(
     "options",
     [

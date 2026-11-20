@@ -8,7 +8,7 @@ from agente_horizonte.retrieval.document_loader import (
     build_product_documents,
     build_review_documents,
 )
-from search import parse_rating_query
+from ai.tests.search import parse_rating_query
 
 
 @pytest.fixture

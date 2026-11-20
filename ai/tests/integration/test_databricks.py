@@ -50,7 +50,7 @@ def test_reviews_read_and_filter_real_records():
     records = fetch_reviews(limit=10)
     assert records, "The prepared reviews table must contain records to validate retrieval"
     assert all(
-        isinstance(row.get("review_id"), str) and row["review_id"].strip() for row in records
+        isinstance(row.get("avaliacao_id"), str) and row["avaliacao_id"].strip() for row in records
     )
     id_column = os.environ["DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN"].strip()
     sample = next((row for row in records if row[id_column] is not None), None)
@@ -126,13 +126,13 @@ def test_reviews_bm25_search_and_rebuild_real_data():
         pytest.skip("Configure the prepared reviews table and its product identifier")
 
     documents = load_documents_from_databricks(
-        review_id_field="review_id", review_text_fields=("comentario",)
+        review_id_field="avaliacao_id", review_text_fields=("titulo", "comentario")
     )
     reviews = [document for document in documents if document["type"] == "review"]
     assert reviews, "The prepared reviews table must produce searchable comments"
     review_ids = [review["review_id"] for review in reviews]
     assert len(review_ids) == len(set(review_ids)), "Each review must have its own identifier"
-    assert all(review["review_id"] == review["source"]["row"]["review_id"] for review in reviews)
+    assert all(review["review_id"] == review["source"]["row"]["avaliacao_id"] for review in reviews)
     product_ids = {
         document["product_id"] for document in documents if document["type"] == "product"
     }
@@ -150,7 +150,7 @@ def test_reviews_bm25_search_and_rebuild_real_data():
         review_results = [result for result in results if result["type"] == "review"]
         assert review_results, "A query taken from a comment must retrieve reviews"
         for result in review_results:
-            assert result["review_id"] == result["source"]["row"]["review_id"]
+            assert result["review_id"] == result["source"]["row"]["avaliacao_id"]
             assert result["source"]["table"] == os.environ["DATABRICKS_REVIEWS_TABLE"].strip()
             assert any(
                 document["type"] == "review"
@@ -163,7 +163,7 @@ def test_reviews_bm25_search_and_rebuild_real_data():
 
     check_results(documents)
     refreshed = load_documents_from_databricks(
-        review_id_field="review_id", review_text_fields=("comentario",)
+        review_id_field="avaliacao_id", review_text_fields=("titulo", "comentario")
     )
     retriever.rebuild(refreshed)
     check_results(refreshed)
@@ -175,7 +175,7 @@ def test_product_rating_ranking_real_data():
     ):
         pytest.skip("Configure the prepared reviews table and its product identifier")
     documents = load_documents_from_databricks(
-        review_id_field="review_id", review_text_fields=("comentario",)
+        review_id_field="avaliacao_id", review_text_fields=("titulo", "comentario")
     )
     retriever = BM25Retriever(documents, top_k=5)
     results = retriever.search("", sort_by_rating=True)
@@ -189,7 +189,8 @@ def test_product_rating_ranking_real_data():
     for result in results:
         assert result["type"] == "product"
         ratings = [row["nota"] for row in records if row[id_column] == result["product_id"]]
-        assert result["average_rating"] == pytest.approx(sum(ratings) / len(ratings))
+        # The gold catalog stores its authoritative average with two decimal places.
+        assert result["average_rating"] == pytest.approx(sum(ratings) / len(ratings), abs=0.005)
         assert result["review_count"] == len(ratings)
 
     query = results[0]["text"]

@@ -35,17 +35,18 @@ def documents():
     return products + build_review_documents(
         [
             {
-                "review_id": "REV-1",
+                "avaliacao_id": "REV-1",
                 "sku": "HZ-001",
                 "nota": 5,
                 "comentario": "Macio e confortável",
-                "data_review": date(2026, 11, 18),
+                "titulo": "Excelente",
+                "data": date(2026, 11, 18),
             }
         ],
         source="test.default.reviews",
         product_id_field="sku",
-        review_id_field="review_id",
-        text_fields=("comentario",),
+        review_id_field="avaliacao_id",
+        text_fields=("titulo", "comentario"),
     )
 
 
@@ -62,7 +63,16 @@ def initialized_tools(monkeypatch, documents):
 
 def assert_no_internal_ids(value):
     serialized = json.dumps(value, ensure_ascii=False).lower()
-    for internal in ("product_id", "review_id", '"sku"', "hz-001", "hz-002", "hz-003", "rev-1"):
+    for internal in (
+        "product_id",
+        "review_id",
+        "avaliacao_id",
+        '"sku"',
+        "hz-001",
+        "hz-002",
+        "hz-003",
+        "rev-1",
+    ):
         assert internal not in serialized
 
 
@@ -78,7 +88,8 @@ def test_search_and_product_name_lookup_use_one_startup_load(initialized_tools):
     }
     assert all(isinstance(item["score"], float) for item in products["results"])
     assert review["product_name"] == "Tênis azul"
-    assert review["data"]["data_review"] == "2026-11-18"
+    assert review["data"]["data"] == "2026-11-18"
+    assert review["data"]["titulo"] == "Excelente"
     assert details["results"][0]["data"]["preco"] == "99.90"
     assert {item["type"] for item in details["results"]} == {"product", "review"}
     assert all("tokens" not in item for item in details["results"])
@@ -86,7 +97,7 @@ def test_search_and_product_name_lookup_use_one_startup_load(initialized_tools):
     for result in (products, review, details):
         assert_no_internal_ids(result)
     initialized_tools.assert_called_once_with(
-        review_id_field="review_id", review_text_fields=("comentario",)
+        review_id_field="avaliacao_id", review_text_fields=("titulo", "comentario")
     )
 
 

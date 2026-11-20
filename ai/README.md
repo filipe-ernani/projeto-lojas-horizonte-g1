@@ -28,8 +28,8 @@ o arquivo sem dependências adicionais.
 | `DATABRICKS_CATALOG_TABLE` | Catálogo atual: `horizonte.gold.gold_catalogo` |
 | `DATABRICKS_CATALOG_PRODUCT_ID_COLUMN` | Coluna de produto; contrato confirmado: `sku` |
 | `DATABRICKS_CATALOG_CATEGORY_COLUMN` | Coluna de categoria; contrato confirmado: `categoria` |
-| `DATABRICKS_REVIEWS_TABLE` | Tabela tratada de comentários; deixar vazia enquanto a nova tabela não estiver disponível |
-| `DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN` | Chave de produto nos reviews; preencher junto com a tabela após confirmar o vínculo |
+| `DATABRICKS_REVIEWS_TABLE` | Tabela atual de avaliações: `horizonte.gold.gold_avaliacoes`; vazia desativa a carga de reviews |
+| `DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN` | Vínculo confirmado com o catálogo: `sku`; preencher junto com a tabela |
 | `DATABRICKS_SOCKET_TIMEOUT_SECONDS` | Timeout de rede; padrão 30 segundos, entre 1 e 300 |
 | `DATABRICKS_STATEMENT_TIMEOUT_SECONDS` | Timeout SQL da sessão; padrão 60 segundos, entre 1 e 300 |
 | `RUN_DATABRICKS_INTEGRATION` | `1` habilita testes reais; desabilitados por padrão |
@@ -151,12 +151,16 @@ repetições e palavras como “não”. Use `tokenize` também nas consultas. T
 vazios ou compostos somente de pontuação produzem `[]`; documentos sem tokens ou
 sem identificador textual válido são omitidos. Campos não textuais não viram palavras.
 
-A fonte atualizada em 18/11/2026, `workspace.default.reviews_atualizado`, contém
-`review_id`, `sku`, `nome_produto`, `nome_autor`, `nota`, `comentario` e `data_review`.
+A fonte atual, confirmada em 20/11/2026, é `horizonte.gold.gold_avaliacoes`. Ela contém
+`avaliacao_id` (string), `sku` (string), `nome_produto`, `categoria`, `grupo`,
+`nota` (int), `titulo`, `comentario` e `data` (date). Substitui a fonte anterior
+`workspace.default.reviews_atualizado`.
 `build_review_documents` recebe os nomes das colunas de produto (`product_id_field`)
 e texto (`text_fields`), além da tabela de origem (`source`). Para essa fonte, use
-`review_id_field="review_id"`: o ID textual original é preservado no documento, no
-resultado da busca e na linha de origem, enquanto `product_id` continua sendo o SKU.
+`review_id_field="avaliacao_id"` e `text_fields=("titulo", "comentario")`: o ID textual
+original é preservado internamente como `review_id` no documento e no resultado do
+recuperador, enquanto `product_id` continua sendo o SKU. As ferramentas do Hori
+removem ambos os identificadores e expõem somente nome, nota, título, comentário e data.
 IDs ausentes e vínculos conflitantes para o mesmo ID são descartados. Fontes sem ID
 podem informar `review_id_field=None`, sem inventar identificadores. Os documentos
 podem ser concatenados aos de produto.
@@ -454,9 +458,9 @@ Na carga do agente, `tools.initialize_index()` reutiliza o carregador existente 
 obter o catálogo e construir o BM25 em memória. Reviews são opcionais: com
 `DATABRICKS_REVIEWS_TABLE` e `DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN` vazios, a carga
 usa somente o catálogo, preservando suas notas e quantidades agregadas. Configuração
-parcial de reviews continua gerando erro. O mapeamento existente de comentários usa
-`review_id`, `comentario` e `nota`; confirmar esse contrato quando a nova tabela for
-entregue e preencher ambas as variáveis. As perguntas seguintes não consultam o Databricks.
+parcial de reviews continua gerando erro. A fonte atual usa `avaliacao_id` como
+identificador interno, `titulo` e `comentario` como texto, `nota` como avaliação e
+`data` como data da avaliação. As perguntas seguintes não consultam o Databricks.
 
 Configuração atual do novo workspace:
 
@@ -464,17 +468,34 @@ Configuração atual do novo workspace:
 DATABRICKS_CATALOG_TABLE=horizonte.gold.gold_catalogo
 DATABRICKS_CATALOG_PRODUCT_ID_COLUMN=sku
 DATABRICKS_CATALOG_CATEGORY_COLUMN=categoria
-DATABRICKS_REVIEWS_TABLE=
-DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN=
+DATABRICKS_REVIEWS_TABLE=horizonte.gold.gold_avaliacoes
+DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN=sku
 ```
 
-Validação do novo catálogo em **20/11/2026**: os **3 testes de integração de
+Validação inicial do novo catálogo em **20/11/2026**, antes da entrega das avaliações:
+os **3 testes de integração de
 catálogo passaram**, incluindo filtros e reconstrução do BM25. A inicialização real
 das ferramentas carregou **200 produtos e 0 comentários**, retornou os novos campos
 nos detalhes e encontrou produtos por ocasião. Nesta carga, nenhum produto tinha
 nota agregada válida; a busca por maiores notas retornou `no_results`. O mapeamento
 de notas `Decimal` e contagens positivas foi validado com dados sintéticos. Não houve
-chamada ao Gemini nessa verificação; a nova tabela de comentários permanece pendente.
+chamada ao Gemini nessa verificação; a tabela de comentários ainda estava pendente.
+
+Após a entrega de `horizonte.gold.gold_avaliacoes`, em **20/11/2026**, foram
+confirmadas **2.532 avaliações de 197 produtos**, com IDs únicos e nenhum vínculo
+órfão com o catálogo. **1.185 avaliações contêm título ou comentário** e entram no
+BM25; as demais não geram texto ou opiniões inventadas. O catálogo atualizado contém
+as médias e contagens desses 197 produtos.
+
+Validação da integração: **235 testes locais passaram** (6 integrações desativadas
+na execução padrão), seguidos de **6 testes reais do Databricks aprovados**. Foram
+verificados filtros, vínculo, reconstrução do BM25 e médias do catálogo com precisão
+de duas casas decimais. A inicialização real das ferramentas carregou **200 produtos
+e 1.185 avaliações textuais**. Para `Sunga Estampada Azul`, retornou nota **4,52**,
+**25 avaliações**, 14 avaliações com texto, título sem comentário e data, sem expor
+identificadores internos. Busca por título e ordenação por nota funcionaram. Não
+houve chamadas ao Gemini; a resposta final no `adk web` deve ser conferida após
+reiniciar o servidor, pois o índice permanece em memória.
 
 ### Configuração e execução
 

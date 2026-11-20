@@ -19,7 +19,7 @@ def parse_rating_query(query: str) -> tuple[str, bool]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Busca lexical no catálogo e nos reviews reais.")
     parser.add_argument(
-        "--reviews", action="store_true", help="Inclui a coluna comentario dos reviews"
+        "--reviews", action="store_true", help="Inclui titulo e comentario dos reviews"
     )
     parser.add_argument(
         "--best-rated",
@@ -31,8 +31,8 @@ def main() -> None:
     top_k = bm25_top_k()
     print("Carregando os dados do Databricks...")
     documents = load_documents_from_databricks(
-        review_id_field="review_id" if include_reviews else None,
-        review_text_fields=("comentario",) if include_reviews else (),
+        review_id_field="avaliacao_id" if include_reviews else None,
+        review_text_fields=("titulo", "comentario") if include_reviews else (),
     )
     retriever = BM25Retriever(documents, top_k=top_k)
     product_count = sum(document["type"] == "product" for document in documents)
