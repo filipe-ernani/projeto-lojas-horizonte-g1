@@ -367,3 +367,133 @@ site:
     Beleza: [Único]
     Casa: [Único]
   tamanho_unico_tipos: [Garrafa, Tapete de Yoga]
+
+# ---------------------------------------------------------------------------
+# AVALIAÇÕES: avaliações de produto do site (nota e texto), para o agente do Emanuel
+# Gerado por data/geradores/gera_avaliacoes.py a partir dos pedidos do histórico
+# do site (rode gera_site.py antes). Formato proposto para o avaliacoes.csv da v1.1.
+#
+# Calibrado pelo Olist (olist_order_reviews, notebook 02_perfil_olist, seções 6 e 7):
+# distribuição das notas, chance de comentário e de título, prazo até avaliar.
+# Premissas do squad: taxa de avaliação, qualidade por SKU e os textos.
+# ---------------------------------------------------------------------------
+avaliacoes:
+  pasta_saida: data/saida/site        # mesma pasta do site: avaliacoes/avaliacoes_historico.csv.gz
+
+  # Premissa: fração dos itens comprados que recebem avaliação. No Olist quase todo pedido
+  # tem avaliação porque a pesquisa é automática; avaliação de produto voluntária fica
+  # entre 3% e 10% no mercado. Usamos o topo da faixa (site pede avaliação por e-mail).
+  # Cada cliente avalia um SKU no máximo uma vez (na primeira compra dele).
+  taxa_avaliacao: 0.10
+
+  # Olist, seção 6: fração das avaliações com cada nota (forma de J)
+  notas: {1: 0.115, 2: 0.032, 3: 0.082, 4: 0.193, 5: 0.578}
+  # Olist, seção 6: chance de ter comentário e título, por nota (nota baixa escreve mais)
+  prob_comentario: {1: 0.765, 2: 0.681, 3: 0.435, 4: 0.312, 5: 0.358}
+  prob_titulo: {1: 0.164, 2: 0.152, 3: 0.101, 4: 0.091, 5: 0.116}
+  comentario_max_caracteres: 208     # limite do formulário no Olist
+
+  # Olist, seção 7: dias entre a compra e a avaliação (pedidos entregues).
+  # Lognormal com a mesma mediana e o mesmo percentil 90 (o p10 resultante, 6,5 dias,
+  # fica perto dos 7 do Olist). Avaliações que cairiam depois do corte não entram.
+  prazo_dias: {mediana: 13, p90: 26}
+
+  # Premissa: qualidade de cada SKU. Desloca as notas do produto para cima ou para baixo
+  # (0 = distribuição do Olist), para alguns produtos serem consistentemente mais bem
+  # avaliados que outros. Sem isso, todas as notas médias ficariam parecidas.
+  qualidade_sku_sigma: 0.4
+
+  # Premissa: quantidade de frases do comentário, por nota (mín., máx.). Mais frases nas
+  # notas baixas, como no Olist (mediana de 89 caracteres na nota 1 e 42 na nota 5).
+  frases_por_nota: {1: [2, 4], 2: [2, 4], 3: [2, 3], 4: [1, 3], 5: [1, 3]}
+
+  # "Sujeira" plantada para as checagens de qualidade (fração das avaliações)
+  sujeira:
+    linhas_duplicadas: 0.01     # cópia exata da linha (reenvio)
+    nota_invalida: 0.005        # nota 0 ou 6
+    sku_sem_cadastro: 0.005     # SKU que não existe no catálogo
+
+  # Textos montados por regra (sem IA): título e frases por nota; frases sobre o produto
+  # pelo tipo de produto (categoria ou grupo) e pelo tom (negativo: notas 1 e 2;
+  # neutro: 3; positivo: 4 e 5).
+  textos:
+    titulos:
+      1: [Decepcionante, Não recomendo, Muito ruim, Me arrependi]
+      2: [Abaixo do esperado, Deixou a desejar, Não gostei]
+      3: [Razoável, Mediano, Ok pelo preço]
+      4: [Gostei, Bom produto, Vale a pena]
+      5: [Adorei, Excelente, Recomendo, Perfeito]
+    abertura:
+      1: ["Produto muito diferente do que eu esperava.", "Que decepção com essa compra.", "Não gostei nada do produto."]
+      2: ["Esperava mais pelo preço.", "O produto deixou a desejar.", "Não atendeu ao que eu precisava."]
+      3: ["Produto razoável, nada de especial.", "Cumpre o básico.", "É ok, mas poderia ser melhor."]
+      4: ["Gostei bastante do produto.", "Bom produto, atendeu ao que eu queria.", "Boa compra no geral."]
+      5: ["Amei o produto!", "Superou minhas expectativas.", "Produto excelente.", "Compra perfeita."]
+    fechamento:
+      1: ["Vou devolver.", "Não compro de novo.", "Não recomendo."]
+      2: ["Não sei se compraria de novo.", "Pelo preço, esperava mais."]
+      3: ["Pelo preço, vale.", "Talvez compre de novo."]
+      4: ["Compraria de novo.", "Recomendo."]
+      5: ["Já quero outras cores!", "Recomendo muito!", "Vou comprar de novo."]
+    # Frases sobre o produto: procura primeiro a categoria, depois o grupo
+    produto:
+      Vestuário:
+        positivo: ["O tecido é macio e de boa qualidade.", "O caimento ficou ótimo.", "O tamanho veio certinho.", "A costura é bem feita."]
+        neutro: ["O tecido é fino, mas confortável.", "O tamanho ficou um pouco justo.", "A cor é um pouco diferente da foto."]
+        negativo: ["O tecido é fino e transparente.", "O tamanho veio bem menor que o indicado.", "A costura soltou na primeira lavagem.", "A cor desbotou depois de lavar."]
+      Calçados:
+        positivo: ["Muito confortável, dá para usar o dia todo.", "A numeração está correta.", "O acabamento é caprichado."]
+        neutro: ["Precisou de alguns dias para amaciar.", "A forma é um pouco estreita."]
+        negativo: ["Machucou o pé nos primeiros usos.", "A numeração é menor que o normal.", "O solado descolou em pouco tempo."]
+      Acessórios:
+        positivo: ["O acabamento é muito bonito.", "O material parece resistente.", "Igualzinho à foto."]
+        neutro: ["O material é simples, mas cumpre o que promete.", "É um pouco menor do que eu imaginava."]
+        negativo: ["O material parece frágil.", "Veio com defeito no fecho.", "Bem diferente da foto."]
+      Esporte:
+        positivo: ["Aguenta bem os treinos.", "Muito prático para a academia.", "Ótimo custo-benefício para quem treina."]
+        neutro: ["Atende bem para treinos leves.", "Poderia ser um pouco mais resistente."]
+        negativo: ["Não aguentou nem um mês de treino.", "Atrapalhou mais do que ajudou no treino.", "A qualidade não aguenta uso frequente."]
+      Beleza:
+        positivo: ["A fragrância é deliciosa e dura bastante.", "Textura leve, absorve rápido.", "Não irritou a pele."]
+        neutro: ["A fragrância é suave e some rápido.", "A embalagem é menor do que eu esperava."]
+        negativo: ["O cheiro é forte e enjoativo.", "Irritou minha pele.", "A fragrância some em minutos."]
+      Casa:
+        positivo: ["Muito macio e bonito.", "Deixou o ambiente mais aconchegante.", "O tecido é de ótima qualidade."]
+        neutro: ["É bonito, mas o tecido é fino.", "A cor é um pouco diferente da foto."]
+        negativo: ["Soltou fiapos na primeira lavagem.", "O tecido é áspero.", "Veio com a costura torta."]
+    # Frase sobre uma das ocasiões de uso do produto (coluna ocasioes do catálogo)
+    ocasiao:
+      positivo: "Ótimo para {ocasiao}."
+      neutro: "Serve para {ocasiao}."
+      negativo: "Não recomendo para {ocasiao}."
+    # Como cada ocasião do catálogo aparece na frase
+    ocasioes_texto:
+      academia: a academia
+      banho: o banho
+      bebê: o bebê
+      caminhada: caminhar
+      casa: ficar em casa
+      casual: o dia a dia
+      corrida: correr
+      cuidados diários: o dia a dia
+      decoração: decorar
+      dia a dia: o dia a dia
+      dormir: dormir
+      escola: a escola
+      festa: festas
+      frio: os dias frios
+      noite: a noite
+      ocasiões especiais: ocasiões especiais
+      passeio: passear
+      pilates: pilates
+      piscina: a piscina
+      praia: a praia
+      presente: dar de presente
+      quarto: o quarto
+      sala: a sala
+      trabalho: o trabalho
+      treino: treinar
+      treino em casa: treinar em casa
+      verão: o verão
+      viagem: viajar
+      yoga: yoga
