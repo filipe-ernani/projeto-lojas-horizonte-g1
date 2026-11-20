@@ -40,6 +40,10 @@ h2 {
   outline-offset: 2px;
 }
 
+h1[tabindex="-1"]:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* Container padrão das páginas: <div className="container"> */
 .container {
   width: 100%;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import useProduto from "@/hooks/useProduto";
@@ -99,13 +99,6 @@ function ProdutoConteudo({
   const [tamanhoSelecionado, setTamanhoSelecionado] = useState(null);
   const [adicionando, setAdicionando] = useState(false);
   const [feedbackAdicao, setFeedbackAdicao] = useState("");
-
-  useEffect(() => {
-    if (!carregandoProduto && location.hash === "#avaliacoes") {
-      const el = document.getElementById("avaliacoes");
-      el?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [carregandoProduto, location.hash]);
 
   // 1. Estado Carregando
   if (carregandoProduto) {

@@ -36,7 +36,7 @@ export default function CatalogoHeader({
   }
 
   return (
-    <div className={styles.header}>
+    <div id="catalogo-inicio" className={styles.header}>
       <div className={styles.titleArea}>
         <h1 className={styles.title}>{titulo}</h1>
         {contagem ? <p className={styles.count}>{contagem}</p> : null}

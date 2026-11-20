@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import ErrorBoundary from "@/components/ErrorBoundary/ErrorBoundary";
+import ScrollToTop from "@/components/ScrollToTop/ScrollToTop";
 import Layout from "@/components/Layout/Layout";
 import PrivateRoute from "@/components/PrivateRoute/PrivateRoute";
 import Home from "@/pages/Home/Home";
@@ -21,6 +22,7 @@ function App() {
 
   return (
     <ErrorBoundary resetKey={location.pathname}>
+      <ScrollToTop />
       <Routes>
         <Route path="/login" element={<Login />} />
 

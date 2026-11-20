@@ -17,7 +17,11 @@ export default function Footer() {
       <div className={`container ${styles.inner}`}>
         <div className={styles.topSection}>
           <div className={styles.brandCol}>
-            <Link to="/" className={styles.logoLink} aria-label="Horizonte - Início">
+            <Link
+              to="/"
+              className={styles.logoLink}
+              aria-label="Horizonte - Início"
+            >
               <Logo className={styles.logoImg} />
             </Link>
             <p className={styles.description}>
@@ -42,8 +46,7 @@ export default function Footer() {
 
         <div className={styles.bottomSection}>
           <p className={styles.copy}>
-            © {anoAtual} Horizonte. Todos os direitos reservados. Projeto
-            acadêmico demonstrativo.
+            © {anoAtual} Horizonte. Todos os direitos reservados.
           </p>
         </div>
       </div>

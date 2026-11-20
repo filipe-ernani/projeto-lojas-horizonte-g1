@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import useCategorias from "@/hooks/useCategorias";
 import useNovidades from "@/hooks/useNovidades";
@@ -21,8 +20,6 @@ export default function Home({
   categorias: categoriasProp,
   produtos: produtosProp,
 }) {
-  const location = useLocation();
-
   // Hook de categorias real via API (sem mock hardcoded, D-19)
   const {
     dados: categoriasApi,
@@ -48,15 +45,6 @@ export default function Home({
 
   const novidades =
     produtosProp !== undefined ? produtosProp.slice(-8) : novidadesApi;
-
-  useEffect(() => {
-    if (location.hash === "#novidades" || window.location.hash === "#novidades") {
-      const el = document.getElementById("novidades");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  }, [location.hash]);
 
   return (
     <div className={`container ${styles.main}`}>
