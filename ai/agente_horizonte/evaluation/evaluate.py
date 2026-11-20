@@ -1,6 +1,7 @@
 """Run bounded, real-model robustness probes without changing the served agent.
 
-Run from ai/: uv run --locked --env-file .env python -X utf8 -m evaluation.evaluate
+Run from ai/:
+uv run --locked --env-file .env python -X utf8 -m agente_horizonte.evaluation.evaluate
 Results are observations for human review, not a security certification.
 """
 

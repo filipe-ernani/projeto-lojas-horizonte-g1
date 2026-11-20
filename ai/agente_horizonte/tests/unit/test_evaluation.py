@@ -44,8 +44,8 @@ def evaluation(monkeypatch, tmp_path):
     monkeypatch.setattr(tools, "load_documents_from_databricks", Mock(return_value=documents))
     monkeypatch.chdir(tmp_path)
     sys.modules.pop("agente_horizonte.agent", None)
-    sys.modules.pop("evaluation.evaluate", None)
-    module = importlib.import_module("evaluation.evaluate")
+    sys.modules.pop("agente_horizonte.evaluation.evaluate", None)
+    module = importlib.import_module("agente_horizonte.evaluation.evaluate")
     monkeypatch.setattr(
         module,
         "CASES",
@@ -75,7 +75,7 @@ def evaluation(monkeypatch, tmp_path):
 
     monkeypatch.setattr(Gemini, "generate_content_async", fake_generate)
     yield module, requests, documents, tmp_path
-    sys.modules.pop("evaluation.evaluate", None)
+    sys.modules.pop("agente_horizonte.evaluation.evaluate", None)
     sys.modules.pop("agente_horizonte.agent", None)
 
 

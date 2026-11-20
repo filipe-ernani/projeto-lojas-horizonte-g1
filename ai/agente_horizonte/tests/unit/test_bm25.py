@@ -1,4 +1,6 @@
+import json
 from copy import deepcopy
+from pathlib import Path
 
 import pytest
 
@@ -8,7 +10,7 @@ from agente_horizonte.retrieval.document_loader import (
     build_product_documents,
     build_review_documents,
 )
-from ai.tests.search import parse_rating_query
+from agente_horizonte.tests.search import parse_rating_query
 
 
 @pytest.fixture
@@ -44,6 +46,22 @@ def test_ranks_matching_products_and_returns_content_source_and_numeric_score(do
         "source": documents[0]["source"],
         "score": results[0]["score"],
     }
+
+
+@pytest.mark.parametrize(
+    "case",
+    json.loads(
+        (Path(__file__).resolve().parents[2] / "evaluation/questions.json").read_text(
+            encoding="utf-8"
+        )
+    ),
+    ids=lambda case: case["name"],
+)
+def test_predefined_queries_rank_relevant_documents_first(documents, case):
+    results = BM25Retriever(documents).search(case["query"], top_k=case["top_k"])
+    assert [(item["product_id"], item["type"]) for item in results] == [
+        tuple(expected) for expected in case["expected"]
+    ]
 
 
 def test_finds_review_and_preserves_its_identifier(documents):

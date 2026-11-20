@@ -93,7 +93,7 @@ Para consultas reais, com `.env` configurado:
 
 ```powershell
 $env:RUN_DATABRICKS_INTEGRATION = '1'
-uv run --env-file .env pytest tests/integration -m integration --show-capture=no
+uv run --env-file .env pytest agente_horizonte/tests/integration -m integration --show-capture=no
 ```
 
 Validação executada em **16/11/2026**, com Python 3.12.14 e SQL Connector 4.9.0:
@@ -182,7 +182,7 @@ documentos, reviews sem texto, vínculos ambíguos e alinhamento do corpus. Para
 a preparação com o catálogo real, habilite `RUN_DATABRICKS_INTEGRATION=1` e execute:
 
 ```powershell
-uv run --env-file .env pytest tests/integration/test_databricks.py::test_catalog_prepares_real_documents --show-capture=no
+uv run --env-file .env pytest agente_horizonte/tests/integration/test_databricks.py::test_catalog_prepares_real_documents --show-capture=no
 ```
 
 Os testes unitários utilizam registros em memória; a validação real da tabela de reviews
@@ -304,7 +304,7 @@ de recarga. Os acessos externos nesses testes são mocks. Para validar carga, bu
 reconstrução do catálogo real, habilite `RUN_DATABRICKS_INTEGRATION=1` e execute:
 
 ```powershell
-uv run --env-file .env pytest tests/integration/test_databricks.py::test_catalog_bm25_search_and_rebuild_real_data --show-capture=no
+uv run --env-file .env pytest agente_horizonte/tests/integration/test_databricks.py::test_catalog_bm25_search_and_rebuild_real_data --show-capture=no
 ```
 
 A integração com o agente e sua inicialização pertence à IA-04; o recuperador está
@@ -334,7 +334,7 @@ A partir de `ai/`, com o `.env` preenchido:
 
 ```powershell
 $env:RUN_DATABRICKS_INTEGRATION = '1'
-uv run --env-file .env pytest tests/integration/test_databricks.py -k reviews -v --show-capture=no
+uv run --env-file .env pytest agente_horizonte/tests/integration/test_databricks.py -k reviews -v --show-capture=no
 $env:RUN_DATABRICKS_INTEGRATION = '0'
 ```
 
@@ -435,7 +435,7 @@ Para validar também as médias e o ranking contra os registros reais:
 
 ```powershell
 $env:RUN_DATABRICKS_INTEGRATION = '1'
-uv run --env-file .env pytest tests/integration/test_databricks.py -k 'reviews or rating' -v --show-capture=no
+uv run --env-file .env pytest agente_horizonte/tests/integration/test_databricks.py -k 'reviews or rating' -v --show-capture=no
 $env:RUN_DATABRICKS_INTEGRATION = '0'
 ```
 
@@ -607,14 +607,14 @@ uv run --locked ruff check .
 uv run --locked ruff format --check .
 ```
 
-`tests/unit/test_agent.py` usa corpus sintético e exercita ferramentas, nomes, notas,
+`agente_horizonte/tests/unit/test_agent.py` usa corpus sintético e exercita ferramentas, nomes, notas,
 JSON, falhas/recarga e descoberta do agente. Também executa o `Runner` real do ADK
 com respostas Gemini simuladas para conferir que os resultados das ferramentas
 chegam à próxima chamada do modelo, inclusive em comparações e ausência de resultados.
 Confere ainda a ausência de IDs nos retornos, a ocultação de códigos em comentários
 e respostas geradas e o bloqueio de consultas por códigos antes de chamar o Gemini.
 Isso não comprova a qualidade de uma resposta gerada pelo Gemini real.
-`tests/unit/test_models.py` cobre configuração, ordem e limites do fallback, falhas
+`agente_horizonte/tests/unit/test_models.py` cobre configuração, ordem e limites do fallback, falhas
 definitivas, bloqueio de segurança, preservação da requisição e falha após início do
 streaming. Os testes unitários não fazem chamadas externas.
 
@@ -705,13 +705,104 @@ os cenários executados, sem garantir toda resposta possível de um modelo gener
 
 ### Prompt injection e uso de tokens
 
-O [relatório de robustez](evaluation/robustness.md) registra os testes reais de
+O [relatório de robustez](agente_horizonte/evaluation/robustness.md) registra os testes reais de
 19/11/2026, os tokens reportados e as lacunas de controle de uso encontradas. Para
 repetir o ensaio com limites externos de chamadas e saída:
 
 ```powershell
-uv run --locked --env-file .env python -X utf8 -m evaluation.evaluate
+uv run --locked --env-file .env python -X utf8 -m agente_horizonte.evaluation.evaluate
 ```
 
 Esses limites pertencem ao ensaio. O agente servido ainda não tem os limites de
 entrada, saída e ferramentas sugeridos no relatório.
+
+## IA-06: testes e validação
+
+Execute a partir de `ai/`, sem precisar de credenciais para a suíte padrão:
+
+```powershell
+uv run --locked pytest -q --junitxml=.cache/ia06-pytest.xml
+uv run --locked ruff check .
+```
+
+Os testes reutilizam a cobertura de processamento, documentos, BM25, ferramentas e
+fallback. As consultas de relevância ficam em `agente_horizonte/evaluation/questions.json`, associadas
+ao corpus sintético de `test_bm25.py`. `agente_horizonte/tests/integration/test_api.py` exercita a API
+nativa do ADK, o agente, as ferramentas, o carregador e o cliente SQL; somente Gemini
+e `sql.connect` são simulados. Também verifica sessões SQLite após recriar a API,
+histórico, separação por usuário, CORS e erros. Não comprova integração com Express
+nem execução de uma interface no navegador.
+
+### Avaliações automáticas no ADK Web
+
+As pastas de apoio `tests` e `evaluation` ficam dentro de `agente_horizonte` para
+não aparecerem como agentes. Com `.env` configurado, execute de `ai/`:
+
+```powershell
+uv sync --locked
+uv run --locked --env-file .env adk web --host 127.0.0.1 --port 8000 --no-reload .
+```
+
+Abra `http://127.0.0.1:8000`, selecione **agente_horizonte** e abra a aba **Evals**.
+O conjunto **customer_support** já contém seis cenários: características,
+avaliações, recomendação, comparação, produto inexistente e informação insuficiente.
+Não é necessário conversar manualmente nem adicionar sessões para criá-los.
+
+Selecione os casos e clique em **Run Evaluation**. Configure as métricas:
+
+| Métrica | Threshold |
+| --- | ---: |
+| `tool_trajectory_avg_score` | `1.0` |
+| `response_match_score` | `0.3` |
+
+Clique em **Start**. O ADK envia as perguntas ao agente, executa as ferramentas,
+calcula as notas e apresenta os resultados na interface. O histórico fica em
+`agente_horizonte/.adk/eval_history/`, ignorado pelo Git.
+
+As métricas verificam chamadas de ferramentas e similaridade textual ROUGE-1.
+Não certificam fidelidade factual completa: uma resposta pode ter palavras parecidas
+e conter um número errado. Os valores `4,52` e `25` nas referências refletem o
+catálogo confirmado em 20/11/2026; atualize as referências se a fonte mudar. As
+respostas de referência são expectativas de teste, não resultados de uma execução.
+As perguntas usam os nomes públicos do catálogo e não expõem identificadores.
+
+### Mesmas avaliações pelo CLI
+
+O comando abaixo executa o mesmo conjunto automaticamente e usa os thresholds do
+arquivo versionado `test_config.json`:
+
+```powershell
+$env:PYTHONUTF8 = '1'
+uv run --locked --env-file .env adk eval agente_horizonte agente_horizonte/customer_support.evalset.json --config_file_path agente_horizonte/test_config.json --print_detailed_results
+```
+
+No Windows, UTF-8 evita erros ao imprimir emojis nas respostas. Use os caminhos
+relativos mostrados acima; o parser desta versão confunde `C:` com o separador de
+casos quando recebe um caminho absoluto de Windows.
+
+Web e CLI usam o agente real e podem consumir a quota Gemini/Databricks. As duas
+dependências de desenvolvimento `rouge-score` e `tabulate` são necessárias ao
+avaliador e ao relatório nativos; não foi instalado todo o extra `google-adk[eval]`.
+O pacote expõe `agent` sob demanda para suportar `adk eval` sem carregar serviços
+externos ao importar apenas os módulos de processamento nos testes unitários.
+
+Para validar separadamente o Databricks:
+
+```powershell
+$env:RUN_DATABRICKS_INTEGRATION = '1'
+uv run --locked --env-file .env pytest agente_horizonte/tests/integration/test_databricks.py -q --show-capture=no
+$env:RUN_DATABRICKS_INTEGRATION = '0'
+
+```
+
+Resultados de **20/11/2026**: os testes verificam a listagem de um único agente, a
+descoberta dos seis casos e a execução nativa com aprovação/reprovação e histórico.
+Essas verificações usam Gemini/SQL simulados; o avaliador e suas métricas são reais.
+Na suíte padrão, **264 testes passaram e 6 integrações foram ignoradas**.
+Após a disponibilização do `.env`, o conjunto também foi executado com Gemini e
+Databricks reais: **seis Evals aprovadas**, com a limitação da métrica e a correção
+do caso de comparação registradas no relatório. Os **seis testes reais do Databricks**
+também passaram, executados separadamente. A formatação global ainda aponta
+a pendência preexistente no cliente
+Databricks. Consulte o [relatório da IA-06](agente_horizonte/evaluation/validation.md) para os critérios,
+falhas encontradas, evidências e dependências do FullStack.

@@ -6,7 +6,7 @@ não uma garantia para todas as entradas possíveis.
 
 ## Método e limites do ensaio
 
-- `evaluation/evaluate.py` executa o `Runner` real do ADK com Gemini real e uma nova
+- `agente_horizonte/evaluation/evaluate.py` executa o `Runner` real do ADK com Gemini real e uma nova
   sessão em memória para cada cenário. A instrumentação encaminha as chamadas ao
   SDK original; as respostas não são mocks.
 - O catálogo e as avaliações foram carregados do Databricks pela inicialização
@@ -91,7 +91,7 @@ apenas instruções ao prompt não substitui esses limites no código.
 A partir de `ai/`, com `.env` configurado:
 
 ```powershell
-uv run --locked --env-file .env python -X utf8 -m evaluation.evaluate
+uv run --locked --env-file .env python -X utf8 -m agente_horizonte.evaluation.evaluate
 ```
 
 O script faz chamadas reais e grava o resultado em `.cache/robustness-results.json`,
@@ -110,7 +110,7 @@ Verificações após a criação do script:
   integrações opcionais do Databricks ficaram desabilitadas nessa suíte; o ensaio
   descrito acima acessou o Databricks e Gemini separadamente.
 - `uv run --locked ruff check .`: passou.
-- `uv run --locked ruff format --check evaluation/evaluate.py`: passou.
+- `uv run --locked ruff format --check agente_horizonte/evaluation/evaluate.py`: passou.
 
 As alterações desta rodada ficaram no script de avaliação, neste relatório e no
 link correspondente no README. O código e as configurações do agente não foram
