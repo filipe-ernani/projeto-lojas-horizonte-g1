@@ -9,7 +9,7 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 
 **CORS:** só são aceitas as origens listadas em `FRONT_ORIGIN` (separadas por vírgula; padrão `http://localhost:5173`). Outra origem recebe `403`; requisição sem cabeçalho `Origin` é permitida. Em produção, a origem pública do site precisa estar nessa lista.
 
-**Limite de requisições (por IP, em memória):** `/api/chat` 30/min e `/api/integracao` 60/min. Acima disso a resposta é `429` com o cabeçalho `Retry-After`. O `/api/chat` também limita cada usuário a 20 mensagens por minuto; nesse caso a resposta é `429` sem `Retry-After`.
+**Limite de requisições (por IP, em memória):** `/api/chat` 30/min e `/api/integracao` 60/min. Acima disso a resposta é `429` com o cabeçalho `Retry-After`. O `/api/chat` também limita cada usuário (ou sessão de visitante) a 20 mensagens por minuto; nesse caso a resposta é `429` sem `Retry-After`. Mensagem do `429` no chat: "Muitas mensagens em pouco tempo. Aguarde um instante."
 
 ## Formatos
 
@@ -89,7 +89,7 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 | POST | `/api/carrinho/finalizar` | privado | `{ enderecoId, formaPagamento, parcelas? }`. `formaPagamento`: `PIX`, `CARTAO_CREDITO` ou `CARTAO_DEBITO` (`BOLETO` é recusado). `parcelas`: 1 a 12, só no crédito, sem juros. Dados de cartão são ignorados | `201` com `Pedido` (mais `pix` quando for Pix); `400` em pagamento inválido, endereço inválido ou cesta vazia; `404` se o endereço não for do usuário |
 | GET | `/api/pedidos/meus` | privado | — | `Pedido[]` |
 | POST | `/api/pedidos/:id/cancelar` | privado | — | `{ ok: true, id, status: "CANCELADO", canceladoEm, dataLocal }` (`400` se o pedido não estiver finalizado; `404` se não existir; `409` se já cancelado) |
-| POST | `/api/chat` | privado | `{ mensagem, sessaoId }` (`mensagem` de 1 a 1000 caracteres) | `{ resposta }` (timeout 20s, 20 msg/min, D-28; `400` em mensagem inválida; `429` acima do limite; `503` com o assistente indisponível) |
+| POST | `/api/chat` | público (Bearer opcional; token inválido = `401`) | `{ mensagem, sessaoId?, contexto?: { sku? } }`. `mensagem`: 1 a 500 caracteres após trim. `sessaoId`: até 64 caracteres `[A-Za-z0-9_-]` (gerado se faltar). `contexto.sku`: padrão `HZ-XXX-000` e existente no catálogo | `{ resposta, sessaoId, produtos: [sku] }` (`produtos`: SKUs citados na resposta que existem, sem repetir, máx. 4). Proxy do agente ADK (`/run`), só o texto final do agente; `400` entrada inválida; `429` limite; `502` "O assistente não conseguiu responder agora."; `503` "O assistente está indisponível agora." (agente fora do ar ou sem `ADK_URL`); `504` "O assistente demorou para responder. Tente de novo." (`ADK_TIMEOUT_MS`, padrão 60s) |
 | GET | `/api/integracao/pedidos` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
 | GET | `/api/integracao/pedido-itens` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
 | GET | `/api/integracao/eventos` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |

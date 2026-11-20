@@ -52,12 +52,13 @@
 /* Painel de diálogo do chat */
 .dialogPanel {
   position: fixed;
-  top: var(--space-6);
+  /* No celular o painel começa abaixo do cabeçalho e não cobre a navegação */
+  top: calc(var(--header-h) + var(--space-2));
   bottom: 0;
   left: 0;
   right: 0;
   width: 100%;
-  max-height: calc(100dvh - var(--space-6));
+  max-height: calc(100dvh - var(--header-h) - var(--space-2));
   background-color: var(--color-paper);
   border-top: 1px solid var(--color-line);
   border-top-left-radius: var(--radius-lg);
@@ -123,7 +124,7 @@
 /* Barra inferior de entrada de texto */
 .inputForm {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-2);
   padding: var(--space-3);
   background-color: var(--color-card);
@@ -132,10 +133,58 @@
 
 .fieldWrapper {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
-.inputField {
-  margin-bottom: 0 !important;
+.textarea {
+  width: 100%;
+  min-height: var(--control-h-sm);
+  max-height: 120px;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-field);
+  color: var(--color-ink);
+  border: 1px solid var(--color-field-border);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: var(--fs-md);
+  line-height: 1.4;
+  resize: none;
+}
+
+.textarea::placeholder {
+  color: var(--color-muted);
+}
+
+.textarea:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 1px;
+}
+
+.inputMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+}
+
+.dica {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contador {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.contadorLimite {
+  color: var(--color-danger-text);
+  font-weight: var(--fw-semibold);
 }
 
 .sendButton {

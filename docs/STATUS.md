@@ -4,7 +4,7 @@
 > Prazos: congelamento de código **20/11**; apresentação **23/11**.
 
 **Última atualização:** 19/11/2026 (Back-end de avaliações: migração `007_avaliacoes.sql`, rotas públicas/privadas de avaliações, exportação `vw_export_avaliacoes` / `/api/integracao/avaliacoes`, `export:novos` e carregador histórico `seed:avaliacoes`)
-**Fase atual:** 4. Ligar à API (Fases 0, 1, 2 e 3 concluídas; dataset e back-end disponíveis; falta ligar o chat à rota `/api/chat`)
+**Fase atual:** 4. Ligar à API (Fases 0, 1, 2 e 3 concluídas; dataset e back-end disponíveis; chat ligado à rota `/api/chat` e ao agente ADK)
 
 ## Bloqueios externos
 
@@ -61,7 +61,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 - [x] Dados: `CartContext` e `FavoritesContext` (e camada de dados de rotas privadas: carrinho, favoritos, pedidos, perfil, endereços)
 - [x] UI (Tarefa 4A UI): ligar hooks às páginas (Home, Catálogo, Produto)
 - [x] UI (Tarefa 4B UI): ligar carrinho, favoritos, perfil, endereços e pedidos aos contextos e hooks do agente Dados
-- [ ] Chat: ligar à rota `/api/chat`
+- [x] Chat: `ChatWidget` ligado à rota `/api/chat` (`useChat`, `chatService`) e back-end ligado ao agente ADK (`services/adkClient.js`); conversa real com o agente pendente de validação
 
 ### Fase 5. Acabamento
 
@@ -92,7 +92,7 @@ Cada tela com layout completo, componentes recebendo dados por props e estados d
 ## Problemas conhecidos
 
 - Informações de materiais e composição na página de Produto dependem da chegada do dataset e de confirmação no `docs/API.md` (Fase 4).
-- `ChatWidget.jsx` está montado no `Layout` para usuário logado com `sessaoId` em memória; o envio real (`onEnviar`) será conectado à rota `POST /api/chat` na Fase 4 (atualmente exibe estado de indisponibilidade com retry).
+- `ChatWidget.jsx` está montado no `Layout` para visitantes e usuários logados (exceto `/login` e `/checkout`), com `sessaoId` por aba em `sessionStorage`; a mensagem de indisponível aparece só em resposta ao `503`. Falta testar a conversa com o agente ADK real.
 
 ## Registro de sessões
 
