@@ -8,12 +8,12 @@ const UFS_VALIDAS = new Set([
 ]);
 
 const CAMPOS_TEXTO = [
-  { campo: "apelido", maximo: 40 },
-  { campo: "logradouro", maximo: 120, obrigatorio: true },
+  { campo: "apelido", maximo: 30 },
+  { campo: "logradouro", maximo: 100, obrigatorio: true },
   { campo: "numero", maximo: 10, obrigatorio: true },
   { campo: "complemento", maximo: 60 },
-  { campo: "bairro", maximo: 80, obrigatorio: true },
-  { campo: "cidade", maximo: 80, obrigatorio: true },
+  { campo: "bairro", maximo: 60, obrigatorio: true },
+  { campo: "cidade", maximo: 60, obrigatorio: true },
 ];
 
 const ERRO_OBRIGATORIOS =
@@ -64,6 +64,15 @@ export function validarDadosEndereco(dados = {}) {
     }
     textos[campo] = texto;
   }
+
+  const numeroNormalizado = textos.numero.toUpperCase();
+  if (!/^(\d+[A-Z]?|S\/N)$/.test(numeroNormalizado)) {
+    return {
+      valido: false,
+      erro: "Número inválido. Utilize apenas dígitos com letra opcional no fim (ex.: 123, 123A) ou S/N.",
+    };
+  }
+  textos.numero = numeroNormalizado;
 
   const cep = lerTexto(dados.cep);
   const uf = lerTexto(dados.uf);

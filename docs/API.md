@@ -78,10 +78,10 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 | PUT | `/api/favoritos/:produtoId` | privado | — | `204` (`404` se o produto não existir) |
 | DELETE | `/api/favoritos/:produtoId` | privado | — | `204` |
 | GET | `/api/usuarios/perfil` | privado | — | `Perfil` |
-| PUT | `/api/usuarios/perfil` | privado | `{ nome, telefone }` (campo ausente mantém o valor salvo; `telefone` vazio ou `null` apaga o número) | `Perfil` (também cria o usuário no primeiro login; `400` em dado inválido) |
+| PUT | `/api/usuarios/perfil` | privado | `{ nome, telefone }` (campo ausente mantém o valor salvo; `telefone` vazio ou `null` apaga o número; preenchido exige 10 ou 11 dígitos) | `Perfil` (também cria o usuário no primeiro login; `400` em dado inválido) |
 | GET | `/api/enderecos` | privado | — | `Endereco[]` |
-| POST | `/api/enderecos` | privado | `Endereco` sem `id` | `201` com `Endereco` (`400` em dado inválido) |
-| PUT | `/api/enderecos/:id` | privado | campos do `Endereco` | `Endereco` (`400` em dado inválido; `404` se não existir) |
+| POST | `/api/enderecos` | privado | `Endereco` sem `id` (`apelido` ≤ 30, `logradouro` ≤ 100, `bairro`/`cidade`/`complemento` ≤ 60, `numero` dígitos+letra ou `S/N` ≤ 10, `cep` 8 dígitos, `uf` 27 UFs) | `201` com `Endereco` (`400` em dado inválido) |
+| PUT | `/api/enderecos/:id` | privado | campos do `Endereco` (mesmas validações do `POST`) | `Endereco` (`400` em dado inválido; `404` se não existir) |
 | DELETE | `/api/enderecos/:id` | privado | — | `204` (`404` se não existir) |
 | GET | `/api/carrinho` | privado | — | `Carrinho` |
 | PUT | `/api/carrinho` | privado | `{ itens: [{ produtoId, tamanho, cor, quantidade }], ultimaEtapa }` (`CARRINHO` ou `CHECKOUT_INICIADO`). `itens` é obrigatório; só `[]` esvazia a cesta | `Carrinho` (`400` se `itens` faltar ou não for lista) |

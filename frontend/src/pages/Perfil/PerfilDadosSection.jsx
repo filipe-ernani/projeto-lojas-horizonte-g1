@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Field from "@/components/ui/Field/Field";
 import Button from "@/components/ui/Button/Button";
+import { extrairDigitos, mascararTelefone } from "@/utils/mascaras";
+import { validarTelefonePerfil } from "./enderecoValidation";
 import styles from "./PerfilDadosSection.module.css";
 
 /**
@@ -24,17 +26,18 @@ export default function PerfilDadosSection({
   const telefoneInicial = perfil?.telefone || usuario?.phoneNumber || "";
 
   const [nome, setNome] = useState(nomeInicial);
-  const [telefone, setTelefone] = useState(telefoneInicial);
+  const [telefone, setTelefone] = useState(mascararTelefone(telefoneInicial));
   const [placeholderNome, setPlaceholderNome] = useState(
     nomeInicial || "Seu nome completo",
   );
   const [placeholderTelefone, setPlaceholderTelefone] = useState(
-    telefoneInicial || "(11) 99999-9999",
+    mascararTelefone(telefoneInicial) || "(11) 99999-9999",
   );
   const [erroNome, setErroNome] = useState(null);
+  const [erroTelefone, setErroTelefone] = useState(null);
   const [mensagemSucesso, setMensagemSucesso] = useState(null);
   const [mensagemErro, setMensagemErro] = useState(null);
-  const [salvandoLocal, setSalvando] = useState(false);
+  const [salvandoLocal, setSalvandoLocal] = useState(false);
   const salvando = salvandoLocal || salvandoPerfil;
 
   // Dados novos da API entram no formulário sem remontar a seção (preserva as mensagens)
@@ -43,9 +46,24 @@ export default function PerfilDadosSection({
   if (dadosRecebidos !== dadosAplicados) {
     setDadosAplicados(dadosRecebidos);
     setNome(nomeInicial);
-    setTelefone(telefoneInicial);
+    setTelefone(mascararTelefone(telefoneInicial));
     setPlaceholderNome(nomeInicial || "Seu nome completo");
-    setPlaceholderTelefone(telefoneInicial || "(11) 99999-9999");
+    setPlaceholderTelefone(
+      mascararTelefone(telefoneInicial) || "(11) 99999-9999",
+    );
+  }
+
+  function validarNomeAoSair() {
+    const limpo = nome.trim();
+    if (!limpo) {
+      setErroNome("Informe seu nome completo.");
+    } else if (limpo.length > 100) {
+      setErroNome("O nome deve ter no máximo 100 caracteres.");
+    }
+  }
+
+  function validarTelefoneAoSair() {
+    setErroTelefone(validarTelefonePerfil(telefone) || null);
   }
 
   async function handleSubmit(e) {
@@ -54,27 +72,45 @@ export default function PerfilDadosSection({
     setMensagemErro(null);
 
     const nomeLimpo = nome.trim();
+    const erroTel = validarTelefonePerfil(telefone);
+
+    let temErro = false;
     if (!nomeLimpo) {
       setErroNome("Informe seu nome completo.");
+      temErro = true;
+    } else if (nomeLimpo.length > 100) {
+      setErroNome("O nome deve ter no máximo 100 caracteres.");
+      temErro = true;
+    } else {
+      setErroNome(null);
+    }
+
+    if (erroTel) {
+      setErroTelefone(erroTel);
+      temErro = true;
+    } else {
+      setErroTelefone(null);
+    }
+
+    if (temErro) {
       return;
     }
 
-    setErroNome(null);
-    setSalvando(true);
+    setSalvandoLocal(true);
 
     try {
-      const telefoneLimpo = telefone.trim();
+      const telefoneDigitos = extrairDigitos(telefone);
       if (typeof onSalvarPerfil === "function") {
         await onSalvarPerfil({
           nome: nomeLimpo,
-          telefone: telefoneLimpo,
+          telefone: telefoneDigitos,
         });
       }
 
       // Atualiza os placeholders com os dados salvos
       setPlaceholderNome(nomeLimpo);
-      if (telefoneLimpo) {
-        setPlaceholderTelefone(telefoneLimpo);
+      if (telefoneDigitos) {
+        setPlaceholderTelefone(mascararTelefone(telefoneDigitos));
       }
 
       setMensagemSucesso("Dados atualizados com sucesso!");
@@ -83,7 +119,7 @@ export default function PerfilDadosSection({
         err?.message || "Não foi possível salvar os dados. Tente novamente.",
       );
     } finally {
-      setSalvando(false);
+      setSalvandoLocal(false);
     }
   }
 
@@ -115,10 +151,12 @@ export default function PerfilDadosSection({
           id="perfil-nome"
           label="Nome completo"
           value={nome}
+          maxLength={100}
           onChange={(e) => {
             setNome(e.target.value);
             if (erroNome) setErroNome(null);
           }}
+          onBlur={validarNomeAoSair}
           erro={erroNome}
           placeholder={placeholderNome}
           disabled={salvando}
@@ -140,8 +178,15 @@ export default function PerfilDadosSection({
           id="perfil-telefone"
           label="Telefone"
           type="tel"
+          inputMode="numeric"
+          maxLength={15}
           value={telefone}
-          onChange={(e) => setTelefone(e.target.value)}
+          onChange={(e) => {
+            setTelefone(mascararTelefone(e.target.value));
+            if (erroTelefone) setErroTelefone(null);
+          }}
+          onBlur={validarTelefoneAoSair}
+          erro={erroTelefone}
           placeholder={placeholderTelefone}
           disabled={salvando}
         />

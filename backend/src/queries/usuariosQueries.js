@@ -59,12 +59,11 @@ export function validarDadosPerfil({ nome, telefone } = {}) {
     const digitos = dados.telefone.replace(/\D/g, "");
     const formatoValido =
       /^[\d\s()+-]+$/.test(dados.telefone) &&
-      digitos.length >= 10 &&
-      digitos.length <= 13;
+      (digitos.length === 10 || digitos.length === 11);
     if (dados.telefone && !formatoValido) {
       return {
         valido: false,
-        erro: "Telefone inválido. Informe DDD e número, como (11) 99999-9999.",
+        erro: "Telefone inválido. Informe DDD e número com 10 ou 11 dígitos, como (11) 99999-9999.",
       };
     }
   }
