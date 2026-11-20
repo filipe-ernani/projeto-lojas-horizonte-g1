@@ -1,115 +1,68 @@
-import { useState, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
+import { useMatch } from "react-router-dom";
 import { MessageCircle, X, Send } from "lucide-react";
 import IconButton from "@/components/ui/IconButton/IconButton";
-import Field from "@/components/ui/Field/Field";
+import useChat, { LIMITE_MENSAGEM_CHAT } from "@/hooks/useChat";
 import ChatMessagesList from "./ChatMessagesList";
 import { useChatFocusTrap } from "./useChatFocusTrap";
 import styles from "./ChatWidget.module.css";
 
 /**
- * ChatWidget — Assistente virtual com IA do Horizonte conforme docs/DESIGN.md:
- * - Botão flutuante preto 60px no canto inferior direito.
- * - Painel em role="dialog" com cabeçalho, mensagens, campo de texto e envio.
- * - sessaoId único gerado via crypto.randomUUID(), sem armazenamento em localStorage.
- * - Acessibilidade: Esc fecha, foco gerenciado ao abrir/fechar, focus trap no Tab.
- * - Estados de carregando (Digitando...), erro e vazio institucional sem respostas pré-fabricadas.
+ * ChatWidget — Assistente virtual com IA do Horizonte:
+ * - Botão flutuante no canto inferior direito; painel role="dialog".
+ * - Enter envia, Shift+Enter quebra linha; limite de 500 caracteres com contador.
+ * - Na página de um produto, envia o SKU como contexto.
+ * - Esc fecha, foco no campo ao abrir e focus trap no Tab.
  */
-export default function ChatWidget({ onEnviar }) {
+export default function ChatWidget() {
   const [aberto, setAberto] = useState(false);
-  const [mensagens, setMensagens] = useState([]);
   const [textoEntrada, setTextoEntrada] = useState("");
-  const [digitando, setDigitando] = useState(false);
-  const [erro, setErro] = useState(null);
-  const [ultimaMensagem, setUltimaMensagem] = useState(null);
 
-  // ID de sessão mantido apenas em memória durante a sessão da página
-  const [sessaoId] = useState(() => {
-    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-      return crypto.randomUUID();
-    }
-    return `sessao-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-  });
+  const rotaProduto = useMatch("/produto/:id");
+  const skuAtual = rotaProduto?.params?.id || null;
+
+  const { mensagens, enviando, erro, enviar, tentarDeNovo } = useChat({ sku: skuAtual });
 
   const botaoFlutuanteRef = useRef(null);
   const painelRef = useRef(null);
 
-  function abrirChat() {
-    setAberto(true);
-  }
-
-  function fecharChat() {
+  const fecharChat = useCallback(() => {
     setAberto(false);
     setTimeout(() => {
-      botaoFlutuanteRef.current?.focus();
+      botaoFlutuanteRef.current?.querySelector("button")?.focus();
     }, 50);
-  }
+  }, []);
 
-  // Gestão de foco acessível e tecla Esc / Tab trap
   useChatFocusTrap(aberto, painelRef, fecharChat);
 
-  async function enviarMensagem(textoMensagem) {
-    const texto = (textoMensagem || textoEntrada).trim();
-    if (!texto || digitando) return;
-
-    const novaMensagemUsuario = {
-      id: `usr-${Date.now()}-${Math.random()}`,
-      autor: "usuario",
-      texto,
-      timestamp: new Date().toISOString(),
-    };
-
-    setMensagens((prev) => [...prev, novaMensagemUsuario]);
-    setTextoEntrada("");
-    setErro(null);
-    setDigitando(true);
-    setUltimaMensagem(texto);
-
-    try {
-      if (typeof onEnviar !== "function") {
-        throw new Error("Assistente indisponível no momento.");
-      }
-      const respostaApi = await onEnviar({ mensagem: texto, sessaoId });
-      if (!respostaApi?.resposta) {
-        throw new Error("Resposta inválida do assistente.");
-      }
-
-      const novaMensagemAssistente = {
-        id: `ast-${Date.now()}-${Math.random()}`,
-        autor: "assistente",
-        texto: respostaApi.resposta,
-        timestamp: new Date().toISOString(),
-      };
-      setMensagens((prev) => [...prev, novaMensagemAssistente]);
-      setUltimaMensagem(null);
-    } catch {
-      setErro("O assistente está indisponível no momento. Tente novamente.");
-    } finally {
-      setDigitando(false);
-    }
+  function enviarTexto(texto) {
+    if (enviar(texto)) setTextoEntrada("");
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    enviarMensagem();
+    enviarTexto(textoEntrada);
   }
 
-  function handleTentarDeNovo() {
-    if (ultimaMensagem) {
-      enviarMensagem(ultimaMensagem);
-    } else {
-      setErro(null);
+  function handleKeyDown(e) {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+      e.preventDefault();
+      enviarTexto(textoEntrada);
     }
   }
 
+  const podeEnviar = textoEntrada.trim().length > 0 && !enviando;
+  const noLimite = textoEntrada.length >= LIMITE_MENSAGEM_CHAT;
+
   return (
-    <aside className={styles.widgetWrapper} aria-label="Widget do Assistente">
+    <aside className={styles.widgetWrapper} aria-label="Assistente Horizonte">
       {!aberto ? (
-        <div ref={botaoFlutuanteRef} tabIndex={-1} className={styles.floatingTrigger}>
+        <div ref={botaoFlutuanteRef} className={styles.floatingTrigger}>
           <IconButton
             icone={MessageCircle}
-            rotulo="Abrir chat com assistente Horizonte"
+            rotulo="Abrir chat com o assistente Horizonte"
             tamanho={60}
-            onClick={abrirChat}
+            onClick={() => setAberto(true)}
             className={styles.floatingButton}
           />
         </div>
@@ -117,14 +70,16 @@ export default function ChatWidget({ onEnviar }) {
         <div
           ref={painelRef}
           role="dialog"
-          aria-modal="true"
-          aria-label="Assistente Horizonte"
+          aria-modal="false"
+          aria-labelledby="chat-titulo"
           className={styles.dialogPanel}
         >
           <header className={styles.panelHeader}>
             <div className={styles.headerTitleGroup}>
               <MessageCircle size={20} aria-hidden="true" className={styles.headerIcon} />
-              <h2 className={styles.panelTitle}>Assistente Horizonte</h2>
+              <h2 id="chat-titulo" className={styles.panelTitle}>
+                Assistente Horizonte
+              </h2>
             </div>
             <IconButton
               icone={X}
@@ -136,29 +91,46 @@ export default function ChatWidget({ onEnviar }) {
 
           <ChatMessagesList
             mensagens={mensagens}
-            digitando={digitando}
+            digitando={enviando}
             erro={erro}
-            onTentarDeNovo={handleTentarDeNovo}
+            onTentarDeNovo={tentarDeNovo}
+            onSugestao={enviarTexto}
+            onAbrirProduto={fecharChat}
           />
 
           <form className={styles.inputForm} onSubmit={handleSubmit} noValidate>
             <div className={styles.fieldWrapper}>
-              <Field
+              <label htmlFor="chat-input-field" className="sr-only">
+                Mensagem para o assistente
+              </label>
+              <textarea
                 id="chat-input-field"
+                className={styles.textarea}
                 placeholder="Digite sua dúvida..."
                 value={textoEntrada}
+                maxLength={LIMITE_MENSAGEM_CHAT}
+                rows={2}
                 onChange={(e) => setTextoEntrada(e.target.value)}
-                disabled={digitando}
-                aria-label="Mensagem para o assistente"
-                required
-                className={styles.inputField}
+                onKeyDown={handleKeyDown}
+                aria-describedby="chat-contador chat-dica"
               />
+              <div className={styles.inputMeta}>
+                <span id="chat-dica" className={styles.dica}>
+                  Enter envia · Shift+Enter quebra linha
+                </span>
+                <span
+                  id="chat-contador"
+                  className={`${styles.contador} ${noLimite ? styles.contadorLimite : ""}`}
+                >
+                  {textoEntrada.length}/{LIMITE_MENSAGEM_CHAT}
+                </span>
+              </div>
             </div>
             <IconButton
               icone={Send}
-              rotulo="Enviar mensagem"
+              rotulo={enviando ? "Enviando mensagem" : "Enviar mensagem"}
               type="submit"
-              disabled={!textoEntrada.trim() || digitando}
+              disabled={!podeEnviar}
               className={styles.sendButton}
             />
           </form>

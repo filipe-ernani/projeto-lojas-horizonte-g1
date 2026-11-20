@@ -67,3 +67,14 @@ export async function requireAuth(req, res, next) {
 
   next();
 }
+
+/**
+ * Autenticação opcional: sem cabeçalho Authorization segue como visitante;
+ * com cabeçalho, vale a mesma regra do requireAuth (token inválido = 401).
+ */
+export function autenticacaoOpcional(req, res, next) {
+  if (req.headers.authorization === undefined) {
+    return next();
+  }
+  return requireAuth(req, res, next);
+}

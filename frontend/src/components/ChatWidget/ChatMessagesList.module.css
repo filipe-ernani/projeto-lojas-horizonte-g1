@@ -15,6 +15,9 @@
   border: 1px dashed var(--color-line);
   text-align: center;
   margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .welcomeText {
@@ -59,6 +62,8 @@
 
 .bubbleText {
   margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .typingText {
@@ -87,4 +92,77 @@
 
 .retryBtn {
   align-self: flex-start;
+}
+
+.log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.log:empty {
+  display: none;
+}
+
+.sugestoes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sugestao {
+  width: 100%;
+  min-height: var(--control-h-sm);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: var(--fs-sm);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.sugestao:hover:not(:disabled) {
+  border-color: var(--color-brand);
+}
+
+.sugestao:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.sugestao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.messageGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 82%;
+  min-width: 0;
+}
+
+.userRow .messageGroup {
+  align-items: flex-end;
+}
+
+.messageGroup .bubble {
+  max-width: 100%;
+}
+
+.produtos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }

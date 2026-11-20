@@ -10,3 +10,4 @@ export { default as useCheckoutIniciado } from "./useCheckoutIniciado";
 export { default as usePedidos } from "./usePedidos";
 export { default as usePerfil } from "./usePerfil";
 export { default as useEnderecos } from "./useEnderecos";
+export { default as useChat } from "./useChat";

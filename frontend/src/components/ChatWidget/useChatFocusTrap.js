@@ -11,7 +11,7 @@ export function useChatFocusTrap(aberto, painelRef, fecharChat) {
     if (!aberto) return;
 
     const timer = setTimeout(() => {
-      const inputEl = painelRef.current?.querySelector("input");
+      const inputEl = painelRef.current?.querySelector("textarea");
       inputEl?.focus();
     }, 50);
 
@@ -24,7 +24,7 @@ export function useChatFocusTrap(aberto, painelRef, fecharChat) {
 
       if (e.key === "Tab") {
         const focusable = painelRef.current?.querySelectorAll(
-          'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
         );
         if (!focusable || focusable.length === 0) return;
 

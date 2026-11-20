@@ -67,7 +67,7 @@ app.use(
   criarLimitador({
     janelaMs: 60000,
     maximo: 30,
-    mensagem: "Muitas requisições ao assistente. Tente novamente em instantes.",
+    mensagem: "Muitas mensagens em pouco tempo. Aguarde um instante.",
   }),
 );
 app.use(
