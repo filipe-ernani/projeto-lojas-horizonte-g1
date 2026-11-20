@@ -42,6 +42,7 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D23 | Premissas do gerador do histórico do site | Proposta |
 | D24 | Contrato da camada gold | Proposta |
 | D25 | Avaliações sintéticas do site, calibradas pelo Olist | Proposta |
+| D26 | Orquestração com um Job do Databricks, a partir do main | Aceita |
 
 ---
 
@@ -337,3 +338,14 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 - **Alternativas descartadas:** textos reais do Olist (falam do pedido e da entrega, não do produto, e não têm SKU do catálogo, D12); texto gerado por IA (não reproduzível nem verificável).
 - **Resultado** (seed 42; conteúdo idêntico a cada execução): 2.584 linhas, sendo 2.558 avaliações e 26 duplicadas; 13 com nota inválida e 13 com SKU sem cadastro; mediana de 9 avaliações por SKU, 3 SKUs sem avaliação.
 - **Substitui:** a limitação da D23 sobre a origem das avaliações.
+
+## D26 · Orquestração com um Job do Databricks, a partir do main
+
+- **Data:** 2026-11-20
+- **Status:** Aceita
+- **Contexto:** os notebooks rodavam um a um, à mão. A demo e a carga ao vivo (#14) precisam rodar o pipeline inteiro com um comando, na ordem certa.
+- **Decisão:** um Job do Databricks (`horizonte_pipeline`), definido em `databricks/jobs/horizonte_pipeline.json`, com uma tarefa por notebook: `00_setup`; três ramos em paralelo, um por fonte (01→03, 06→07, 08→09); depois 10, 11 e 12. O código vem do `main` do GitHub (`git_source`): o Job roda só o que passou por PR, e cada execução fica ligada a um commit. Compute serverless, uma execução por vez, disparo sob demanda (botão ou `demo.sh` da #14).
+- **Fora do Job:** `02_perfil_olist`, `04_calibracao_catalogo` e `05_sazonalidade`, que são análises de uma vez só, não etapas do pipeline.
+- **Ajuste:** a `dim_produto` passou do notebook 10 para o início do 09, que é o primeiro a usá-la. Antes, o 09 dependia de uma tabela criada depois dele e só funcionava porque ela já existia.
+- **Alternativas descartadas:** Airflow em Docker (infraestrutura a mais para manter, e Docker ainda não liberado na máquina corporativa); Lakeflow pipelines (limite de um pipeline ativo por tipo no Free Edition e reescrita dos notebooks).
+- **Equivalente no GCP:** Dataform com uma *workflow configuration* (ordem pelas dependências entre as tabelas), agendada ou disparada por arquivo novo no Cloud Storage. O Cloud Composer foi descartado pelo custo fixo alto para o porte.
