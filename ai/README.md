@@ -25,11 +25,11 @@ o arquivo sem dependências adicionais.
 | `DATABRICKS_SERVER_HOSTNAME` | Server Hostname em Connection Details do warehouse, sem `https://` |
 | `DATABRICKS_HTTP_PATH` | HTTP Path do SQL warehouse, no formato `/sql/1.0/warehouses/...` |
 | `DATABRICKS_TOKEN` | Token com acesso ao warehouse e leitura das tabelas |
-| `DATABRICKS_CATALOG_TABLE` | Nome completo real: `catalogo.schema.tabela` |
+| `DATABRICKS_CATALOG_TABLE` | Catálogo atual: `horizonte.gold.gold_catalogo` |
 | `DATABRICKS_CATALOG_PRODUCT_ID_COLUMN` | Coluna de produto; contrato confirmado: `sku` |
 | `DATABRICKS_CATALOG_CATEGORY_COLUMN` | Coluna de categoria; contrato confirmado: `categoria` |
-| `DATABRICKS_REVIEWS_TABLE` | Nome completo da tabela tratada de reviews; fonte atual: `workspace.default.reviews_atualizado` |
-| `DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN` | Chave de produto nos reviews; fonte atual: `sku` |
+| `DATABRICKS_REVIEWS_TABLE` | Tabela tratada de comentários; deixar vazia enquanto a nova tabela não estiver disponível |
+| `DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN` | Chave de produto nos reviews; preencher junto com a tabela após confirmar o vínculo |
 | `DATABRICKS_SOCKET_TIMEOUT_SECONDS` | Timeout de rede; padrão 30 segundos, entre 1 e 300 |
 | `DATABRICKS_STATEMENT_TIMEOUT_SECONDS` | Timeout SQL da sessão; padrão 60 segundos, entre 1 e 300 |
 | `RUN_DATABRICKS_INTEGRATION` | `1` habilita testes reais; desabilitados por padrão |
@@ -115,9 +115,11 @@ e [limitações da Free Edition](https://docs.databricks.com/gcp/en/getting-star
 
 As funções `build_product_documents` e `build_review_documents` em
 `retrieval/document_loader.py` recebem os registros já consultados, sem acesso à rede.
-O catálogo usa `nome`, `modelo`, `categoria` e `grupo`, colunas
-verificadas no Databricks em 16/11/2026. Preço, custo e popularidade permanecem na
-referência de origem e não são utilizados como texto de recuperação.
+O catálogo usa `nome`, `modelo`, `categoria`, `grupo`, `tipo`, `variacao`, `cor`,
+`descricao` e `ocasioes` como texto de recuperação. Os campos adicionais foram
+confirmados em `horizonte.gold.gold_catalogo` em 20/11/2026. Preços, URLs, contadores
+de vendas e identificadores não participam do texto BM25; os campos originais
+permanecem na referência de origem.
 
 ```python
 import os
@@ -370,8 +372,15 @@ Atualização em **18/11/2026**, após a inclusão de `review_id`:
 ### Buscar produtos com maiores notas
 
 A regra escolhida é a **média das avaliações de cada SKU**, acompanhada da quantidade
-de reviews. Não se usa a maior nota isolada nem o score BM25 como nota do produto.
-A média é calculada uma vez na carga, usando a coluna `nota` dos reviews válidos,
+de avaliações. No catálogo novo, `nota_media` e `qtd_avaliacoes` alimentam
+`average_rating` e `review_count`, inclusive sem uma tabela de comentários. A nota
+deve ser numérica, finita, entre 1 e 5, com uma contagem inteira positiva; uma
+contagem zero mantém a nota indisponível. Valores ausentes ou inválidos não geram
+uma nota inventada. Esses agregados do catálogo não são substituídos por uma
+amostra parcial de comentários carregados depois.
+
+Não se usa a maior nota isolada nem o score BM25 como nota do produto. Para fontes
+sem as colunas agregadas, a média é calculada uma vez na carga usando a coluna `nota` dos reviews válidos,
 inclusive avaliações sem comentário. IDs repetidos contam uma vez; vínculos ambíguos,
 IDs ausentes e notas inválidas são excluídos. São válidas notas numéricas finitas de
 1 a 5. Produtos sem notas ficam com `average_rating=None` e `review_count=0`.
@@ -442,10 +451,30 @@ Validação da ordenação por nota em **18/11/2026**:
 
 `agente_horizonte/agent.py` expõe um único `root_agent`, descoberto pelo Google ADK.
 Na carga do agente, `tools.initialize_index()` reutiliza o carregador existente para
-obter catálogo e reviews uma vez e construir o BM25 em memória. O contrato atual dos
-reviews usa `review_id`, `comentario` e `nota`, com SKU definido na configuração
-existente. As tabelas e colunas do catálogo e dos reviews precisam estar configuradas.
-As perguntas seguintes não consultam o Databricks.
+obter o catálogo e construir o BM25 em memória. Reviews são opcionais: com
+`DATABRICKS_REVIEWS_TABLE` e `DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN` vazios, a carga
+usa somente o catálogo, preservando suas notas e quantidades agregadas. Configuração
+parcial de reviews continua gerando erro. O mapeamento existente de comentários usa
+`review_id`, `comentario` e `nota`; confirmar esse contrato quando a nova tabela for
+entregue e preencher ambas as variáveis. As perguntas seguintes não consultam o Databricks.
+
+Configuração atual do novo workspace:
+
+```dotenv
+DATABRICKS_CATALOG_TABLE=horizonte.gold.gold_catalogo
+DATABRICKS_CATALOG_PRODUCT_ID_COLUMN=sku
+DATABRICKS_CATALOG_CATEGORY_COLUMN=categoria
+DATABRICKS_REVIEWS_TABLE=
+DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN=
+```
+
+Validação do novo catálogo em **20/11/2026**: os **3 testes de integração de
+catálogo passaram**, incluindo filtros e reconstrução do BM25. A inicialização real
+das ferramentas carregou **200 produtos e 0 comentários**, retornou os novos campos
+nos detalhes e encontrou produtos por ocasião. Nesta carga, nenhum produto tinha
+nota agregada válida; a busca por maiores notas retornou `no_results`. O mapeamento
+de notas `Decimal` e contagens positivas foi validado com dados sintéticos. Não houve
+chamada ao Gemini nessa verificação; a nova tabela de comentários permanece pendente.
 
 ### Configuração e execução
 
@@ -502,6 +531,11 @@ evitar versionar sessões, artefatos e traces gerados durante o desenvolvimento.
   comentários inventados.
 - Os retornos são serializáveis em JSON. Preços `Decimal` e datas de origem são
   representados como texto, preservando seu valor sem inventar moeda ou atualização.
+- Os atributos públicos do catálogo incluem modelo, categoria, grupo, tipo, material
+  (`variacao`), cor, preço, descrição, ocasiões, URL de imagem e contadores de vendas.
+  Notas e quantidades são expostas como `average_rating` e `review_count`. Vendas não
+  representam estoque atual. A ausência de comentários individuais não invalida uma
+  nota agregada existente; o Hori deve explicar a limitação sem inventar opiniões.
 - `status=no_results` significa ausência de correspondências. `status=unavailable`
   significa que a carga inicial falhou. As instruções exigem explicitar a diferença
   e não inventar produtos, atributos ou avaliações. A falha de uma recarga explícita

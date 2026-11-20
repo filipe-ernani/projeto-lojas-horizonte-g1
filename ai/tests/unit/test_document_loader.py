@@ -1,4 +1,5 @@
 from copy import deepcopy
+from decimal import Decimal
 from unittest.mock import Mock
 
 import pytest
@@ -59,6 +60,29 @@ def test_partial_product_text_and_configured_identifier():
     )
     assert documents[0]["product_id"] == "001"
     assert documents[0]["tokens"] == ["calcados"]
+
+
+@pytest.mark.parametrize(
+    ("rating", "count", "expected_rating", "expected_count"),
+    [
+        (Decimal("4.75"), 12, 4.75, 12),
+        (None, 0, None, 0),
+        (Decimal("4.75"), 0, None, 0),
+        (6, 3, None, 3),
+        (float("nan"), 3, None, 3),
+        (True, 3, None, 3),
+        ("4.75", 3, None, 3),
+        (4.75, -1, None, None),
+        (4.75, None, None, None),
+        (4.75, True, None, None),
+    ],
+)
+def test_catalog_rating_aggregates_are_validated(rating, count, expected_rating, expected_count):
+    row = {"sku": "sku-1", "nome": "Camiseta", "nota_media": rating, "qtd_avaliacoes": count}
+    document = build_product_documents([row], source="test.default.catalog")[0]
+    assert document["average_rating"] == expected_rating
+    assert document["review_count"] == expected_count
+    assert document["source"]["row"] == row
 
 
 @pytest.mark.parametrize("product_id", [None, "", "  ", ["sku-1", "sku-2"], {"sku": "sku-1"}])
@@ -272,6 +296,30 @@ def test_unconfigured_reviews_fail_before_query(monkeypatch, databricks_loader):
         load_documents_from_databricks(review_id_field="review_id", review_text_fields=("comment",))
     products.assert_not_called()
     reviews.assert_not_called()
+
+
+def test_catalog_loads_when_both_review_settings_are_empty(monkeypatch, databricks_loader):
+    products, reviews = databricks_loader
+    monkeypatch.setenv("DATABRICKS_REVIEWS_TABLE", "")
+    monkeypatch.setenv("DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN", "")
+    documents = load_documents_from_databricks(
+        review_id_field="review_id", review_text_fields=("comment",)
+    )
+    assert [document["type"] for document in documents] == ["product"]
+    products.assert_called_once_with(limit=None)
+    reviews.assert_not_called()
+
+
+def test_catalog_aggregates_are_not_replaced_by_partial_reviews(databricks_loader):
+    products, reviews = databricks_loader
+    products.return_value[0].update(nota_media=Decimal("4.75"), qtd_avaliacoes=20)
+    reviews.return_value[0]["nota"] = 1
+    documents = load_documents_from_databricks(
+        review_id_field="review_id", review_text_fields=("comment",)
+    )
+    assert documents[0]["average_rating"] == 4.75
+    assert documents[0]["review_count"] == 20
+    assert documents[1]["source"]["row"]["nota"] == 1
 
 
 @pytest.mark.parametrize("failing_source", ["catalog", "reviews"])

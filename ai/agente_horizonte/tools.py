@@ -91,7 +91,21 @@ def _public_document(document: dict[str, Any]) -> dict[str, Any]:
         row.get("nome_produto"),
     )
     fields = (
-        ("modelo", "categoria", "grupo", "preco", "popularidade")
+        (
+            "modelo",
+            "categoria",
+            "grupo",
+            "tipo",
+            "variacao",
+            "cor",
+            "preco",
+            "descricao",
+            "ocasioes",
+            "imagem_url",
+            "unidades_vendidas",
+            "unidades_30_dias",
+            "popularidade",
+        )
         if document["type"] == "product"
         else ("nota", "comentario", "data_review")
     )

@@ -1,4 +1,6 @@
+import os
 from collections.abc import Sequence
+from decimal import Decimal
 from math import isfinite
 from typing import Any
 
@@ -46,9 +48,35 @@ def build_product_documents(
         if product_id is None:
             continue
         document = _document(
-            row, product_id, ("nome", "modelo", "categoria", "grupo"), source, "product"
+            row,
+            product_id,
+            (
+                "nome",
+                "modelo",
+                "categoria",
+                "grupo",
+                "tipo",
+                "variacao",
+                "cor",
+                "descricao",
+                "ocasioes",
+            ),
+            source,
+            "product",
         )
         if document is not None:
+            if "nota_media" in row or "qtd_avaliacoes" in row:
+                rating, count = row.get("nota_media"), row.get("qtd_avaliacoes")
+                document["review_count"] = count if type(count) is int and count >= 0 else None
+                document["average_rating"] = (
+                    float(rating)
+                    if type(rating) in (int, float, Decimal)
+                    and isfinite(rating)
+                    and 1 <= rating <= 5
+                    and document["review_count"] is not None
+                    and document["review_count"] > 0
+                    else None
+                )
             documents.append(document)
     return documents
 
@@ -112,7 +140,7 @@ def load_documents_from_databricks(
     review_id_field: str | None = None,
     review_text_fields: Sequence[str] = (),
 ) -> list[dict[str, Any]]:
-    """Load the complete catalog; include reviews when their text fields are supplied.
+    """Load the complete catalog; include reviews when fields and source are configured.
 
     Call at startup or for an explicit rebuild, never for each user query.
     Errors propagate to the caller, leaving any existing retriever unchanged.
@@ -121,7 +149,12 @@ def load_documents_from_databricks(
         raise ValueError("Provide review_text_fields and a non-empty review_id_field when set")
 
     table, product_id, _ = catalog_identifiers()
-    review_identifiers = reviews_identifiers() if review_text_fields else None
+    review_identifiers = None
+    if review_text_fields and (
+        os.getenv("DATABRICKS_REVIEWS_TABLE", "").strip()
+        or os.getenv("DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN", "").strip()
+    ):
+        review_identifiers = reviews_identifiers()
     # SQL identifiers have already been validated; document metadata uses unquoted names.
     documents = build_product_documents(
         fetch_products(limit=None),
@@ -149,6 +182,9 @@ def load_documents_from_databricks(
                 seen_ids.add(review_id)
             ratings_by_product.setdefault(row[review_product_id], []).append(float(rating))
         for document in documents:
+            # Gold catalog aggregates remain authoritative even if comments are partial.
+            if "average_rating" in document:
+                continue
             ratings = ratings_by_product.get(document["product_id"], [])
             document["average_rating"] = sum(ratings) / len(ratings) if ratings else None
             document["review_count"] = len(ratings)

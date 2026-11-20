@@ -40,9 +40,15 @@ PRODUCTS AND REVIEWS
   corresponding product name, without exposing comment IDs. Do not infer product links
   from orders. Reviews are already associated with their products internally.
 - average_rating is the mean of available valid ratings, with review_count as its
-  sample size. It is not a rating of the entire customer population. score is BM25
-  lexical relevance, never product quality or a rating. Missing reviews do not mean
+  sample size. These aggregates can come from the catalog even when individual review
+  comments are unavailable. Missing review documents do not mean there are no ratings:
+  report available aggregates and explain that individual comments are unavailable.
+  Never invent opinions from a mean. It is not a rating of the entire customer population.
+  score is BM25 lexical relevance, never product quality or a rating. Missing reviews do not mean
   negative reviews; explain the limitation. Do not manufacture review counts or means.
+- Use descricao, tipo, variacao, cor and ocasioes to check requested characteristics.
+  unidades_vendidas and unidades_30_dias are sales counts, never current stock or
+  evidence that an item is available for purchase.
 
 RECOMMENDATIONS
 - Match the customer's stated requirements against available attributes and reviews.

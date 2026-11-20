@@ -98,6 +98,61 @@ def test_rating_search_returns_product_means_and_counts(initialized_tools):
     assert tools.search_products("", sort_by_rating=True)["results"] == results
 
 
+def test_gold_catalog_search_and_details_work_without_review_table(monkeypatch):
+    row = {
+        "sku": "HZ-001",
+        "nome": "Peça de teste",
+        "modelo": "Feminino",
+        "categoria": "Moda",
+        "grupo": "Vestuário",
+        "tipo": "Regata",
+        "variacao": "Linho",
+        "cor": "Lilás",
+        "preco": Decimal("89.90"),
+        "descricao": "Tecido respirável.",
+        "ocasioes": "festa;casamento",
+        "imagem_url": "https://example.com/imagem.jpg",
+        "nota_media": Decimal("4.75"),
+        "qtd_avaliacoes": 20,
+        "unidades_vendidas": 300,
+        "unidades_30_dias": 25,
+        "custo": 10,
+    }
+    for name, value in {
+        "DATABRICKS_CATALOG_TABLE": "horizonte.gold.gold_catalogo",
+        "DATABRICKS_CATALOG_PRODUCT_ID_COLUMN": "sku",
+        "DATABRICKS_CATALOG_CATEGORY_COLUMN": "categoria",
+        "DATABRICKS_REVIEWS_TABLE": "",
+        "DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN": "",
+        "BM25_TOP_K": "5",
+    }.items():
+        monkeypatch.setenv(name, value)
+    monkeypatch.setattr(tools, "_documents", [])
+    monkeypatch.setattr(tools, "_retriever", None)
+    products, reviews = Mock(return_value=[row]), Mock()
+    monkeypatch.setattr("agente_horizonte.retrieval.document_loader.fetch_products", products)
+    monkeypatch.setattr("agente_horizonte.retrieval.document_loader.fetch_reviews", reviews)
+
+    assert tools.initialize_index()
+    details = tools.get_product_details("Peça de teste")
+    assert details["status"] == "success"
+    assert len(details["results"]) == 1
+    product = details["results"][0]
+    assert product["average_rating"] == 4.75
+    assert product["review_count"] == 20
+    assert product["data"] == {
+        key: str(value) if isinstance(value, Decimal) else value
+        for key, value in row.items()
+        if key not in {"sku", "nome", "nota_media", "qtd_avaliacoes", "custo"}
+    }
+    for query in ("regata", "linho", "lilás", "respirável", "casamento"):
+        assert tools.search_products(query)["results"][0]["product_name"] == "Peça de teste"
+    assert tools.search_products("", sort_by_rating=True)["results"][0]["average_rating"] == 4.75
+    assert_no_internal_ids(details)
+    products.assert_called_once_with(limit=None)
+    reviews.assert_not_called()
+
+
 def test_search_respects_configured_top_k(initialized_tools, monkeypatch):
     monkeypatch.setenv("BM25_TOP_K", "1")
     assert tools.initialize_index()
