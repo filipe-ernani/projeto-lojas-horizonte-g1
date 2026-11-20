@@ -68,7 +68,7 @@ def initialize_index() -> bool:
     try:
         top_k = bm25_top_k()
         documents = load_documents_from_databricks(
-            review_id_field="review_id", review_text_fields=("comentario",)
+            review_id_field="avaliacao_id", review_text_fields=("titulo", "comentario")
         )
         retriever = BM25Retriever(documents, top_k=top_k)
     except (ValueError, ConnectionError, PermissionError, RuntimeError) as error:
@@ -91,9 +91,23 @@ def _public_document(document: dict[str, Any]) -> dict[str, Any]:
         row.get("nome_produto"),
     )
     fields = (
-        ("modelo", "categoria", "grupo", "preco", "popularidade")
+        (
+            "modelo",
+            "categoria",
+            "grupo",
+            "tipo",
+            "variacao",
+            "cor",
+            "preco",
+            "descricao",
+            "ocasioes",
+            "imagem_url",
+            "unidades_vendidas",
+            "unidades_30_dias",
+            "popularidade",
+        )
         if document["type"] == "product"
-        else ("nota", "comentario", "data_review")
+        else ("nota", "titulo", "comentario", "data")
     )
     result = {
         "product_name": _redact_internal_ids(product_name) if product_name else None,
