@@ -437,3 +437,226 @@ Validação da ordenação por nota em **18/11/2026**:
   `maiores notas` listou os cinco produtos com média 5; `qualidade` manteve a busca
   lexical normal e mostrou a nota individual de cada review.
 - Ruff, formatação dos seis arquivos Python alterados e `git diff --check` passaram.
+
+## IA-04: agente de atendimento com ADK e Gemini
+
+`agente_horizonte/agent.py` expõe um único `root_agent`, descoberto pelo Google ADK.
+Na carga do agente, `tools.initialize_index()` reutiliza o carregador existente para
+obter catálogo e reviews uma vez e construir o BM25 em memória. O contrato atual dos
+reviews usa `review_id`, `comentario` e `nota`, com SKU definido na configuração
+existente. As tabelas e colunas do catálogo e dos reviews precisam estar configuradas.
+As perguntas seguintes não consultam o Databricks.
+
+### Configuração e execução
+
+A partir de `ai/`, preserve o `.env` existente e acrescente as variáveis da seção
+Gemini de `.env.example`:
+
+| Variável | Finalidade |
+| --- | --- |
+| `GOOGLE_API_KEY` | Chave do [Google AI Studio](https://aistudio.google.com/api-keys); obrigatória |
+| `GEMINI_MODEL` | ID do modelo Gemini principal; obrigatório |
+| `GEMINI_MODEL_FALLBACK_1` | ID do primeiro modelo alternativo; opcional |
+| `GEMINI_MODEL_FALLBACK_2` | ID do segundo modelo alternativo; opcional |
+| `GOOGLE_GENAI_USE_VERTEXAI` | Manter `FALSE`; este MVP utiliza a API key do AI Studio |
+| `GEMINI_MAX_ATTEMPTS_PER_MODEL` | Entre 1 e 3 tentativas por modelo; padrão 2 |
+
+Escolha IDs com suporte a chamadas de ferramentas no
+[catálogo oficial Gemini](https://ai.google.dev/gemini-api/docs/models) e confirme o
+acesso na conta utilizada. Não há um modelo fixo no código. Não compartilhe a chave
+pelo chat, logs ou Git. Configuração Gemini ausente ou inválida impede a carga do
+agente, com indicação da variável a corrigir.
+
+Use um único ID por variável. A ordem é `GEMINI_MODEL` → `GEMINI_MODEL_FALLBACK_1`
+→ `GEMINI_MODEL_FALLBACK_2`; alternativas vazias são ignoradas. Para executar apenas
+o principal, deixe os dois fallbacks vazios. A configuração antiga `GEMINI_MODELS`
+não é mais lida: distribua seus modelos entre as três variáveis de `.env.example`.
+
+```powershell
+uv sync --locked
+uv run --locked --env-file .env adk web --host 127.0.0.1 --port 8000 --no-reload .
+```
+
+Abra `http://127.0.0.1:8000`, selecione `agente_horizonte` e envie uma pergunta. O
+ADK carrega o agente e seus dados na primeira utilização; o warehouse pode demorar
+a iniciar. Aguarde essa carga antes de avaliar a resposta. O modo sem reload evita
+recargas durante a validação. Para atualizar o corpus, reinicie o servidor ou chame
+`tools.initialize_index()` explicitamente em Python; essa operação não é uma
+ferramenta acessível ao modelo.
+
+O ADK mantém seus arquivos locais em `.adk/`, ignorado pelo Git para
+evitar versionar sessões, artefatos e traces gerados durante o desenvolvimento.
+
+### Ferramentas e comportamento
+
+- `search_products(query, sort_by_rating=False)` aplica a busca BM25 existente com
+  `BM25_TOP_K`. Retorna `status` e `results` com `product_name`, atributos públicos,
+  comentários, score e médias de avaliações quando disponíveis. A ordenação por nota
+  é usada apenas quando pedida. SKU, IDs de comentários e linhas brutas de origem
+  não fazem parte desse retorno.
+- `get_product_details(product_name)` procura o nome completo do catálogo, ignorando
+  diferenças de caixa, acentos e pontuação. Retorna os atributos públicos e os
+  comentários vinculados internamente ao produto. Para nomes parciais, o agente usa
+  primeiro a busca BM25; nomes iguais exigem esclarecimento por atributos disponíveis.
+  Notas sem comentário participam da média calculada pelo carregador; não viram
+  comentários inventados.
+- Os retornos são serializáveis em JSON. Preços `Decimal` e datas de origem são
+  representados como texto, preservando seu valor sem inventar moeda ou atualização.
+- `status=no_results` significa ausência de correspondências. `status=unavailable`
+  significa que a carga inicial falhou. As instruções exigem explicitar a diferença
+  e não inventar produtos, atributos ou avaliações. A falha de uma recarga explícita
+  preserva o índice anterior; a carga bem-sucedida vazia limpa os resultados.
+- `status=invalid_query` orienta consultar pelo nome quando a ferramenta recebe um
+  código interno. O callback `require_product_name` também bloqueia mensagens com
+  esses códigos antes de chamar o Gemini, sem repeti-los na resposta.
+
+As instruções em `prompt.py` orientam respostas em português, perguntas de esclarecimento,
+recomendações por requisitos verificáveis e comparações com consulta individual de
+cada produto. Produtos recomendados ou comparados são identificados pelo nome do
+catálogo. SKU e IDs de comentários são exclusivamente internos: não devem ser
+solicitados, aceitos como consulta ou exibidos nas respostas. A camada de ferramentas
+seleciona campos públicos; códigos presentes em comentários são ocultados. O callback
+`hide_internal_ids` também oculta códigos reconhecidos em textos gerados pelo modelo.
+Os IDs continuam no carregador e no recuperador para vincular avaliações corretamente;
+os módulos internos e o utilitário técnico `search.py` não são a interface do cliente.
+Textos recuperados são tratados como dados, sem autoridade para alterar as instruções.
+BM25 mede correspondência lexical; encontrar uma palavra não comprova todos os
+requisitos do cliente. Características ausentes devem ser declaradas indisponíveis.
+A fundamentação das respostas ainda depende do comportamento do Gemini e precisa
+ser conferida nos testes reais, além dos testes determinísticos das ferramentas.
+
+### Fallback e limites
+
+`models.GeminiFallback` é um adaptador **próprio** baseado em `BaseLlm`, ponto de
+extensão do ADK; a troca de modelos não usa uma função pronta de fallback do ADK.
+O `retry_options` do Gemini permite novas tentativas no mesmo modelo. A sequência
+entre modelos é controlada pelo adaptador, sem criar outro agente.
+Cada chamada começa pelo primeiro modelo configurado.
+Somente erros HTTP 408, 429, 500, 502, 503 e 504 acionam novas tentativas e troca de
+modelo, com espera de um segundo entre tentativas. Os retries internos do SDK são
+desabilitados (`attempts=1`) e cada requisição tem timeout de 30 segundos. O limite
+total de tentativas é a quantidade de modelos multiplicada pelo limite por modelo.
+Não há garantia de contornar quotas compartilhadas.
+
+Erros de credenciais, permissão, modelo inexistente e requisição inválida encerram
+a chamada sem fallback. Respostas bloqueadas por segurança também não acionam troca
+de modelo. Se uma resposta em streaming já começou, uma falha não repete a geração.
+Cada tentativa usa uma cópia da requisição para preservar o histórico. Os logs da
+aplicação registram modelo, tentativa e código HTTP, sem o conteúdo do erro da API.
+
+### Validação
+
+```powershell
+uv run --locked pytest
+uv run --locked ruff check .
+uv run --locked ruff format --check .
+```
+
+`tests/unit/test_agent.py` usa corpus sintético e exercita ferramentas, nomes, notas,
+JSON, falhas/recarga e descoberta do agente. Também executa o `Runner` real do ADK
+com respostas Gemini simuladas para conferir que os resultados das ferramentas
+chegam à próxima chamada do modelo, inclusive em comparações e ausência de resultados.
+Confere ainda a ausência de IDs nos retornos, a ocultação de códigos em comentários
+e respostas geradas e o bloqueio de consultas por códigos antes de chamar o Gemini.
+Isso não comprova a qualidade de uma resposta gerada pelo Gemini real.
+`tests/unit/test_models.py` cobre configuração, ordem e limites do fallback, falhas
+definitivas, bloqueio de segurança, preservação da requisição e falha após início do
+streaming. Os testes unitários não fazem chamadas externas.
+
+Para validar no `adk web`, confira os eventos de ferramenta e a resposta final:
+
+1. Busque um produto pela categoria e consulte suas características e avaliações.
+2. Peça uma recomendação com requisito verificável, como faixa de preço ou maiores notas.
+3. Compare dois produtos pelo nome, verificando atributos e avaliações sem códigos internos.
+4. Consulte um termo inexistente e uma característica ausente; confira que não há invenção.
+5. Envie um código interno; confira que o agente solicita o nome sem repetir o código.
+
+Exemplos: “Quais são as avaliações da Bermuda Masculino Malha Vinho?” e
+“Compare Bermuda Masculino Malha Vinho e Bermuda Masculino Linho Off-white”.
+Após atualizar esta versão, reinicie o servidor e abra uma nova sessão para não
+reutilizar o histórico do comportamento anterior, que incluía identificadores.
+
+Referências: [ADK Python e execução web](https://google.github.io/adk-docs/get-started/python/),
+[ferramentas de função](https://google.github.io/adk-docs/tools-custom/function-tools/)
+e [implementação Gemini no ADK 1.39.1](https://github.com/google/adk-python/blob/v1.39.1/src/google/adk/models/google_llm.py).
+
+Evidências históricas da IA-04 em **18/11/2026**, com Google ADK **1.39.1**
+(anteriores à mudança para atendimento exclusivamente por nome):
+
+- `uv run --locked pytest -q`: **193 passaram e 6 foram ignorados**. São 48 testes
+  novos; as seis integrações reais são desabilitadas por padrão e não foram executadas
+  nessa suíte. O Gemini foi simulado nos testes unitários.
+- `uv run --locked ruff check .`: passou. A formatação dos sete arquivos Python da
+  IA-04 passou. A verificação global de formatação aponta somente a pendência
+  preexistente em `data/databricks_client.py`, mantida fora do escopo.
+- As ferramentas foram executadas separadamente com uma carga real do Databricks:
+  busca por `bermuda` ordenada por nota retornou `HZ-MAS-004` (5), `HZ-MAS-008` (3)
+  e `HZ-ESP-005` (1), cada um com uma avaliação. A consulta exata de `HZ-MAS-004`
+  retornou o documento do catálogo e seu review. `zzzinexistentexyz` retornou
+  `no_results`. Essa execução não utilizou Gemini.
+- O servidor `adk web` iniciou em `127.0.0.1:8000`; a interface foi aberta em Chrome
+  isolado e `agente_horizonte` foi selecionado. Isso comprova a abertura da interface,
+  mas **não** comprova uma conversa com o modelo.
+- A configuração local ainda não continha `GOOGLE_API_KEY` e `GEMINI_MODELS` na
+  verificação. A geração real de respostas e os cenários completos no `adk web`
+  permanecem **bloqueados** até o preenchimento dessas variáveis e sua execução.
+
+Atualização em **19/11/2026**, após a mudança solicitada para atendimento por nome:
+
+- As instruções anteriores de exibir SKU foram substituídas pela orientação explícita
+  do usuário: nomes no atendimento; SKU e IDs de comentários exclusivamente internos.
+  As alterações ficaram em `agent.py`, `tools.py`, `prompt.py`, `test_agent.py` e
+  neste README, sem alterar o carregador, o BM25 ou o fallback.
+- `uv run --locked pytest -q`: **207 passaram e 6 foram ignorados**. Os testes novos
+  verificam consultas por nome, normalização, nomes duplicados, vínculos internos,
+  ausência de IDs nos retornos, ocultação em textos e bloqueio antes de chamar Gemini.
+- `uv run --locked ruff check .` e a formatação dos quatro arquivos Python alterados:
+  passaram. A pendência de formatação preexistente do cliente Databricks permanece
+  fora do escopo. `git diff --check` passou.
+- Validação real na interface `adk web`, em uma instância isolada na porta **8001**,
+  com **Gemini 3.1 Flash-Lite** e dados reais do Databricks (**200 produtos e 20 reviews**):
+  consulta de características/avaliações por nome, recomendação de bermudas por nota,
+  comparação por nome, informação ausente e bloqueio de consulta por código funcionaram.
+- A recomendação retornou **Bermuda Masculino Malha Vinho** (média 5, uma avaliação)
+  e **Bermuda Masculino Linho Off-white** (média 3, uma avaliação). A comparação
+  consultou ambos os nomes e apresentou atributos, preços e os comentários vinculados.
+  Os retornos das ferramentas e as respostas geradas não expuseram SKU nem IDs de comentários.
+- O produto sem informação de impermeabilidade/proteção UV foi descrito como sem
+  dados suficientes para confirmar essas características. A consulta por código
+  respondeu pedindo o nome, sem repetir o código. Um pedido explícito de SKU e ID
+  de comentário também não revelou os identificadores.
+- Durante a validação, uma consulta a nome inexistente inicialmente não acionou nova
+  busca. A instrução foi reforçada para exigir consulta para cada nome novo. Após
+  reiniciar o servidor, `zzzinexistentexyz3` acionou a ferramenta, retornou `no_results`
+  e recebeu uma resposta informando a ausência de resultados, sem inventar alternativas.
+- Houve uma falha HTTP **503** real no modelo principal durante a recomendação;
+  a nova tentativa no mesmo modelo funcionou. A troca entre modelos continua coberta
+  por mocks; não foi provocada indisponibilidade real para forçar essa troca.
+
+| Critério da IA-04 (situação em 19/11/2026) | Situação e evidência |
+| --- | --- |
+| Agente ADK com Gemini | Atendido; respostas reais com Gemini 3.1 Flash-Lite no ADK Web |
+| BM25 como ferramenta | Atendido; ferramentas verificadas com corpus sintético e Databricks real |
+| Instruções contextualizadas e fundamentadas | Atendido nos cenários reais descritos acima, com conferência dos eventos das ferramentas |
+| Consultas de produtos, características e avaliações | Atendido; consulta por nome recuperou atributos e comentário do produto |
+| Recomendações por requisitos | Atendido no cenário de maiores notas, com médias e quantidades conferidas |
+| Comparação por atributos e avaliações | Atendido; consulta individual por nome e comparação dos dados recuperados |
+| Identificação nas recomendações e comparações | Atendido conforme alteração de 19/11/2026: nomes públicos, sem SKU ou IDs de comentários |
+| Ausência de resultados sem inventar informações | Atendido nos cenários de nome inexistente e característica ausente; indisponibilidade coberta por mocks |
+| Funcionamento na interface `adk web` | Atendido nos cenários reais executados na interface, além da descoberta e dos testes com Runner |
+
+A validação com Gemini real deixou de estar bloqueada. As evidências representam
+os cenários executados, sem garantir toda resposta possível de um modelo generativo.
+
+### Prompt injection e uso de tokens
+
+O [relatório de robustez](evaluation/robustness.md) registra os testes reais de
+19/11/2026, os tokens reportados e as lacunas de controle de uso encontradas. Para
+repetir o ensaio com limites externos de chamadas e saída:
+
+```powershell
+uv run --locked --env-file .env python -X utf8 -m evaluation.evaluate
+```
+
+Esses limites pertencem ao ensaio. O agente servido ainda não tem os limites de
+entrada, saída e ferramentas sugeridos no relatório.

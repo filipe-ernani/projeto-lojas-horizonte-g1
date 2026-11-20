@@ -1,5 +1,5 @@
 """
-Environment configuration for read-only Databricks access.
+Environment configuration for Databricks, retrieval and Gemini.
 """
 
 import os
@@ -77,4 +77,31 @@ def bm25_top_k() -> int:
         raise ValueError("BM25_TOP_K must be a positive integer") from None
     if value < 1:
         raise ValueError("BM25_TOP_K must be a positive integer")
+    return value
+
+
+def gemini_models() -> tuple[str, ...]:
+    _required_env("GOOGLE_API_KEY")
+    if os.getenv("GOOGLE_GENAI_USE_VERTEXAI", "false").strip().lower() not in {"", "false", "0"}:
+        raise ValueError("Use a Google AI Studio API key; Vertex AI is not supported")
+    models = []
+    for name in ("GEMINI_MODEL", "GEMINI_MODEL_FALLBACK_1", "GEMINI_MODEL_FALLBACK_2"):
+        model = _required_env(name) if name == "GEMINI_MODEL" else os.getenv(name, "").strip()
+        if not model:
+            continue
+        if not re.fullmatch(r"gemini-[A-Za-z0-9][A-Za-z0-9._-]*", model):
+            raise ValueError(f"{name} must contain one Gemini model ID")
+        models.append(model)
+    return tuple(models)
+
+
+def gemini_max_attempts_per_model() -> int:
+    try:
+        value = int(os.getenv("GEMINI_MAX_ATTEMPTS_PER_MODEL", "2"))
+    except ValueError:
+        raise ValueError(
+            "GEMINI_MAX_ATTEMPTS_PER_MODEL must be an integer between 1 and 3"
+        ) from None
+    if not 1 <= value <= 3:
+        raise ValueError("GEMINI_MAX_ATTEMPTS_PER_MODEL must be an integer between 1 and 3")
     return value
