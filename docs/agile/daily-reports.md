@@ -49,3 +49,18 @@
 * **Decisões Arquiteturais e de Escopo:** 
   1. Devido à complexidade e cota, a equipa não irá gerar as 200 imagens de produtos via IA. O Frontend usará *placeholders* (imagens genéricas em SVG) para fins de demonstração.
   2. Os dados da API do Frontend servirão apenas para simulação local; a camada Gold do Databricks será a verdadeira "fonte da verdade" do projeto.
+    
+---
+
+## Daily 05 - 19/11/2026 (Alinhamento Final & Ensaio)
+**Status do Projeto:** 🟢 No prazo para apresentação (23/11)
+
+* **O que foi feito:** Apresentação funcional da IA "Ori" (Emanuel) integrada com interface visual. Roteiro e divisão de tempo da apresentação final aprovados pela equipa.
+* **Em andamento:** 
+  * Caio (Frontend): Configuração do Docker Compose para subir toda a aplicação (API, Banco, IA e Frontend) simultaneamente na máquina local.
+  * Diego (Dados): Finalização da Tabela Gold para alimentar o agente de IA.
+  * Filipe (PMO): Montagem dos slides visuais baseados no roteiro estruturado na D4.
+* **Decisões Estratégicas:** 
+  1. **Arquitetura Prática:** Confirmado que o MVP rodará via Docker Compose na máquina local, mas consultando a tabela Gold no Databricks, simulando um Bucket GCP.
+  2. **Firebase:** Adoção do Firebase para autenticação (login Google/email). PMO adicionará esta dependência à proposta técnica de custos.
+  3. **Escopo IA:** A IA (Ori) fará previsão de demanda focada em redução de estoque no dashboard administrativo, além de responder a clientes no chat.
