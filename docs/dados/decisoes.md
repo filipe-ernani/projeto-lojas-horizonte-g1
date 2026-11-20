@@ -41,6 +41,7 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D22 | Consumidores leem a gold no workspace do pipeline, só com leitura | Aceita |
 | D23 | Premissas do gerador do histórico do site | Proposta |
 | D24 | Contrato da camada gold | Proposta |
+| D25 | Avaliações sintéticas do site, calibradas pelo Olist | Proposta |
 
 ---
 
@@ -323,3 +324,16 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 - **Receita e ticket médio sem frete em todos os canais:** o ERP não tem frete e o marketplace foi tratado sem frete (D20); o contrato com a API calcula o ticket com frete, mas isso deixaria os canais incomparáveis. O frete do site continua disponível na silver.
 - **Ticket e taxas de um período** são calculados somando numerador e denominador, nunca pela média dos valores diários.
 - **Limitações:** estoque só da loja física (D23); margem do marketplace estimada (D20).
+
+## D25 · Avaliações sintéticas do site, calibradas pelo Olist
+
+- **Data:** 2026-11-20
+- **Status:** Proposta (validar colunas com Caio e Emanuel)
+- **Contexto:** o agente (D21) precisa de avaliações com nota e texto ligadas ao SKU. A D23 previa que viriam de uma tabela do Emanuel e do Henry; essa tabela foi descartada.
+- **Decisão:** as avaliações são geradas por `data/geradores/gera_avaliacoes.py` a partir dos pedidos finalizados do histórico do site, com seed fixa e números e frases na seção `avaliacoes` do `parametros.yaml`. Cada avaliação pertence a um item comprado (mesmo `usuario_hash`, `pedido_id` e `sku`), uma por cliente e SKU, com data posterior à compra e anterior ao corte. Colunas propostas para o `avaliacoes.csv` da v1.1: `avaliacao_id, pedido_id, sku, usuario_hash, nota, titulo, comentario, avaliado_em, updated_at, origem`.
+- **Calibração pelo Olist** (`olist_order_reviews`, notebook `02_perfil_olist`, seções 6 e 7): distribuição das notas, chance de comentário e de título por nota e prazo até avaliar (mediana de 13 dias, p90 de 26).
+- **Premissas:** 10% dos itens recebem avaliação (no Olist a pesquisa é automática; avaliação voluntária fica entre 3% e 10% no mercado); qualidade por SKU (algumas notas médias bem acima ou abaixo da média, mantendo a distribuição geral do Olist); textos montados por regra a partir da nota e do tipo de produto.
+- **Sujeira plantada:** 1% de linhas duplicadas, 0,5% de nota inválida (0 ou 6) e 0,5% de SKU sem cadastro. Comentário vazio não é sujeira: a silver marca, mas a avaliação é válida.
+- **Alternativas descartadas:** textos reais do Olist (falam do pedido e da entrega, não do produto, e não têm SKU do catálogo, D12); texto gerado por IA (não reproduzível nem verificável).
+- **Resultado** (seed 42; conteúdo idêntico a cada execução): 2.584 linhas, sendo 2.558 avaliações e 26 duplicadas; 13 com nota inválida e 13 com SKU sem cadastro; mediana de 9 avaliações por SKU, 3 SKUs sem avaliação.
+- **Substitui:** a limitação da D23 sobre a origem das avaliações.
