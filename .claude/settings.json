@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(./frontend/**)",
+      "Read(./backend/**)",
+      "Read(./docs/**)",
+      "Edit(./frontend/src/**)",
+      "Edit(./backend/src/**)",
+      "Edit(./backend/scripts/**)",
+      "Edit(./backend/db/**)",
+      "Edit(./docs/**)",
+      "Bash(npm --prefix frontend run lint)",
+      "Bash(npm --prefix frontend run build)",
+      "Bash(npm --prefix backend run:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(docker ps:*)"
+    ],
+    "deny": [
+      "Read(./backend/.env)",
+      "Read(./frontend/.env)",
+      "Read(./.env)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git reset:*)",
+      "Bash(rm:*)",
+      "Bash(del:*)"
+    ]
+  }
+}

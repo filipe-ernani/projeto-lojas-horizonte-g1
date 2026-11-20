@@ -1,0 +1,153 @@
+.widgetWrapper {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Botão flutuante no canto inferior direito */
+.floatingTrigger {
+  position: fixed;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  z-index: 1000;
+  outline: none;
+}
+
+.floatingButton {
+  width: 48px !important;
+  height: 48px !important;
+  background-color: var(--color-brand) !important;
+  color: var(--color-brand-contrast) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .floatingTrigger {
+    bottom: var(--space-8);
+    right: var(--space-8);
+  }
+
+  .floatingButton {
+    width: 60px !important;
+    height: 60px !important;
+  }
+}
+
+.floatingButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.floatingButton:focus-visible {
+  outline: 2px solid var(--color-brand-contrast);
+  outline-offset: 2px;
+}
+
+/* Painel de diálogo do chat */
+.dialogPanel {
+  position: fixed;
+  top: var(--space-6);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: calc(100dvh - var(--space-6));
+  background-color: var(--color-paper);
+  border-top: 1px solid var(--color-line);
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+}
+
+@media (min-width: 640px) {
+  .dialogPanel {
+    top: auto;
+    left: auto;
+    bottom: calc(var(--space-8) + 72px);
+    right: var(--space-8);
+    width: 380px;
+    height: 560px;
+    max-height: calc(100dvh - 120px);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+  }
+}
+
+/* Cabeçalho do painel com --color-brand e texto --color-brand-contrast */
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-brand);
+  color: var(--color-brand-contrast);
+}
+
+.headerTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.headerIcon {
+  color: var(--color-brand-contrast);
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  color: var(--color-brand-contrast);
+}
+
+.closeButton {
+  color: var(--color-brand-contrast) !important;
+  background: transparent !important;
+}
+
+.closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Barra inferior de entrada de texto */
+.inputForm {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--color-card);
+  border-top: 1px solid var(--color-line);
+}
+
+.fieldWrapper {
+  flex: 1;
+}
+
+.inputField {
+  margin-bottom: 0 !important;
+}
+
+.sendButton {
+  width: 44px !important;
+  height: 44px !important;
+  background-color: var(--color-brand) !important;
+  color: var(--color-brand-contrast) !important;
+  border-radius: var(--radius-md) !important;
+  flex-shrink: 0;
+}
+
+.sendButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

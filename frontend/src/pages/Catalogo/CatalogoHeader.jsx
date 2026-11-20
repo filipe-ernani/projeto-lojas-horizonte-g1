@@ -1,0 +1,73 @@
+import { SlidersHorizontal } from "lucide-react";
+import Button from "@/components/ui/Button/Button";
+import Select from "@/components/ui/Select/Select";
+import styles from "./CatalogoHeader.module.css";
+
+const OPCOES_ORDENACAO = [
+  { value: "relevancia", label: "Relevância" },
+  { value: "menor-preco", label: "Menor preço" },
+  { value: "maior-preco", label: "Maior preço" },
+  { value: "recentes", label: "Mais recentes" },
+];
+
+/**
+ * Cabeçalho do Catálogo conforme docs/DESIGN.md:
+ * Título, contagem de produtos, seletor de ordenação e botão mobile para abrir filtros.
+ */
+export default function CatalogoHeader({
+  totalProdutos = 0,
+  ordenar = "relevancia",
+  busca = "",
+  carregando = false,
+  comErro = false,
+  onMudarOrdenacao,
+  onAbrirFiltrosMobile,
+}) {
+  const titulo = busca ? `Resultados para "${busca}"` : "Catálogo";
+
+  // Sem resposta da API não existe contagem: "0 produtos" pareceria lista vazia
+  let contagem = `${totalProdutos} produtos encontrados`;
+  if (carregando) {
+    contagem = "Carregando produtos...";
+  } else if (comErro) {
+    contagem = "";
+  } else if (totalProdutos === 1) {
+    contagem = "1 produto encontrado";
+  }
+
+  return (
+    <div id="catalogo-inicio" className={styles.header}>
+      <div className={styles.titleArea}>
+        <h1 className={styles.title}>{titulo}</h1>
+        {contagem ? <p className={styles.count}>{contagem}</p> : null}
+      </div>
+
+      <div className={styles.controlsArea}>
+        {/* Botão de abrir filtros (mobile/tablet) */}
+        <Button
+          variant="outline"
+          size="sm"
+          className={styles.filterButtonMobile}
+          onClick={onAbrirFiltrosMobile}
+          aria-label="Abrir painel de filtros"
+        >
+          <SlidersHorizontal size={18} strokeWidth={1.8} aria-hidden="true" />
+          <span>Filtrar</span>
+        </Button>
+
+        {/* Seletor de ordenação */}
+        <div className={styles.sortGroup}>
+          <label htmlFor="ordenar-select" className={styles.sortLabel}>
+            Ordenar por:
+          </label>
+          <Select
+            id="ordenar-select"
+            value={ordenar}
+            onChange={(e) => onMudarOrdenacao && onMudarOrdenacao(e.target.value)}
+            options={OPCOES_ORDENACAO}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

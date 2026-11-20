@@ -1,0 +1,85 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-line);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.apelido {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+  color: var(--color-ink);
+  line-height: 1.25;
+  margin: 0;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.line {
+  font-size: var(--fs-sm);
+  color: var(--color-ink);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.cep {
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.confirmBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-paper);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-line);
+}
+
+.confirmText {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  color: var(--color-danger-text);
+  margin: 0;
+}
+
+.confirmActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.deleteConfirmBtn {
+  color: var(--color-danger-text);
+  border-color: var(--color-danger);
+}

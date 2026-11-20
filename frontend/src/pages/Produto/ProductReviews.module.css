@@ -1,0 +1,258 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-line);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  color: var(--color-ink);
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: var(--fs-2xl);
+  }
+}
+
+.summaryCard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  padding: var(--space-5);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+}
+
+@media (min-width: 640px) {
+  .summaryCard {
+    grid-template-columns: 200px 1fr;
+    align-items: center;
+    padding: var(--space-6);
+    gap: var(--space-8);
+  }
+}
+
+.scoreBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-1);
+}
+
+.bigScore {
+  font-size: 3rem;
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+.starsWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.starIcon {
+  color: var(--color-star);
+  fill: var(--color-star);
+}
+
+.scoreLabel {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-muted);
+}
+
+.totalLabel {
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+}
+
+.distributionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.distRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.starLabel {
+  width: 70px;
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.track {
+  flex: 1;
+  height: 8px;
+  background-color: var(--color-line);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background-color: var(--color-star);
+  border-radius: var(--radius-pill);
+  transition: width 0.15s ease;
+}
+
+.distCount {
+  width: 32px;
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+  text-align: right;
+}
+
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.emptyReviews {
+  padding: var(--space-6);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.emptyText {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+.stateBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.reviewActionBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+}
+
+.formTitle {
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  color: var(--color-ink);
+}
+
+.ratingField,
+.textareaField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fieldLabel {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-ink);
+}
+
+.textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-3);
+  border: 1px solid var(--color-field-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-field);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.textarea:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.charCounter {
+  align-self: flex-end;
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.infoText {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+.errorText {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-danger-text);
+}
+
+.successText {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-brand);
+}
+
+.inlineErrorRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.loginLink {
+  color: var(--color-link);
+  font-weight: var(--fw-semibold);
+  text-decoration: underline;
+}
+
+.loginLink:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.loadMoreWrapper {
+  display: flex;
+  justify-content: center;
+}
