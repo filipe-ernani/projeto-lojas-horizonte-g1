@@ -1,3 +1,15 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[codz]
+*$py.class
+
+.vscode/
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
 # Logs
 logs/
 *.log
@@ -9,6 +21,7 @@ lerna-debug.log*
 
 # Dependências
 node_modules/
+
 
 # Build e distribuição
 dist/
@@ -44,6 +57,7 @@ serviceAccount*.json
 .agent/
 .cache/
 kit-claude-horizonte
+.adk/
 # Dados gerados / simulados
 data/saida/
 
