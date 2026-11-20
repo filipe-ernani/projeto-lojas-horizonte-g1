@@ -33,37 +33,82 @@ build/
 .env
 .env.*
 .envrc
-!.env.example
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# Credenciais e chaves
-*-firebase-adminsdk-*.json
-serviceAccount*.json
-*.pem
-*.key
-.firebase/
+# Spyder project settings
+.spyderproject
+.spyproject
 
-# Configurações de IDEs e editores
-.vscode/*
-!.vscode/extensions.json
-.idea/
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Rope project settings
+.ropeproject
 
-# Pastas e arquivos do agente / cache
-.agent/
-.cache/
-kit-claude-horizonte
-.adk/
-# Dados gerados / simulados
+# mkdocs/Zensical documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+#   JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#   be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#   and can be added to the global gitignore or merged into this file.  For a more nuclear
+#   option (not recommended) you can uncomment the following to ignore the entire idea folder.
+# .idea/
+
+# Abstra
+#   Abstra is an AI-powered process automation framework.
+#   Ignore directories containing user credentials, local state, and settings.
+#   Learn more at https://abstra.io/docs
+.abstra/
+
+# Visual Studio Code
+#   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore that
+#   can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
+#   and can be added to the global gitignore or merged into this file. However, if you prefer, you
+#   could uncomment the following to ignore the entire vscode folder
+# .vscode/
+# Temporary file for partial code execution
+tempCodeRunnerFile.py
+
+# Ruff stuff:
+.ruff_cache/
+
+# PyPI configuration file
+.pypirc
+
+# Marimo
+marimo/_static/
+marimo/_lsp/
+__marimo__/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# --- Projeto Lojas Horizonte ---
+# Credenciais
+.databrickscfg
+kaggle.json
+
+# Estado local dos Databricks Asset Bundles
+.databricks/
+
+# Dados brutos e gerados (o Olist tem ~120 MB; não versionar)
+data/olist/
 data/saida/
-
-# Pastas solicitadas (e todos os seus conteúdos)
-docs/analise/
-scripts/
-scripts/**
-**/scripts/
-**/scripts/**
+*.parquet

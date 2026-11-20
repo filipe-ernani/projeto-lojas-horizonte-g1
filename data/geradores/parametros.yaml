@@ -1,0 +1,369 @@
+# Parâmetros dos geradores sintéticos da Lojas Horizonte.
+# Todos os números de negócio dos dados sintéticos ficam aqui, em um só lugar,
+# para serem revisados, ajustados e explicados na apresentação.
+
+seed: 42  # semente fixa: o mesmo arquivo gera sempre o mesmo resultado
+
+catalogo:
+  arquivo_saida: data/referencia/catalogo.csv
+
+  # Faixas de preço (R$) calibradas pelo Olist:
+  # quartis de horizonte.silver.marketplace_itens
+  # (filtro: valido AND incluir AND periodo_completo), notebook 04_calibracao_catalogo.
+  #
+  # margem = margem bruta sobre o preço de venda -> custo = preco * (1 - margem).
+  # As margens são premissas do squad (o Olist não tem custo).
+  #
+  # skus = quantidade de produtos da categoria no catálogo. A distribuição
+  # privilegia vestuário, que é o núcleo de uma rede de moda.
+  #
+  # Regra de preço (para itens parecidos terem preços coerentes):
+  # - tipos: listados do MAIS BARATO para o MAIS CARO. O preço-base de cada tipo
+  #   é um ponto da faixa de preço do Olist, espaçado entre os quantis 15% e 85%.
+  # - complementos: também do mais barato para o mais caro; aplicam um fator
+  #   de 0,90 (primeiro) a 1,15 (último) sobre o preço-base.
+  # - cor: não muda o preço. Mesmo modelo em cores diferentes = mesmo preço.
+  categorias:
+    Feminino:
+      grupo: Vestuário
+      skus: 45
+      preco: {p25: 29.99, mediana: 49.00, p75: 65.90}   # Olist: só 47 itens, referência fraca
+      margem: 0.60
+      tipos: [Short, Blusa, Saia, Camisa, Calça, Macacão, Vestido, Jaqueta]
+      complementos: [Malha, Algodão, Jeans, Viscose, Tricô, Linho, Cetim]
+    Masculino:
+      grupo: Vestuário
+      skus: 35
+      preco: {p25: 40.90, mediana: 59.90, p75: 126.90}  # Olist: 130 itens
+      margem: 0.60
+      tipos: [Camiseta, Bermuda, Polo, Camisa, Calça, Moletom, Jaqueta]
+      complementos: [Malha, Algodão, Piquet, Sarja, Jeans, Linho]
+    Infantil:
+      grupo: Vestuário
+      skus: 20
+      preco: {p25: 39.99, mediana: 49.90, p75: 89.99}   # Olist: só 8 itens, referência fraca
+      margem: 0.58
+      tipos: [Body, Camiseta, Bermuda, Pijama, Vestido, Conjunto]
+      complementos: [Malha, Algodão, Estampado, Moletom]
+    Calçados:
+      grupo: Vestuário
+      skus: 25
+      preco: {p25: 35.90, mediana: 79.90, p75: 99.90}   # Olist: 259 itens
+      margem: 0.50
+      tipos: [Chinelo, Sapatilha, Sandália, Tênis, Mocassim, Bota]
+      complementos: [Casual, Tressê, Confort, Esportivo, Couro]
+    Moda íntima e praia:
+      grupo: Vestuário
+      skus: 15
+      preco: {p25: 49.90, mediana: 59.90, p75: 79.90}   # Olist: 131 itens
+      margem: 0.62
+      tipos: [Calcinha, Cueca, Sutiã, Sunga, Biquíni, Maiô]
+      complementos: [Básico, Microfibra, Estampado, Renda]
+    Acessórios:
+      grupo: Acessórios
+      skus: 25
+      preco: {p25: 49.90, mediana: 102.90, p75: 180.00} # Olist: 9.069 itens
+      margem: 0.55
+      tipos: [Carteira, Cinto, Óculos de Sol, Mochila, Bolsa, Relógio, Mala]
+      complementos: [Sintético, Casual, Viagem, Clássico, Couro]
+    Esporte:
+      grupo: Esporte
+      skus: 15
+      preco: {p25: 44.00, mediana: 77.90, p75: 129.90}  # Olist: 8.603 itens
+      margem: 0.45
+      tipos: [Garrafa, Top, Camiseta Dry, Bermuda, Legging, Tapete de Yoga]
+      complementos: [Treino, Fitness, Running, Performance]
+    Beleza:
+      grupo: Beleza
+      skus: 12
+      preco: {p25: 44.50, mediana: 79.99, p75: 138.90}  # Olist: 12.958 itens
+      margem: 0.40
+      tipos: [Sabonete Líquido, Hidratante, Body Splash, Kit Maquiagem, Perfume]
+      complementos: [Suave, Cítrico, Floral, Amadeirado]
+      usa_cor: false   # perfume e hidratante não têm cor
+    Casa:
+      grupo: Casa
+      skus: 8
+      preco: {p25: 48.04, mediana: 79.90, p75: 115.99}  # Olist: 11.553 itens
+      margem: 0.50
+      tipos: [Almofada, Toalha de Banho, Manta, Cortina, Jogo de Cama]
+      complementos: [Microfibra, Algodão, Linho, Percal]
+
+  quantil_minimo: 0.15     # preço-base do tipo mais barato
+  quantil_maximo: 0.85     # preço-base do tipo mais caro
+  fator_complemento: [0.90, 1.15]
+
+  cores: [Preto, Branco, Azul, Bege, Verde, Vinho, Cinza, Rosa, Marrom, Off-white]
+
+  # Popularidade relativa de cada SKU, usada pelos geradores do ERP e do site
+  # para que alguns produtos vendam muito mais que outros (padrão comum no varejo).
+  # Valores de uma lognormal: mediana 1, com poucos SKUs bem acima disso.
+  popularidade_sigma: 0.8
+
+  # -------------------------------------------------------------------------
+  # Catálogo v2 (D21): informações para o agente do Emanuel tirar dúvidas e
+  # recomendar produtos. Tudo é montado por regra, sem sorteio: SKUs, preços,
+  # custos e popularidades continuam idênticos aos da v1.
+  # -------------------------------------------------------------------------
+
+  # Concordância do nome. Tipos que não estão aqui são masculinos no singular.
+  genero_tipo:
+    feminino: [Blusa, Saia, Camisa, Calça, Jaqueta, Camiseta, Bermuda, Polo, Sapatilha, Sandália,
+               Bota, Calcinha, Cueca, Sunga, Carteira, Mochila, Bolsa, Mala, Garrafa, Camiseta Dry,
+               Legging, Almofada, Toalha de Banho, Manta, Cortina]
+    masculino_plural: [Óculos de Sol]
+
+  # Palavras que concordam com o tipo: [feminino, masculino plural]
+  flexao:
+    Feminino: [Feminina, Femininos]
+    Masculino: [Masculina, Masculinos]
+    Esportivo: [Esportiva, Esportivos]
+    Estampado: [Estampada, Estampados]
+    Básico: [Básica, Básicos]
+    Sintético: [Sintética, Sintéticos]
+    Clássico: [Clássica, Clássicos]
+
+  # Uma imagem por tipo de produto em cada categoria; {categoria} e {tipo} viram texto sem acento, em minúsculas
+  # e com hífens (ex.: Acessórios, "Óculos de Sol" -> imagens/acessorios/oculos-de-sol.png). Os arquivos de
+  # imagem ficam por conta do front-end (Caio).
+  imagem_padrao: "imagens/{categoria}/{tipo}.png"
+
+  # Frase e ocasiões de uso de cada tipo, por categoria (o mesmo tipo pode ter usos
+  # diferentes: a Bermuda de Esporte não é a Bermuda Masculina).
+  detalhes:
+    Feminino:
+      Short: ["Short feminino de cintura média, confortável para o calor.", [dia a dia, praia, passeio]]
+      Blusa: ["Blusa feminina de modelagem solta, fácil de combinar.", [dia a dia, trabalho]]
+      Saia: ["Saia feminina na altura dos joelhos.", [trabalho, passeio]]
+      Camisa: ["Camisa feminina de botões, com caimento estruturado.", [trabalho, ocasiões especiais]]
+      Calça: ["Calça feminina de cintura alta e corte reto.", [trabalho, dia a dia]]
+      Macacão: ["Macacão feminino de peça única, prático e versátil.", [passeio, festa]]
+      Vestido: ["Vestido feminino midi, leve e fluido.", [passeio, festa]]
+      Jaqueta: ["Jaqueta feminina para dias mais frescos.", [frio, passeio]]
+    Masculino:
+      Camiseta: ["Camiseta masculina de gola careca e manga curta.", [dia a dia, casual]]
+      Bermuda: ["Bermuda masculina com bolsos, na altura dos joelhos.", [dia a dia, praia, passeio]]
+      Polo: ["Camisa polo masculina, com gola e botões.", [trabalho, casual]]
+      Camisa: ["Camisa masculina de botões e manga longa.", [trabalho, ocasiões especiais]]
+      Calça: ["Calça masculina de corte reto.", [trabalho, dia a dia]]
+      Moletom: ["Blusa de moletom masculina, quente e confortável.", [frio, casual]]
+      Jaqueta: ["Jaqueta masculina para dias mais frescos.", [frio, passeio]]
+    Infantil:
+      Body: ["Body infantil com fechamento de botões, fácil de trocar.", [dia a dia, bebê]]
+      Camiseta: ["Camiseta infantil confortável para brincar.", [dia a dia, escola]]
+      Bermuda: ["Bermuda infantil com elástico na cintura.", [dia a dia, praia]]
+      Pijama: ["Pijama infantil de duas peças.", [dormir]]
+      Vestido: ["Vestido infantil leve, para passeios e festas.", [passeio, festa]]
+      Conjunto: ["Conjunto infantil de blusa e short.", [dia a dia, passeio]]
+    Calçados:
+      Chinelo: ["Chinelo de dedo com solado de borracha.", [praia, casa]]
+      Sapatilha: ["Sapatilha leve e flexível, fácil de calçar.", [dia a dia, trabalho]]
+      Sandália: ["Sandália aberta, fresca para o calor.", [passeio, verão]]
+      Tênis: ["Tênis com amortecimento no solado.", [dia a dia, caminhada]]
+      Mocassim: ["Mocassim sem cadarço, de visual mais social.", [trabalho, ocasiões especiais]]
+      Bota: ["Bota de cano curto, para dias frios.", [frio, passeio]]
+    Moda íntima e praia:
+      Calcinha: ["Calcinha de cós confortável.", [dia a dia]]
+      Cueca: ["Cueca boxer de cós elástico.", [dia a dia]]
+      Sutiã: ["Sutiã com bojo e alças reguláveis.", [dia a dia]]
+      Sunga: ["Sunga com forro interno.", [praia, piscina]]
+      Biquíni: ["Biquíni de duas peças, com amarração.", [praia, piscina]]
+      Maiô: ["Maiô de peça única, com costas abertas.", [praia, piscina]]
+    Acessórios:
+      Carteira: ["Carteira com divisórias para cartões e notas.", [dia a dia, presente]]
+      Cinto: ["Cinto com fivela de metal.", [trabalho, dia a dia]]
+      Óculos de Sol: ["Óculos de sol com proteção UV.", [praia, verão, viagem]]
+      Mochila: ["Mochila com compartimento para notebook.", [trabalho, escola, viagem]]
+      Bolsa: ["Bolsa de ombro com alça regulável.", [trabalho, passeio]]
+      Relógio: ["Relógio analógico com pulseira ajustável.", [trabalho, presente]]
+      Mala: ["Mala de mão com rodinhas.", [viagem]]
+    Esporte:
+      Garrafa: ["Garrafa reutilizável para levar água ao treino.", [treino, academia]]
+      Top: ["Top esportivo de sustentação média.", [treino, academia]]
+      Camiseta Dry: ["Camiseta de tecido que seca rápido.", [treino, corrida]]
+      Bermuda: ["Bermuda esportiva leve, com elástico na cintura.", [treino, corrida]]
+      Legging: ["Legging de cintura alta, com elasticidade.", [treino, academia, yoga]]
+      Tapete de Yoga: ["Tapete antiderrapante para exercícios no chão.", [yoga, pilates, treino em casa]]
+    Beleza:
+      Sabonete Líquido: ["Sabonete líquido para o banho.", [banho, cuidados diários]]
+      Hidratante: ["Hidratante corporal de rápida absorção.", [cuidados diários]]
+      Body Splash: ["Body splash de fragrância leve.", [dia a dia, presente]]
+      Kit Maquiagem: ["Kit de maquiagem com itens básicos.", [festa, presente]]
+      Perfume: ["Perfume de longa duração.", [ocasiões especiais, presente]]
+    Casa:
+      Almofada: ["Almofada decorativa com capa removível.", [decoração, sala]]
+      Toalha de Banho: ["Toalha de banho macia e absorvente.", [banho]]
+      Manta: ["Manta para sofá ou cama.", [frio, decoração, sala]]
+      Cortina: ["Cortina com ilhós para varão.", [decoração, quarto, sala]]
+      Jogo de Cama: ["Jogo de cama de casal com lençol e fronhas.", [quarto]]
+
+  # Frase e ocasiões extras de cada complemento (material, estilo, linha ou fragrância)
+  variacoes:
+    Malha: ["Tecido de malha, macio e com elasticidade.", []]
+    Algodão: ["Feito de algodão, respirável.", []]
+    Jeans: ["Em jeans resistente.", [casual]]
+    Viscose: ["Em viscose leve, de bom caimento.", [verão]]
+    Tricô: ["Em tricô, aconchegante.", [frio]]
+    Linho: ["Em linho, fresco para dias quentes.", [verão]]
+    Cetim: ["Em cetim, com brilho suave.", [festa]]
+    Piquet: ["Em malha piquet, de textura discreta.", []]
+    Sarja: ["Em sarja, tecido firme e durável.", [trabalho]]
+    Estampado: ["Com estampa colorida.", []]
+    Moletom: ["Em moletom felpado.", [frio]]
+    Casual: ["De estilo casual.", [dia a dia]]
+    Tressê: ["Com detalhes em tressê.", [verão]]
+    Confort: ["Com palmilha extra macia.", [dia a dia]]
+    Esportivo: ["Versão esportiva, com solado antiderrapante.", [treino, caminhada]]
+    Couro: ["Em couro.", [trabalho]]
+    Básico: ["Modelo básico, sem detalhes.", []]
+    Microfibra: ["Em microfibra, leve e macia.", []]
+    Renda: ["Com detalhes em renda.", [ocasiões especiais]]
+    Sintético: ["Em material sintético, fácil de limpar.", []]
+    Viagem: ["Versão para viagem, mais espaçosa.", [viagem]]
+    Clássico: ["De design clássico.", [trabalho]]
+    Treino: ["Linha de treino.", [treino]]
+    Fitness: ["Linha fitness.", [academia]]
+    Running: ["Linha de corrida.", [corrida]]
+    Performance: ["Linha performance, para treinos intensos.", [treino]]
+    Suave: ["Fragrância suave.", []]
+    Cítrico: ["Fragrância cítrica.", [verão]]
+    Floral: ["Fragrância floral.", []]
+    Amadeirado: ["Fragrância amadeirada.", [noite]]
+    Percal: ["Em percal, de toque macio.", []]
+
+# ---------------------------------------------------------------------------
+# ERP: vendas das lojas físicas, cadastro de produtos e estoque diário
+# Gerado por data/geradores/gera_erp.py
+# ---------------------------------------------------------------------------
+erp:
+  pasta_saida: data/saida/erp          # ignorada pelo Git (.gitignore)
+  data_inicio: "2025-02-01"            # jan/2025 tem índice de sazonalidade instável (poucos dados no Olist)
+  data_fim: "2026-11-15"               # data fixa para o resultado ser reproduzível
+
+  # Lojas físicas. porte define o volume de vendas e o tamanho do sortimento.
+  lojas:
+    - {loja_id: L01, nome: Horizonte Paulista,        cidade: São Paulo,           uf: SP, porte: G}
+    - {loja_id: L02, nome: Horizonte Tatuapé,         cidade: São Paulo,           uf: SP, porte: M}
+    - {loja_id: L03, nome: Horizonte Campinas,        cidade: Campinas,            uf: SP, porte: M}
+    - {loja_id: L04, nome: Horizonte Santos,          cidade: Santos,              uf: SP, porte: M}
+    - {loja_id: L05, nome: Horizonte São José,        cidade: São José dos Campos, uf: SP, porte: M}
+    - {loja_id: L06, nome: Horizonte Ribeirão Preto,  cidade: Ribeirão Preto,      uf: SP, porte: P}
+    - {loja_id: L07, nome: Horizonte Sorocaba,        cidade: Sorocaba,            uf: SP, porte: P}
+    - {loja_id: L08, nome: Horizonte Rio Centro,      cidade: Rio de Janeiro,      uf: RJ, porte: G}
+    - {loja_id: L09, nome: Horizonte Niterói,         cidade: Niterói,             uf: RJ, porte: P}
+    - {loja_id: L10, nome: Horizonte Belo Horizonte,  cidade: Belo Horizonte,      uf: MG, porte: G}
+    - {loja_id: L11, nome: Horizonte Uberlândia,      cidade: Uberlândia,          uf: MG, porte: M}
+    - {loja_id: L12, nome: Horizonte Juiz de Fora,    cidade: Juiz de Fora,        uf: MG, porte: P}
+
+  portes:
+    # unidades: média de itens vendidos num dia normal (índice 1,0)
+    # sortimento: fração dos SKUs do catálogo que a loja trabalha
+    G: {unidades_dia: 80, sortimento: 1.00}
+    M: {unidades_dia: 50, sortimento: 0.85}
+    P: {unidades_dia: 30, sortimento: 0.70}
+
+  # D16 (proposta): grupos que as lojas físicas não vendem. Use [] para vender tudo.
+  grupos_fora_da_loja_fisica: [Casa]
+
+  # Peso de cada grupo na demanda da loja física (multiplica a popularidade do SKU)
+  peso_grupo: {Vestuário: 1.0, Acessórios: 0.8, Esporte: 0.6, Beleza: 0.7, Casa: 0.5}
+
+  # D15 (proposta): padrão de dia da semana da loja física (média 1,0).
+  # O gerador remove o padrão do online (Olist) e aplica este.
+  fator_dia_semana: {seg: 0.80, ter: 0.85, qua: 0.90, qui: 0.95, sex: 1.15, sab: 1.45, dom: 0.90}
+
+  indice_minimo: 0.4    # limita dias extremos do índice de sazonalidade
+  indice_maximo: 8.0
+
+  # Cupom fiscal: quantidade de itens por compra (1 + distribuição geométrica)
+  itens_por_cupom_media: 1.8
+  horario_abertura: 10
+  horario_fechamento: 22
+
+  # Descontos em datas promocionais (fração sobre o preço de tabela)
+  promocoes:
+    - {nome: Black Friday 2025, inicio: "2025-11-28", fim: "2025-12-01", desconto: 0.25}
+
+  # Política de estoque por loja e SKU, em dias de venda média
+  estoque:
+    dias_maximo: 30         # estoque após reposição
+    ponto_pedido_dias: 10   # pede reposição quando o estoque cai a esse nível
+    prazo_entrega_dias: 5   # dias entre o pedido e a chegada
+
+  # "Sujeira" plantada de propósito para as checagens de qualidade encontrarem
+  sujeira:
+    linhas_duplicadas: 0.002   # 0,2% das linhas de venda repetidas
+    sku_nulo: 0.001            # 0,1% sem SKU
+    quantidade_negativa: 0.001 # 0,1% com quantidade negativa
+
+# ---------------------------------------------------------------------------
+# SITE: histórico sintético do e-commerce (pedidos, itens e eventos de navegação)
+# Gerado por data/geradores/gera_site.py, no formato do contrato com a API do Caio
+# (SCHEMA_PIPELINE_v1): as mesmas colunas da exportação ao vivo.
+# ---------------------------------------------------------------------------
+site:
+  pasta_saida: data/saida/site        # ignorada pelo Git (.gitignore)
+  data_inicio: "2025-02-01"           # igual ao ERP
+  corte_utc: "2026-11-18T00:00:00Z"   # contrato: depois do corte, só dados ao vivo da API
+  fuso_horas: -3                      # horário de Brasília (sem horário de verão desde 2019)
+
+  # Volume: sessões num dia normal (índice 1,0). O índice do Olist é usado COM o efeito
+  # de dia da semana do online (D15: o site é canal online).
+  sessoes_dia: 1000
+  indice_minimo: 0.4
+  indice_maximo: 8.0
+  # Hora de início das sessões (distribuição triangular, pico à noite)
+  hora_min: 0
+  hora_pico: 20
+  hora_max: 24
+  segundos_entre_eventos: 45          # média do intervalo entre ações de uma sessão
+
+  # Funil (probabilidade de avançar para a etapa seguinte).
+  # 0,60 x 0,1667 x 0,45 x 0,667 = 3% de conversão; carrinhos que compram:
+  # 0,45 x 0,667 = 30%, ou seja, 70% de abandono (faixas do contrato).
+  funil:
+    ver_produto: 0.60          # sessões que abrem ao menos um produto
+    adicionar_carrinho: 0.1667 # das que viram produto
+    iniciar_checkout: 0.45     # das que adicionaram ao carrinho
+    comprar: 0.667             # das que iniciaram o checkout
+  produtos_vistos_media: 2.5   # produtos abertos por sessão que vê produtos
+  itens_carrinho_media: 1.4    # itens diferentes no carrinho
+  prob_quantidade_2: 0.15      # chance de um item ter quantidade 2
+
+  # Clientes: base fixa de clientes (usuario_hash) e visitantes anônimos.
+  # Quem chega ao checkout sempre se identifica (o pedido exige usuario_hash).
+  clientes: 30000
+  clientes_sigma: 1.0          # lognormal: alguns clientes voltam muito mais que outros
+  prob_anonimo: 0.5
+
+  # Peso de cada grupo na demanda do site (multiplica a popularidade do SKU).
+  # Casa é vendida no site (D16).
+  peso_grupo: {Vestuário: 1.0, Acessórios: 0.8, Esporte: 0.6, Beleza: 0.7, Casa: 0.5}
+
+  # Frete do pedido
+  frete_gratis_acima: 199.00
+  frete_fixo: 19.90
+
+  # Forma de pagamento (contrato v1; ajustar se a v1.1 confirmar CARTAO_CREDITO/CARTAO_DEBITO)
+  forma_pagamento: {PIX: 0.45, CARTAO: 0.45, BOLETO: 0.10}
+
+  # Cancelamento: fração dos pedidos e prazo entre a compra e o cancelamento
+  prob_cancelamento: 0.05
+  cancelamento_horas: [2, 72]
+
+  # Descontos em datas promocionais (mesma promoção do ERP)
+  promocoes:
+    - {nome: Black Friday 2025, inicio: "2025-11-28", fim: "2025-12-01", desconto: 0.25}
+
+  # Tamanhos por categoria; tipos com tamanho único
+  tamanhos:
+    Feminino: [PP, P, M, G, GG]
+    Masculino: [P, M, G, GG]
+    Infantil: ["2", "4", "6", "8", "10", "12"]
+    Calçados: ["34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44"]
+    Moda íntima e praia: [P, M, G, GG]
+    Esporte: [P, M, G, GG]
+    Acessórios: [Único]
+    Beleza: [Único]
+    Casa: [Único]
+  tamanho_unico_tipos: [Garrafa, Tapete de Yoga]
