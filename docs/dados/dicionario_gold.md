@@ -238,6 +238,8 @@ GROUP BY data;
 
 ## Valores de referência (conferidos em 19/11/2026)
 
+Só o histórico. A cada carga ao vivo (D27), os números do site crescem com os pedidos da API: depois do teste de 20/11, o site tem 31.013 unidades e R$ 2.390.208,82.
+
 | Canal | Unidades | Receita | Pedidos | Ticket médio |
 |---|---|---|---|---|
 | Loja física | 403.365 | R$ 30.795.090,78 | 225.151 | R$ 136,78 |

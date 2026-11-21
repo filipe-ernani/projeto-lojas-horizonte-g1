@@ -43,6 +43,7 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D24 | Contrato da camada gold | Proposta |
 | D25 | Avaliações sintéticas do site, calibradas pelo Olist | Proposta |
 | D26 | Orquestração com um Job do Databricks, a partir do main | Aceita |
+| D27 | Carga ao vivo do site por micro-lote sob demanda | Proposta |
 
 ---
 
@@ -302,6 +303,10 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 - **Equivalente no GCP:** papel `roles/bigquery.dataViewer` no dataset `gold` e `roles/bigquery.jobUser` no projeto, para executar consultas.
 - **Limitações:** no Free Edition, usuários adicionados não podem ser removidos da conta; as consultas deles usam a cota de compute do workspace do pipeline.
 - **Responsável:** Diego.
+- **Complemento (20/11):**
+  - O agente do Emanuel se conecta ao SQL warehouse com um token pessoal do próprio Emanuel (o administrador deu a ele *Can Use* em tokens) e herda só a leitura da gold. O token fica no `.env` local, fora do Git.
+  - Para a carga ao vivo (D27), o Caio recebe só o necessário: `USE CATALOG`, `USE SCHEMA` em `bronze`, `READ VOLUME, WRITE VOLUME` em `horizonte.bronze.landing` e *Can Manage Run* no Job `horizonte_site_ao_vivo`. No Unity Catalog a permissão vale para o Volume inteiro, não para uma pasta: em produção, a API teria um Volume (ou bucket) só dela.
+  - Equivalentes no GCP: conta de serviço do agente com `roles/bigquery.dataViewer` no dataset `gold` e `roles/bigquery.jobUser`; conta de serviço da API com `roles/storage.objectCreator` no bucket de entrada.
 
 ## D23 · Premissas do gerador do histórico do site
 
@@ -349,3 +354,21 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 - **Ajuste:** a `dim_produto` passou do notebook 10 para o início do 09, que é o primeiro a usá-la. Antes, o 09 dependia de uma tabela criada depois dele e só funcionava porque ela já existia.
 - **Alternativas descartadas:** Airflow em Docker (infraestrutura a mais para manter, e Docker ainda não liberado na máquina corporativa); Lakeflow pipelines (limite de um pipeline ativo por tipo no Free Edition e reescrita dos notebooks).
 - **Equivalente no GCP:** Dataform com uma *workflow configuration* (ordem pelas dependências entre as tabelas), agendada ou disparada por arquivo novo no Cloud Storage. O Cloud Composer foi descartado pelo custo fixo alto para o porte.
+
+## D27 · Carga ao vivo do site por micro-lote sob demanda
+
+- **Data:** 2026-11-20
+- **Status:** Proposta (pendências com o Caio, abaixo)
+- **Contexto:** pedidos, eventos e avaliações feitos no site (Postgres local da API) precisam chegar à gold durante a demo. O Databricks Free Edition não alcança um banco local, e o CDC por log (Lakeflow Connect, equivalente ao Datastream) não está disponível: conector de PostgreSQL em prévia, exige compute clássico e acesso de rede ao banco.
+- **Decisão:** CDC por consulta, com marca d'água no `updated_at`: o `npm run export:novos` da API exporta só o que mudou desde a última exportação (com 5 minutos de sobreposição). O `databricks/carga_ao_vivo.sh` exporta, envia cada CSV para `landing/site/api/<tabela>/` e roda o Job `horizonte_site_ao_vivo` (08 → 09 → 10 → 11 → 12); se nada for novo, não dispara o Job. A bronze lê histórico e API juntos, e a silver fica com a versão mais recente de cada registro.
+- **Execução na apresentação:** na máquina do Caio, onde estão a API e o banco, com a CLI logada no usuário dele e só as permissões do complemento da D22.
+- **Latência:** cerca de 3 minutos por rodada (gold pronta em ~2,7 minutos): micro-lote sob demanda, não tempo real. Suficiente para a dor do cliente (relatórios montados à mão).
+- **Teste (20/11):** exportação real da API de 18/11 (1 pedido, 2 itens, 5 eventos, `origem = APP`). O pedido de 00:56 UTC de 18/11 entrou no dia 17/11 (Brasília); a gold do site passou a 31.013 unidades e R$ 2.390.208,82; qualidade com 23 OK e 2 INFO.
+- **Limitações:**
+  - não enxerga exclusões no banco (só o que muda de `updated_at`);
+  - depende de alguém disparar o script;
+  - os IDs da API são sequenciais: se o banco for recriado, colidem com os já enviados e a silver misturaria registros. Mitigação: não recriar o banco, ou limpar `landing/site/api/` e rodar o Job completo. Em produção, IDs únicos (UUID);
+  - permissão por Volume, não por pasta (D22).
+- **Alternativas descartadas:** Lakeflow Connect (motivos acima); pipeline contínuo (Lakeflow Declarative Pipelines: consumo constante da cota e reescrita dos notebooks); a API gravar direto no Volume a cada pedido (a loja passaria a depender da análise); arquivos de exportação pelo Git (dados num repositório público).
+- **Equivalente no GCP:** Datastream lendo o log do Cloud SQL e entregando no BigQuery de forma contínua, inclusive exclusões, e Dataform com tabelas incrementais.
+- **A confirmar:** exportação de avaliações com as mesmas colunas do histórico e `origem = 'APP'`; leitura da coluna `parcelas` junto com o histórico; acesso e CLI do Caio; ensaio com a configuração da apresentação.
