@@ -80,6 +80,27 @@ def bm25_top_k() -> int:
     return value
 
 
+def agent_limits() -> dict[str, int]:
+    """Read bounded MVP budgets; no credentials or external services are required."""
+    limits = {}
+    for name, default, maximum in (
+        ("AGENT_MAX_INPUT_CHARS", 4000, 20000),
+        ("AGENT_MAX_OUTPUT_TOKENS", 1024, 8192),
+        ("AGENT_MAX_TOOL_CALLS", 6, 20),
+        ("AGENT_MAX_MODEL_CALLS", 8, 30),
+        ("PRODUCT_MAX_REVIEWS", 5, 20),
+        ("EVIDENCE_MAX_TEXT_CHARS", 1000, 4000),
+    ):
+        try:
+            value = int(os.getenv(name, str(default)))
+        except ValueError:
+            raise ValueError(f"{name} must be an integer between 1 and {maximum}") from None
+        if not 1 <= value <= maximum:
+            raise ValueError(f"{name} must be an integer between 1 and {maximum}")
+        limits[name] = value
+    return limits
+
+
 def gemini_models() -> tuple[str, ...]:
     _required_env("GOOGLE_API_KEY")
     if os.getenv("GOOGLE_GENAI_USE_VERTEXAI", "false").strip().lower() not in {"", "false", "0"}:

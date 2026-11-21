@@ -201,7 +201,7 @@ aponta pendências preexistentes em `config.py` e `data/databricks_client.py`, p
 Com o `.env` preenchido, execute a partir de `ai/`:
 
 ```powershell
-uv run --env-file .env python search.py
+uv run --env-file .env python -m agente_horizonte.tests.search
 ```
 
 O comando carrega o catálogo real uma vez e abre o prompt `Busca:`. Digite o nome,
@@ -213,7 +213,7 @@ As consultas seguintes reutilizam o índice, sem acessar novamente o Databricks.
 Para incluir os comentários reais da tabela de reviews:
 
 ```powershell
-uv run --env-file .env python -X utf8 search.py --reviews
+uv run --env-file .env python -X utf8 -m agente_horizonte.tests.search --reviews
 ```
 
 A inicialização informa separadamente a quantidade de produtos e reviews indexados.
@@ -392,7 +392,7 @@ IDs ausentes e notas inválidas são excluídos. São válidas notas numéricas 
 Para pedir a ordenação durante a busca interativa:
 
 ```powershell
-uv run --env-file .env python -X utf8 search.py --reviews
+uv run --env-file .env python -X utf8 -m agente_horizonte.tests.search --reviews
 ```
 
 Exemplos no prompt:
@@ -411,7 +411,7 @@ produtos, além da nota individual quando o resultado normal é um review.
 Também é possível ativar a ordenação para todas as consultas:
 
 ```powershell
-uv run --env-file .env python -X utf8 search.py --best-rated
+uv run --env-file .env python -X utf8 -m agente_horizonte.tests.search --best-rated
 ```
 
 Essa opção já inclui a carga dos reviews. Em Python, use:
@@ -713,8 +713,9 @@ repetir o ensaio com limites externos de chamadas e saída:
 uv run --locked --env-file .env python -X utf8 -m agente_horizonte.evaluation.evaluate
 ```
 
-Esses limites pertencem ao ensaio. O agente servido ainda não tem os limites de
-entrada, saída e ferramentas sugeridos no relatório.
+O ensaio mantém um orçamento próprio, mais restrito. O agente servido também tem
+limites de entrada, saída, ferramentas e chamadas de modelo desde a refatoração
+de 21/11/2026, descrita abaixo. O relatório preserva as observações históricas.
 
 ## IA-06: testes e validação
 
@@ -806,3 +807,119 @@ também passaram, executados separadamente. A formatação global ainda aponta
 a pendência preexistente no cliente
 Databricks. Consulte o [relatório da IA-06](agente_horizonte/evaluation/validation.md) para os critérios,
 falhas encontradas, evidências e dependências do FullStack.
+
+## Refatoração do MVP — 21/11/2026
+
+A estrutura de pastas, o agente único e as dependências foram preservados.
+Os registros históricos acima descrevem as versões e execuções de cada data;
+esta seção documenta o comportamento atual.
+
+### Documentos e índice
+
+- Avaliações com o mesmo ID e vínculo inequívoco geram um único documento e uma
+  única contribuição à média. Prevalece a primeira linha com vínculo válido no
+  lote recebido; o carregador não escolhe a versão mais recente nem combina textos.
+  IDs associados a produtos diferentes continuam descartados. Sem ID, não se
+  presume que dois comentários iguais sejam a mesma avaliação.
+- O lote de avaliações é validado uma vez durante a carga. Notas sem texto
+  continuam participando dos agregados; agregados do catálogo continuam prioritários.
+- `tools.replace_index(documents)` prepara recuperador, mapas por nome/produto e
+  padrão de ocultação de IDs e só então publica o estado completo. Erros de carga
+  ou preparação preservam o estado anterior; uma carga vazia bem-sucedida o limpa.
+- `tools.get_documents()` retorna uma cópia isolada, ou `None` se indisponível.
+  Alterar essa cópia não muda buscas ou detalhes: é preciso publicá-la com
+  `replace_index()`. Não modificar atributos privados do módulo ou do recuperador.
+- `tools.temporary_index()` é exclusivo de ensaios/testes em processo isolado,
+  sem atendimento concorrente. Restaura o estado exato anterior ao sair. O ensaio
+  de robustez também restaura ferramentas e configuração do modelo em caso de erro.
+- Sessões SQLite são estado local: o banco anteriormente rastreado deixa de
+  integrar o versionamento, preservando o arquivo local. Isso não apaga versões
+  antigas já existentes no histórico do Git.
+
+### Limites do atendimento
+
+Configure no ambiente, sem precisar acrescentar as variáveis ao `.env` para usar
+os padrões. Reinicie o servidor após alterar valores.
+
+| Variável | Padrão | Intervalo |
+| --- | ---: | ---: |
+| `AGENT_MAX_INPUT_CHARS` | 4.000 caracteres por mensagem | 1–20.000 |
+| `AGENT_MAX_OUTPUT_TOKENS` | 1.024 tokens por chamada de modelo | 1–8.192 |
+| `AGENT_MAX_TOOL_CALLS` | 6 ferramentas por mensagem | 1–20 |
+| `AGENT_MAX_MODEL_CALLS` | 8 chamadas lógicas por mensagem | 1–30 |
+| `PRODUCT_MAX_REVIEWS` | 5 comentários por produto nos detalhes | 1–20 |
+| `EVIDENCE_MAX_TEXT_CHARS` | 1.000 caracteres por campo descritivo | 1–4.000 |
+
+Os callbacks do agente aplicam os orçamentos no ADK Web, API Server e Runner.
+Mensagem textual acima do limite recebe uma resposta curta sem chamar Gemini.
+Os contadores são temporários e reiniciados em cada mensagem; não são quotas
+globais por usuário nem limites do histórico acumulado da sessão. O limite de
+entrada considera as partes textuais, não o tamanho de anexos multimodais.
+
+Chamadas com mesmo nome de ferramenta e argumentos idênticos no mesmo lote são
+deduplicadas antes da execução. Um lote com mais chamadas distintas que o saldo,
+ou uma repetição em rodada posterior da mesma mensagem, encerra o atendimento com
+resposta controlada, sem executar aquele lote. O limite de chamadas de modelo
+também encerra a mensagem sem uma nova geração. Esses limites não dependem de
+instruções no prompt nem substituem os retries/fallbacks Gemini existentes:
+cada chamada lógica ainda pode realizar as tentativas configuradas por modelo.
+
+Detalhes preservam atributos, média e quantidade total de avaliações. Quando
+existem mais comentários indexados que o limite, o retorno inclui
+`comments_partial=true`, `comments_available` e `comments_returned`. Esses campos
+contam comentários textuais indexados, não todas as notas que compõem a média.
+São selecionados os primeiros comentários na ordem do corpus, sem alegar que
+sejam os mais recentes ou uma amostra estatisticamente representativa.
+
+Os campos `descricao`, `ocasioes`, `titulo` e `comentario` podem ser encurtados,
+com `…` e indicação em `truncated_fields`. Nomes, preços, médias e contagens são
+preservados. A ocultação dos IDs ocorre antes do corte. Mapas e padrões são
+preparados na carga, evitando percorrer todo o corpus para cada campo retornado.
+
+### API nativa do ADK com SQLite
+
+Execute a partir de `ai/`, com `.env` configurado:
+
+```powershell
+New-Item -ItemType Directory -Force .adk | Out-Null
+uv run --locked --env-file .env adk api_server --host 127.0.0.1 --port 8000 --no-reload --session_service_uri "sqlite:///.adk/session.db" .
+```
+
+O SQLite é relativo a `ai/`; preserve o banco ao reiniciar. `.adk/` é ignorado
+pelo Git. O índice BM25 continua em memória e é reconstruído quando o agente é
+carregado. Para compartilhar esse banco com o ADK Web, use o mesmo argumento
+`--session_service_uri` no comando `adk web`. Não combine essa URI com a opção
+explícita `--use_local_storage` ou `--no_use_local_storage` nesta versão do CLI.
+
+Exemplo de consumo em outro terminal PowerShell (faz chamadas reais ao agente):
+
+```powershell
+$adkBase = 'http://127.0.0.1:8000'
+$session = Invoke-RestMethod -Method Post -Uri "$adkBase/apps/agente_horizonte/users/customer-demo/sessions" -ContentType 'application/json' -Body '{}'
+$payload = @{
+    appName = 'agente_horizonte'
+    userId = 'customer-demo'
+    sessionId = $session.id
+    newMessage = @{ role = 'user'; parts = @(@{ text = 'Quais produtos você tem?' }) }
+} | ConvertTo-Json -Depth 10
+$events = Invoke-RestMethod -Method Post -Uri "$adkBase/run" -ContentType 'application/json; charset=utf-8' -Body ([System.Text.Encoding]::UTF8.GetBytes($payload))
+$events
+```
+
+`POST /run` retorna uma lista de eventos, incluindo respostas de ferramentas e
+texto final; não um objeto `{answer: ...}`. A sessão pode ser consultada em
+`GET /apps/agente_horizonte/users/customer-demo/sessions/{sessionId}`.
+O backend Express deverá controlar a identidade do usuário e adaptar esses eventos.
+Essa integração ainda não existe neste checkout. Comunicação Express–ADK no
+servidor não exige CORS; para acesso de um navegador em desenvolvimento, configure
+`--allow_origins` com a origem específica que será usada.
+
+### Verificação desta refatoração
+
+Em **21/11/2026**, `uv run --locked pytest -q --tb=short` concluiu com
+**286 testes aprovados e seis integrações Databricks ignoradas**. Gemini e a
+conexão SQL foram simulados nos testes de API; não houve chamadas reais nesta
+rodada. Os casos novos verificam deduplicação de avaliações, preservação do índice
+em falha, seleção limitada de comentários, cortes de texto, restauração do ensaio,
+rejeição de entrada longa e orçamentos por mensagem pela API nativa.
+`uv run --locked ruff check .` também passou.

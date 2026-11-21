@@ -25,8 +25,7 @@ def evaluation(monkeypatch, tmp_path):
     monkeypatch.setenv("GEMINI_MODEL_FALLBACK_2", "")
     monkeypatch.setenv("GEMINI_MAX_ATTEMPTS_PER_MODEL", "1")
     monkeypatch.setenv("BM25_TOP_K", "5")
-    monkeypatch.setattr(tools, "_documents", [])
-    monkeypatch.setattr(tools, "_retriever", None)
+    monkeypatch.setattr(tools, "_index", None)
     # The old fixed product exists but has no review; another product has one.
     documents = build_product_documents(
         [
@@ -81,7 +80,13 @@ def evaluation(monkeypatch, tmp_path):
 
 def test_indirect_review_uses_an_available_product_and_saves_all_results(evaluation):
     module, requests, original_documents, tmp_path = evaluation
+    before = tools.get_documents()
+    original_tools = module.root_agent.tools
+    original_config = module.root_agent.generate_content_config
     asyncio.run(module.main())
+    assert tools.get_documents() == before
+    assert module.root_agent.tools is original_tools
+    assert module.root_agent.generate_content_config is original_config
 
     report = json.loads((tmp_path / ".cache/robustness-results.json").read_text(encoding="utf-8"))
     assert [case["case"] for case in report["cases"]] == [
@@ -104,9 +109,9 @@ def test_indirect_review_uses_an_available_product_and_saves_all_results(evaluat
 @pytest.mark.parametrize("orphan_review", [False, True])
 def test_no_usable_review_skips_only_that_case_without_spending_tokens(evaluation, orphan_review):
     module, requests, _, tmp_path = evaluation
-    tools._documents = [document for document in tools._documents if document["type"] == "product"]
+    documents = [document for document in tools.get_documents() if document["type"] == "product"]
     if orphan_review:
-        tools._documents += build_review_documents(
+        documents += build_review_documents(
             [
                 {
                     "review_id": "orphan-review",
@@ -119,7 +124,7 @@ def test_no_usable_review_skips_only_that_case_without_spending_tokens(evaluatio
             review_id_field="review_id",
             text_fields=("comentario",),
         )
-    tools._retriever.rebuild(tools._documents)
+    tools.replace_index(documents)
     asyncio.run(module.main())
 
     report = json.loads((tmp_path / ".cache/robustness-results.json").read_text(encoding="utf-8"))
@@ -132,3 +137,16 @@ def test_no_usable_review_skips_only_that_case_without_spending_tokens(evaluatio
     assert report["cases"][1]["reason"]
     assert report["cases"][2]["status"] == "completed"
     assert report["actual_provider_attempts"] == len(requests) == 2
+
+
+def test_evaluation_restores_state_when_report_cannot_be_saved(evaluation, monkeypatch):
+    module, _, _, _ = evaluation
+    before = tools.get_documents()
+    original_tools = module.root_agent.tools
+    original_config = module.root_agent.generate_content_config
+    monkeypatch.setattr(module.Path, "write_text", Mock(side_effect=OSError("disk unavailable")))
+    with pytest.raises(OSError, match="disk unavailable"):
+        asyncio.run(module.main())
+    assert tools.get_documents() == before
+    assert module.root_agent.tools is original_tools
+    assert module.root_agent.generate_content_config is original_config

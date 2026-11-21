@@ -52,8 +52,7 @@ def documents():
 
 @pytest.fixture
 def initialized_tools(monkeypatch, documents):
-    monkeypatch.setattr(tools, "_retriever", None)
-    monkeypatch.setattr(tools, "_documents", [])
+    monkeypatch.setattr(tools, "_index", None)
     monkeypatch.setenv("BM25_TOP_K", "5")
     loader = Mock(return_value=documents)
     monkeypatch.setattr(tools, "load_documents_from_databricks", loader)
@@ -138,8 +137,7 @@ def test_gold_catalog_search_and_details_work_without_review_table(monkeypatch):
         "BM25_TOP_K": "5",
     }.items():
         monkeypatch.setenv(name, value)
-    monkeypatch.setattr(tools, "_documents", [])
-    monkeypatch.setattr(tools, "_retriever", None)
+    monkeypatch.setattr(tools, "_index", None)
     products, reviews = Mock(return_value=[row]), Mock()
     monkeypatch.setattr("agente_horizonte.retrieval.document_loader.fetch_products", products)
     monkeypatch.setattr("agente_horizonte.retrieval.document_loader.fetch_reviews", reviews)
@@ -196,15 +194,19 @@ def test_tools_reject_internal_identifier_queries(initialized_tools, query):
 
 
 def test_ids_are_removed_from_comment_text_and_raw_metadata(initialized_tools):
-    tools._documents[-1]["source"]["row"]["comentario"] = "Confortável. HZ-001, REV-1."
-    tools._documents[-1]["source"]["row"]["metadata"] = {"review_id": "REV-1", "sku": "HZ-001"}
+    documents = tools.get_documents()
+    documents[-1]["source"]["row"]["comentario"] = "Confortável. HZ-001, REV-1."
+    documents[-1]["source"]["row"]["metadata"] = {"review_id": "REV-1", "sku": "HZ-001"}
+    tools.replace_index(documents)
     result = tools.get_product_details("Tênis azul")
     assert result["results"][1]["data"]["comentario"] == "Confortável. [omitido], [omitido]."
     assert_no_internal_ids(result)
 
 
 def test_duplicate_names_keep_internal_review_links(initialized_tools):
-    tools._documents[1]["source"]["row"]["nome"] = "Tênis azul"
+    documents = tools.get_documents()
+    documents[1]["source"]["row"]["nome"] = "Tênis azul"
+    tools.replace_index(documents)
     result = tools.get_product_details("Tênis azul")
     assert len(result["results"]) == 3
     assert [item["average_rating"] for item in result["results"] if item["type"] == "product"] == [
@@ -217,8 +219,7 @@ def test_duplicate_names_keep_internal_review_links(initialized_tools):
 
 @pytest.mark.parametrize("error", [ValueError, ConnectionError, PermissionError, RuntimeError])
 def test_initial_load_failure_is_controlled(monkeypatch, caplog, error):
-    monkeypatch.setattr(tools, "_retriever", None)
-    monkeypatch.setattr(tools, "_documents", [])
+    monkeypatch.setattr(tools, "_index", None)
     monkeypatch.setattr(
         tools, "load_documents_from_databricks", Mock(side_effect=error("private credentials"))
     )
@@ -263,7 +264,9 @@ def test_agent_configuration_and_adk_discovery(agent):
     assert agent.sub_agents == []
     assert agent.tools == [tools.search_products, tools.get_product_details]
     assert agent.before_agent_callback is tools.require_product_name
-    assert agent.after_model_callback is tools.hide_internal_ids
+    assert agent.before_model_callback is tools.limit_model_calls
+    assert agent.after_model_callback is tools.guard_model_response
+    assert agent.generate_content_config.max_output_tokens == 1024
     assert [model.model for model in agent.model.models] == [
         "gemini-primary",
         "gemini-secondary",
@@ -316,7 +319,7 @@ def test_adk_runner_passes_real_tool_evidence_to_mocked_gemini(
 ):
     requests = []
     if expected_status == "unavailable":
-        monkeypatch.setattr(tools, "_retriever", None)
+        monkeypatch.setattr(tools, "_index", None)
 
     async def fake_generate(self, llm_request, stream=False):
         requests.append(llm_request)
@@ -410,3 +413,83 @@ def test_identifier_queries_are_blocked_before_gemini(agent, monkeypatch, messag
     assert "informe o nome" in text
     assert_no_internal_ids(text)
     generate.assert_not_called()
+
+
+def test_index_export_is_isolated_and_replacement_updates_search_and_details(initialized_tools):
+    documents = tools.get_documents()
+    documents[0]["source"]["row"]["nome"] = "Produto novo"
+    documents[0]["text"] = "produto novo"
+    documents[0]["tokens"] = ["produto", "novo"]
+    assert tools.get_product_details("Tênis azul")["status"] == "success"
+    tools.replace_index(documents)
+    assert tools.get_product_details("Tênis azul")["status"] == "no_results"
+    assert tools.get_product_details("Produto novo")["results"][0]["product_name"] == "Produto novo"
+    assert tools.search_products("novo")["results"][0]["product_name"] == "Produto novo"
+
+
+def test_failed_snapshot_build_preserves_all_previous_lookups(initialized_tools, monkeypatch):
+    before = tools.get_product_details("Tênis azul")
+    with pytest.raises(RuntimeError, match="pattern failure"):
+        with monkeypatch.context() as scoped:
+            scoped.setattr(tools.re, "compile", Mock(side_effect=RuntimeError("pattern failure")))
+            tools.replace_index(tools.get_documents())
+    assert tools.get_product_details("Tênis azul") == before
+
+
+def test_comments_are_bounded_without_changing_total_ratings(initialized_tools, monkeypatch):
+    documents = tools.get_documents()
+    documents[0].update(average_rating=4.5, review_count=100)
+    for number in range(10):
+        documents += build_review_documents(
+            [{"sku": "HZ-001", "review_id": f"comment-{number}", "comentario": "Bom"}],
+            source="test.reviews",
+            product_id_field="sku",
+            review_id_field="review_id",
+            text_fields=("comentario",),
+        )
+    tools.replace_index(documents)
+    monkeypatch.setenv("PRODUCT_MAX_REVIEWS", "2")
+    result = tools.get_product_details("Tênis azul")
+    assert result["comments_available"] == 11
+    assert result["comments_returned"] == 2
+    assert result["comments_partial"] is True
+    assert sum(item["type"] == "review" for item in result["results"]) == 2
+    assert result["results"][0]["review_count"] == 100
+    assert result["results"][0]["average_rating"] == 4.5
+
+
+def test_long_evidence_is_marked_and_ids_are_redacted_before_truncation(
+    initialized_tools, monkeypatch
+):
+    documents = tools.get_documents()
+    documents[-1]["source"]["row"]["comentario"] = "HZ-001 " + "bom " * 100
+    tools.replace_index(documents)
+    monkeypatch.setenv("EVIDENCE_MAX_TEXT_CHARS", "30")
+    review = tools.get_product_details("Tênis azul")["results"][1]
+    assert review["truncated_fields"] == ["comentario"]
+    assert review["data"]["comentario"].startswith("[omitido]")
+    assert len(review["data"]["comentario"]) == 31
+
+
+def test_name_lookup_normalizes_only_the_query(initialized_tools, monkeypatch):
+    normalize = Mock(wraps=tools.normalize_text)
+    monkeypatch.setattr(tools, "normalize_text", normalize)
+    assert tools.get_product_details("TENIS AZUL")["status"] == "success"
+    normalize.assert_called_once_with("TENIS AZUL")
+
+
+@pytest.mark.parametrize("value", ["0", "-1", "1.5", "abc", "20001"])
+def test_invalid_input_budget_is_rejected(monkeypatch, value):
+    from agente_horizonte.config import agent_limits
+
+    monkeypatch.setenv("AGENT_MAX_INPUT_CHARS", value)
+    with pytest.raises(ValueError, match="AGENT_MAX_INPUT_CHARS"):
+        agent_limits()
+
+
+def test_temporary_index_restores_exact_previous_state_after_error(initialized_tools):
+    before = tools.get_product_details("Tênis azul")
+    with pytest.raises(RuntimeError, match="probe failed"), tools.temporary_index([]):
+        assert tools.get_product_details("Tênis azul")["status"] == "no_results"
+        raise RuntimeError("probe failed")
+    assert tools.get_product_details("Tênis azul") == before

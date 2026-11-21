@@ -45,8 +45,7 @@ def api(monkeypatch, tmp_path):
         "DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN": "sku",
     }.items():
         monkeypatch.setenv(name, value)
-    monkeypatch.setattr(tools, "_retriever", None)
-    monkeypatch.setattr(tools, "_documents", [])
+    monkeypatch.setattr(tools, "_index", None)
     products = [
         {"sku": "HZ-001", "nome": "Tênis azul", "preco": Decimal("99.90"), "cor": "Azul"},
         {"sku": "HZ-002", "nome": "Tênis vermelho", "preco": Decimal("149.90")},
@@ -447,7 +446,7 @@ def test_api_returns_500_when_model_fails(api):
 def test_api_exposes_sql_failure_as_unavailability_not_no_results(api, monkeypatch):
     client, state, connect, _ = api
     connect.side_effect = exc.OperationalError("warehouse offline")
-    monkeypatch.setattr(tools, "_retriever", None)
+    monkeypatch.setattr(tools, "_index", None)
     assert not tools.initialize_index()
     state["calls"] = [("search_products", {"query": "tênis"})]
     with client() as http:
@@ -461,3 +460,79 @@ def test_api_exposes_sql_failure_as_unavailability_not_no_results(api, monkeypat
     ]
     assert evidence[0]["status"] == "unavailable"
     assert evidence[0]["results"] == []
+
+
+def test_api_rejects_oversized_input_without_calling_model(api):
+    client, state, _, _ = api
+    with client() as http:
+        session_id = http.post(SESSION_PATH, json={}).json()["id"]
+        response = http.post("/run", json=run_payload(session_id, "x" * 4001))
+    assert response.status_code == 200
+    assert "muito longa" in " ".join(part.get("text", "") for part in event_parts(response.json()))
+    assert state["requests"] == []
+
+
+def test_api_deduplicates_a_batch_and_resets_budget_on_next_message(api):
+    client, state, _, _ = api
+    state["calls"] = [("search_products", {"query": "tênis"})] * 20
+    with client() as http:
+        session_id = http.post(SESSION_PATH, json={}).json()["id"]
+        for _ in range(2):
+            response = http.post("/run", json=run_payload(session_id))
+            assert response.status_code == 200
+            parts = event_parts(response.json())
+            assert sum("functionResponse" in part for part in parts) == 1
+        stored = http.get(f"{SESSION_PATH}/{session_id}").json()
+    assert len(state["requests"]) == 4
+    assert all(request.config.max_output_tokens == 1024 for request in state["requests"])
+    assert not any(key.startswith("temp:") for key in stored["state"])
+
+
+def test_api_rejects_tool_batch_over_budget_before_executing_any_tool(api):
+    client, state, _, _ = api
+    state["calls"] = [("search_products", {"query": f"produto-{number}"}) for number in range(7)]
+    with client() as http:
+        session_id = http.post(SESSION_PATH, json={}).json()["id"]
+        response = http.post("/run", json=run_payload(session_id))
+    assert response.status_code == 200
+    parts = event_parts(response.json())
+    assert not any("functionResponse" in part for part in parts)
+    assert "limite de consultas" in " ".join(part.get("text", "") for part in parts)
+    assert len(state["requests"]) == 1
+
+
+@pytest.mark.parametrize(
+    ("repeat", "model_limit", "expected_models", "expected_tools"),
+    [(True, 8, 2, 1), (False, 2, 2, 2), (False, 8, 7, 6)],
+)
+def test_api_stops_tool_loops_with_a_controlled_answer(
+    api, monkeypatch, repeat, model_limit, expected_models, expected_tools
+):
+    client, state, _, _ = api
+    monkeypatch.setenv("AGENT_MAX_MODEL_CALLS", str(model_limit))
+
+    async def generate(self, llm_request, stream=False):
+        state["requests"].append(llm_request.model_copy(deep=True))
+        number = 1 if repeat else len(state["requests"])
+        yield LlmResponse(
+            content=types.Content(
+                role="model",
+                parts=[
+                    types.Part(
+                        function_call=types.FunctionCall(
+                            name="search_products", args={"query": f"termo{number}"}
+                        )
+                    )
+                ],
+            )
+        )
+
+    monkeypatch.setattr(Gemini, "generate_content_async", generate)
+    with client() as http:
+        session_id = http.post(SESSION_PATH, json={}).json()["id"]
+        response = http.post("/run", json=run_payload(session_id))
+    assert response.status_code == 200
+    parts = event_parts(response.json())
+    assert len(state["requests"]) == expected_models
+    assert sum("functionResponse" in part for part in parts) == expected_tools
+    assert "limite de consultas" in " ".join(part.get("text", "") for part in parts)

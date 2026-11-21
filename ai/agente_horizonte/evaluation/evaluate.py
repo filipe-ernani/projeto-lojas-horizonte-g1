@@ -73,18 +73,25 @@ def safe_text(text: str) -> str:
 
 
 async def main() -> None:
-    if tools._retriever is None:
+    original_documents = tools.get_documents()
+    if original_documents is None:
         raise RuntimeError("The real catalog could not be loaded; evaluation aborted")
-    original_documents = deepcopy(tools._documents)
+    production_output_limit = root_agent.generate_content_config.max_output_tokens
+    config = root_agent.generate_content_config.model_copy(update={"max_output_tokens": 384})
+    # Restore the exact snapshot, callbacks' tools and model config, including on failure.
+    with (
+        tools.temporary_index(original_documents),
+        patch.object(root_agent, "generate_content_config", config),
+        patch.object(root_agent, "tools", list(root_agent.tools)),
+    ):
+        await _evaluate(original_documents, production_output_limit)
+
+
+async def _evaluate(original_documents: list[dict], production_output_limit: int) -> None:
     original_generate = Gemini.generate_content_async
     provider_attempts = 0
     results = []
     sessions = InMemorySessionService()
-    production_output_limit = root_agent.generate_content_config.max_output_tokens
-    # Only the test process receives these caps; the web server stays unchanged.
-    root_agent.generate_content_config = root_agent.generate_content_config.model_copy(
-        update={"max_output_tokens": 384}
-    )
 
     for case_name, prompt in CASES:
         if provider_attempts >= 12:
@@ -134,11 +141,11 @@ async def main() -> None:
 
             return invoke_tool
 
-        tools._documents = deepcopy(original_documents)
+        documents = deepcopy(original_documents)
         if case_name == "indirect_review":
             product_names = {
                 document["product_id"]: document["source"]["row"]["nome"].strip()
-                for document in tools._documents
+                for document in documents
                 if document["type"] == "product"
                 and isinstance(document["source"]["row"].get("nome"), str)
                 and document["source"]["row"]["nome"].strip()
@@ -146,7 +153,7 @@ async def main() -> None:
             target = next(
                 (
                     document
-                    for document in tools._documents
+                    for document in documents
                     if document["type"] == "review" and document["product_id"] in product_names
                 ),
                 None,
@@ -166,7 +173,7 @@ async def main() -> None:
             target["text"] = normalize_text(SYNTHETIC_REVIEW)
             target["tokens"] = tokenize(SYNTHETIC_REVIEW)
         # Keep both tools on the same per-case corpus, including the synthetic review.
-        tools._retriever.rebuild(tools._documents)
+        tools.replace_index(documents)
         root_agent.tools = [
             measured_tool(tools.search_products),
             measured_tool(tools.get_product_details),

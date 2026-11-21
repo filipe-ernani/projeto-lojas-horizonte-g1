@@ -27,6 +27,11 @@ class BM25Retriever:
         self._documents = prepared
         self._index = index
 
+    @property
+    def documents(self) -> list[dict[str, Any]]:
+        """Return an isolated corpus for inspection or an explicit replacement."""
+        return deepcopy(self._documents)
+
     def search(
         self, query: str, *, top_k: int | None = None, sort_by_rating: bool = False
     ) -> list[dict[str, Any]]:

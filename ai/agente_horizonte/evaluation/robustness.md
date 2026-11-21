@@ -71,7 +71,7 @@ definições das ferramentas e mensagem. A consulta com ferramenta exige outra c
 com os resultados no contexto. Esse consumo tem função no atendimento; a falha
 observada é aceitar repetições de busca que não acrescentam informação.
 
-## Lacunas confirmadas na configuração atual
+## Lacunas observadas em 19/11/2026
 
 1. `generate_content_config.max_output_tokens` está sem valor explícito no agente.
    A recusa de uma repetição extensa neste ensaio não substitui um teto de saída.
@@ -81,10 +81,18 @@ observada é aceitar repetições de busca que não acrescentam informação.
 3. A proteção local de entrada verifica identificadores internos, mas não tamanho.
    A passagem de 12.000 caracteres pelo callback foi confirmada sem gastar tokens de API.
 
-Correções mínimas sugeridas, **não implementadas neste teste**: estabelecer limites
+Correções mínimas sugeridas, **não implementadas naquele teste**: estabelecer limites
 explícitos de entrada e saída, limitar/deduplicar ferramentas por mensagem e encerrar
 o atendimento com uma resposta curta quando o orçamento for atingido. Acrescentar
 apenas instruções ao prompt não substitui esses limites no código.
+
+Atualização em **21/11/2026**: o agente servido passou a limitar entrada, saída,
+chamadas de modelo e ferramentas por mensagem. Chamadas idênticas no mesmo lote
+são deduplicadas; repetições em rodadas seguintes encerram a execução com resposta
+controlada. Consulte os valores e a política no [README](../../README.md).
+O ensaio usa a atualização pública do índice e restaura índice, ferramentas e
+configuração ao terminar, inclusive em erro. Os resultados reais de 19/11 acima
+continuam históricos; esta alteração não representa uma nova execução com Gemini.
 
 ## Reprodução e evidências
 
