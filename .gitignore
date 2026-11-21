@@ -59,6 +59,7 @@ cover/
 *.pot
 
 .adk/
+session.db
 
 # Django stuff:
 # Logs

@@ -1,0 +1,217 @@
+{
+  "eval_set_id": "customer_support",
+  "name": "Atendimento — Lojas Horizonte",
+  "description": "Seis cenários automáticos. Use tool_trajectory_avg_score=1.0 e response_match_score=0.3. As referências são expectativas do catálogo confirmado em 20/11/2026, não resultados de uma execução. ROUGE mede similaridade textual e não certifica fidelidade factual completa.",
+  "eval_cases": [
+    {
+      "eval_id": "product_attributes",
+      "conversation": [
+        {
+          "invocation_id": "product_attributes",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "Consulte os detalhes da Sunga Estampada Azul e informe somente o nome completo e a cor do catálogo, em uma frase curta."
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "Sunga Estampada Azul, cor azul."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "get_product_details",
+                "args": {
+                  "product_name": "Sunga Estampada Azul"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "product_reviews",
+      "conversation": [
+        {
+          "invocation_id": "product_reviews",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "Consulte os detalhes da Sunga Estampada Azul. Informe somente o nome, a nota média e a quantidade total de avaliações disponíveis, em uma frase curta."
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "Sunga Estampada Azul: nota média 4,52 em 25 avaliações."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "get_product_details",
+                "args": {
+                  "product_name": "Sunga Estampada Azul"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "recommendation",
+      "conversation": [
+        {
+          "invocation_id": "recommendation",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "Quero uma sunga azul. Consulte os detalhes da Sunga Estampada Azul e diga se você a recomenda considerando a cor e a nota média disponível. Responda em até duas frases, sem afirmar disponibilidade em estoque."
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "Recomendo a Sunga Estampada Azul para quem busca uma sunga azul: tem nota média 4,52 em 25 avaliações. Não tenho informação sobre estoque atual."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "get_product_details",
+                "args": {
+                  "product_name": "Sunga Estampada Azul"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "comparison",
+      "conversation": [
+        {
+          "invocation_id": "comparison",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "Consulte primeiro os detalhes da Sunga Estampada Azul e depois os detalhes da Short Feminino Viscose Marrom. Compare somente o tipo de peça e a cor, usando os nomes completos e até duas frases."
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "A Sunga Estampada Azul é uma sunga azul. A Short Feminino Viscose Marrom é um short de cor marrom."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "get_product_details",
+                "args": {
+                  "product_name": "Sunga Estampada Azul"
+                }
+              },
+              {
+                "name": "get_product_details",
+                "args": {
+                  "product_name": "Short Feminino Viscose Marrom"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "no_results",
+      "conversation": [
+        {
+          "invocation_id": "no_results",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "Use search_products com o termo exato zzzinexistentexyz987654321. Se não houver resultados, informe isso em uma frase curta e peça outro nome, sem sugerir produtos."
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "Não encontrei o produto zzzinexistentexyz987654321 no catálogo. Informe outro nome de produto, por favor."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_products",
+                "args": {
+                  "query": "zzzinexistentexyz987654321"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "insufficient_information",
+      "conversation": [
+        {
+          "invocation_id": "insufficient_information",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "Consulte os detalhes da Sunga Estampada Azul. Quantas unidades estão em estoque agora? Responda de forma curta e não use unidades vendidas como estoque."
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "Não tenho informação sobre o estoque atual da Sunga Estampada Azul. As unidades vendidas não informam quantas unidades estão em estoque."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "get_product_details",
+                "args": {
+                  "product_name": "Sunga Estampada Azul"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+[
+  {"name": "specific_color", "query": "Tênis azul", "top_k": 2, "expected": [["sku-1", "product"], ["sku-2", "product"]]},
+  {"name": "running_shoe", "query": "tênis corrida vermelho", "top_k": 1, "expected": [["sku-2", "product"]]},
+  {"name": "material", "query": "ALGODÃO!", "top_k": 3, "expected": [["sku-3", "product"]]},
+  {"name": "school_use", "query": "mochila escolar", "top_k": 3, "expected": [["sku-4", "product"]]},
+  {"name": "appliance", "query": "cafeteira elétrica", "top_k": 3, "expected": [["sku-5", "product"]]},
+  {"name": "review_opinion", "query": "macio confortável", "top_k": 3, "expected": [["sku-1", "review"]]},
+  {"name": "unknown_product", "query": "geladeirainexistente", "top_k": 3, "expected": []},
+  {"name": "punctuation_only", "query": "...!?", "top_k": 3, "expected": []}
+]

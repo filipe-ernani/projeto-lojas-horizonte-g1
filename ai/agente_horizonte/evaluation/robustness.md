@@ -6,7 +6,7 @@ não uma garantia para todas as entradas possíveis.
 
 ## Método e limites do ensaio
 
-- `evaluation/evaluate.py` executa o `Runner` real do ADK com Gemini real e uma nova
+- `agente_horizonte/evaluation/evaluate.py` executa o `Runner` real do ADK com Gemini real e uma nova
   sessão em memória para cada cenário. A instrumentação encaminha as chamadas ao
   SDK original; as respostas não são mocks.
 - O catálogo e as avaliações foram carregados do Databricks pela inicialização
@@ -71,7 +71,7 @@ definições das ferramentas e mensagem. A consulta com ferramenta exige outra c
 com os resultados no contexto. Esse consumo tem função no atendimento; a falha
 observada é aceitar repetições de busca que não acrescentam informação.
 
-## Lacunas confirmadas na configuração atual
+## Lacunas observadas em 19/11/2026
 
 1. `generate_content_config.max_output_tokens` está sem valor explícito no agente.
    A recusa de uma repetição extensa neste ensaio não substitui um teto de saída.
@@ -81,17 +81,25 @@ observada é aceitar repetições de busca que não acrescentam informação.
 3. A proteção local de entrada verifica identificadores internos, mas não tamanho.
    A passagem de 12.000 caracteres pelo callback foi confirmada sem gastar tokens de API.
 
-Correções mínimas sugeridas, **não implementadas neste teste**: estabelecer limites
+Correções mínimas sugeridas, **não implementadas naquele teste**: estabelecer limites
 explícitos de entrada e saída, limitar/deduplicar ferramentas por mensagem e encerrar
 o atendimento com uma resposta curta quando o orçamento for atingido. Acrescentar
 apenas instruções ao prompt não substitui esses limites no código.
+
+Atualização em **21/11/2026**: o agente servido passou a limitar entrada, saída,
+chamadas de modelo e ferramentas por mensagem. Chamadas idênticas no mesmo lote
+são deduplicadas; repetições em rodadas seguintes encerram a execução com resposta
+controlada. Consulte os valores e a política no [README](../../README.md).
+O ensaio usa a atualização pública do índice e restaura índice, ferramentas e
+configuração ao terminar, inclusive em erro. Os resultados reais de 19/11 acima
+continuam históricos; esta alteração não representa uma nova execução com Gemini.
 
 ## Reprodução e evidências
 
 A partir de `ai/`, com `.env` configurado:
 
 ```powershell
-uv run --locked --env-file .env python -X utf8 -m evaluation.evaluate
+uv run --locked --env-file .env python -X utf8 -m agente_horizonte.evaluation.evaluate
 ```
 
 O script faz chamadas reais e grava o resultado em `.cache/robustness-results.json`,
@@ -110,7 +118,7 @@ Verificações após a criação do script:
   integrações opcionais do Databricks ficaram desabilitadas nessa suíte; o ensaio
   descrito acima acessou o Databricks e Gemini separadamente.
 - `uv run --locked ruff check .`: passou.
-- `uv run --locked ruff format --check evaluation/evaluate.py`: passou.
+- `uv run --locked ruff format --check agente_horizonte/evaluation/evaluate.py`: passou.
 
 As alterações desta rodada ficaram no script de avaliação, neste relatório e no
 link correspondente no README. O código e as configurações do agente não foram

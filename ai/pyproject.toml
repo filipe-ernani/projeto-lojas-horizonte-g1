@@ -11,13 +11,17 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=8,<10",
+    "rouge-score>=0.1.2,<0.2",
     "ruff>=0.14,<1",
+    "tabulate>=0.9,<1",
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["agente_horizonte/tests"]
 pythonpath = ["."]
-markers = ["integration: consultas reais ao Databricks, habilitadas explicitamente"]
+markers = [
+    "integration: consultas reais ao Databricks, habilitadas explicitamente",
+]
 addopts = "-ra --strict-markers"
 
 [tool.ruff]

@@ -442,3 +442,36 @@ def test_invalid_ratings_do_not_create_a_product_average(databricks_loader, rati
     assert documents[0]["average_rating"] is None
     assert documents[0]["review_count"] == 0
     assert BM25Retriever(documents).search("tenis", sort_by_rating=True) == []
+
+
+def test_duplicate_review_ids_produce_one_document_and_keep_first_row():
+    row = {"review_id": "r-1", "product_sku": "sku-1", "comment": "Primeiro comentário"}
+    documents = prepare_reviews([row, row.copy(), {**row, "comment": "Outro conteúdo"}])
+    assert len(documents) == 1
+    assert documents[0]["source"]["row"] == row
+
+
+def test_duplicates_do_not_hide_a_conflicting_link():
+    row = {"review_id": "r-1", "product_sku": "sku-1", "comment": "Comentário"}
+    assert prepare_reviews([row, row.copy(), {**row, "product_sku": "sku-2"}]) == []
+
+
+def test_reviews_without_ids_are_not_deduplicated():
+    row = {"sku": "sku-1", "comment": "Mesmo texto"}
+    documents = build_review_documents(
+        [row, row.copy()],
+        source="test.reviews",
+        product_id_field="sku",
+        review_id_field=None,
+        text_fields=("comment",),
+    )
+    assert len(documents) == 2
+
+
+def test_load_validates_reviews_only_once(databricks_loader, monkeypatch):
+    from agente_horizonte.retrieval import document_loader
+
+    validate = Mock(wraps=document_loader._valid_review_rows)
+    monkeypatch.setattr(document_loader, "_valid_review_rows", validate)
+    load_documents_from_databricks(review_id_field="review_id", review_text_fields=("comment",))
+    assert validate.call_count == 1
