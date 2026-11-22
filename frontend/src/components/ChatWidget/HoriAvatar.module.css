@@ -1,0 +1,30 @@
+/*
+ * Recorte do canvas 460x420 da Hori: quadrado de 464 unidades com centro em
+ * (256, 195). O círculo inscrito contém o corpo, as 3 bolinhas do "pensando"
+ * e os brilhos do "feliz" inteiros. O que fica fora do canvas recebe
+ * --color-paper, que é a mesma cor do retângulo de fundo dos SVGs.
+ *   largura  = 460 / 464 = 99.138%
+ *   esquerda = -24 / 464 = -5.172%
+ *   topo     =  37 / 464 =  7.974%
+ */
+.avatar {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: var(--color-paper);
+  box-shadow: 0 0 0 2px var(--color-brand-contrast);
+}
+
+.imagem {
+  position: absolute;
+  left: -5.172%;
+  top: 7.974%;
+  width: 99.138%;
+  height: auto;
+  max-width: none;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}

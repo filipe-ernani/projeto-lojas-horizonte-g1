@@ -45,20 +45,69 @@
 }
 
 .floatingButton:focus-visible {
-  outline: 2px solid var(--color-brand-contrast);
-  outline-offset: 2px;
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+/* Selo de mensagens não lidas da Hori */
+.selo {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--space-1);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-accent);
+  color: var(--color-accent-ink);
+  box-shadow: 0 0 0 2px var(--color-paper);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.seloVisivel {
+  display: inline-flex;
+  animation: seloEntrada 0.25s ease-out;
+}
+
+@keyframes seloEntrada {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seloVisivel {
+    animation: none;
+  }
 }
 
 /* Painel de diálogo do chat */
 .dialogPanel {
   position: fixed;
-  /* No celular o painel começa abaixo do cabeçalho e não cobre a navegação */
-  top: calc(var(--header-h) + var(--space-2));
+  /*
+   * No celular o painel é uma folha presa ao rodapé com no máximo 70% da
+   * altura: o cabeçalho do site (com a navegação, ~125 px em 360 px de
+   * largura) continua visível no topo.
+   */
+  top: auto;
   bottom: 0;
   left: 0;
   right: 0;
   width: 100%;
-  max-height: calc(100dvh - var(--header-h) - var(--space-2));
+  height: min(70dvh, 560px);
+  max-height: min(70dvh, 560px);
   background-color: var(--color-paper);
   border-top: 1px solid var(--color-line);
   border-top-left-radius: var(--radius-lg);
@@ -87,6 +136,7 @@
 
 /* Cabeçalho do painel com --color-brand e texto --color-brand-contrast */
 .panelHeader {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -98,18 +148,33 @@
 .headerTitleGroup {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
+  min-width: 0;
 }
 
-.headerIcon {
-  color: var(--color-brand-contrast);
+.headerTexts {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .panelTitle {
   margin: 0;
   font-size: var(--fs-md);
   font-weight: var(--fw-semibold);
+  line-height: 1.2;
   color: var(--color-brand-contrast);
+}
+
+.panelSubtitle {
+  margin: 0;
+  font-size: var(--fs-xs);
+  line-height: 1.3;
+  color: var(--color-brand-contrast);
+  opacity: 0.85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .closeButton {
