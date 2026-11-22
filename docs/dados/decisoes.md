@@ -44,6 +44,8 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D25 | Avaliações sintéticas do site, calibradas pelo Olist | Proposta |
 | D26 | Orquestração com um Job do Databricks, a partir do main | Aceita |
 | D27 | Carga ao vivo do site por micro-lote sob demanda | Proposta |
+| D28 | Desenho da camada de dados no GCP | Proposta |
+| D29 | Acessos no GCP: pessoas leem, contas de serviço escrevem | Proposta |
 
 ---
 
@@ -372,3 +374,28 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 - **Alternativas descartadas:** Lakeflow Connect (motivos acima); pipeline contínuo (Lakeflow Declarative Pipelines: consumo constante da cota e reescrita dos notebooks); a API gravar direto no Volume a cada pedido (a loja passaria a depender da análise); arquivos de exportação pelo Git (dados num repositório público).
 - **Equivalente no GCP:** Datastream lendo o log do Cloud SQL e entregando no BigQuery de forma contínua, inclusive exclusões, e Dataform com tabelas incrementais.
 - **A confirmar:** exportação de avaliações com as mesmas colunas do histórico e `origem = 'APP'`; leitura da coluna `parcelas` junto com o histórico; acesso e CLI do Caio; ensaio com a configuração da apresentação.
+
+## D28 · Desenho da camada de dados no GCP
+
+- **Data:** 2026-11-21
+- **Status:** Proposta (validar com o squad)
+- **Contexto:** o entregável 2 pede o diagrama com os serviços do GCP e as justificativas. O MVP roda no Databricks (D02), e o desenho precisa manter as regras do pipeline.
+- **Decisão:**
+  - arquivos do ERP e dos marketplaces entram pelo Cloud Storage (uma pasta por fonte);
+  - o Cloud SQL chega à bronze pelo Datastream, em modo *append-only*: cada mudança vira uma linha, inclusive exclusões;
+  - o Dataform transforma bronze → silver → gold, com as checagens do `12_qualidade` como *assertions*;
+  - Looker Studio, Google Sheets e o agente no Vertex AI Agent Engine leem só a gold;
+  - tabelas diárias da gold particionadas por `data` e clusterizadas por `canal`.
+- **Motivo:** mantém as regras do MVP (D05, D07, D24); o CDC por log não consulta o banco da loja e enxerga exclusões (diferença em relação à D27); tudo é serverless, sem infraestrutura para manter; partição e cluster reduzem o dado lido, que é o que o BigQuery cobra no modelo por consulta.
+- **Alternativas descartadas:** Cloud Composer (custo fixo alto para um fluxo diário, D26); Databricks no GCP (mais complexo para o porte); Redshift ou Synapse/Fabric (comparação em `docs/architecture/gcp.md`, seção 4.5).
+- **Em aberto:** região (São Paulo × EUA), a combinar com a estimativa de custos (#35).
+- **Documento:** `docs/architecture/gcp.md`, seções 3 e 4 (#60).
+
+## D29 · Acessos no GCP: pessoas leem, contas de serviço escrevem
+
+- **Data:** 2026-11-21
+- **Status:** Proposta
+- **Decisão:** no GCP, as permissões das pessoas são dadas a grupos do Google Workspace e são só de leitura (consumidores só na gold). Quem grava é uma conta de serviço por componente (Datastream, Dataform, exportação do ERP), e a conta da API não tem nenhum papel no BigQuery.
+- **Motivo:** menor privilégio; nenhuma credencial pessoal em aplicação; a loja não depende da análise.
+- **Diferença no MVP:** o Free Edition não tem esse nível de separação. Os Jobs rodam como o Diego, o agente usa o token pessoal do Emanuel e a permissão de escrita do Caio vale para o Volume inteiro (D22).
+- **Documento:** `docs/architecture/iam.md` (#62).
