@@ -27,36 +27,68 @@ function removerBarrasFinais(url = "") {
 
 const BASE_URL = removerBarrasFinais(import.meta?.env?.VITE_API_URL || "");
 
+const CHAVE_SESSAO = "horizonte_sessao_id";
+const CHAVE_ULTIMA_ATIVIDADE = "horizonte_sessao_ultima_atividade";
+// Sessão do funil: termina após 30 min sem atividade ou depois de cada compra
+const INATIVIDADE_MAXIMA_MS = 30 * 60 * 1000;
+
+let sessaoEmMemoria = null;
+let ultimaAtividadeEmMemoria = 0;
+
+function gerarUuid() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = Math.trunc(Math.random() * 16);
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+function guardarSessao(sessaoId, agora) {
+  sessaoEmMemoria = sessaoId;
+  ultimaAtividadeEmMemoria = agora;
+  try {
+    sessionStorage.setItem(CHAVE_SESSAO, sessaoId);
+    sessionStorage.setItem(CHAVE_ULTIMA_ATIVIDADE, String(agora));
+  } catch {
+    // sessionStorage bloqueado: a sessão fica só em memória nesta aba
+  }
+}
+
 /**
- * Obtém ou inicializa o identificador de sessão persistido em sessionStorage.
- * Tratado com try/catch para ambientes onde sessionStorage está bloqueado ou indisponível.
+ * Identificador da sessão do funil (cabeçalho X-Sessao-Id), um por aba.
+ * Cada chamada conta como atividade. Depois de 30 min sem atividade nasce uma sessão nova.
+ * Sem sessionStorage, usa uma cópia em memória para nunca mandar requisição sem sessão.
  */
 export function obterSessaoId() {
+  const agora = Date.now();
+  let sessaoId = sessaoEmMemoria;
+  let ultimaAtividade = ultimaAtividadeEmMemoria;
   try {
-    const CHAVE = "horizonte_sessao_id";
-    let sessaoId = sessionStorage.getItem(CHAVE);
-    if (!sessaoId) {
-      if (
-        typeof crypto !== "undefined" &&
-        typeof crypto.randomUUID === "function"
-      ) {
-        sessaoId = crypto.randomUUID();
-      } else {
-        sessaoId = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-          /[xy]/g,
-          (c) => {
-            const r = Math.trunc(Math.random() * 16);
-            const v = c === "x" ? r : (r & 0x3) | 0x8;
-            return v.toString(16);
-          },
-        );
-      }
-      sessionStorage.setItem(CHAVE, sessaoId);
-    }
-    return sessaoId;
+    sessaoId = sessionStorage.getItem(CHAVE_SESSAO) || sessaoId;
+    ultimaAtividade = Number(sessionStorage.getItem(CHAVE_ULTIMA_ATIVIDADE)) || ultimaAtividade;
   } catch {
-    return null;
+    // Mantém os valores em memória
   }
+
+  const expirou = !ultimaAtividade || agora - ultimaAtividade > INATIVIDADE_MAXIMA_MS;
+  if (!sessaoId || expirou) {
+    sessaoId = gerarUuid();
+  }
+  guardarSessao(sessaoId, agora);
+  return sessaoId;
+}
+
+/**
+ * Encerra a sessão atual (por exemplo, depois de uma compra): a próxima
+ * requisição já sai com um X-Sessao-Id novo e abre outra sessão no funil.
+ */
+export function renovarSessaoId() {
+  const sessaoId = gerarUuid();
+  guardarSessao(sessaoId, Date.now());
+  return sessaoId;
 }
 
 function parseJsonSeguro(texto) {

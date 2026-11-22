@@ -1,2 +1,0 @@
-pedido_id,usuario_hash,status,forma_pagamento,subtotal,frete,valor_total,finalizado_em,cancelado_em,updated_at,origem
-P-2,25dd6e3953949d44,FINALIZADO,PIX,172.80,15.00,187.80,2026-11-18T00:56:58.643Z,,2026-11-18T00:56:58.643Z,APP

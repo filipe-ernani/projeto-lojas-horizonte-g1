@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { pool, query } from "../db.js";
-import { gravarEvento } from "../services/analyticsService.js";
+import { registrarCompraNaTransacao } from "../services/analyticsService.js";
 import {
   formatarDataLocalSaoPaulo,
   formatarDataSimples,
@@ -214,17 +214,17 @@ export async function finalizarCarrinhoQuery(
       ],
     );
 
-    await client.query("COMMIT;");
+    // Funil na MESMA transação: se algo falhar, nem o pedido nem o purchase ficam.
+    // Sem X-Sessao-Id, a compra ganha uma sessão própria para nunca ficar sem purchase.
+    await registrarCompraNaTransacao(client, {
+      sessaoId: sessaoId || crypto.randomUUID(),
+      usuarioId,
+      pedidoId: pedido.id,
+      valorTotal,
+      valorCheckout: subtotal,
+    });
 
-    if (sessaoId) {
-      void gravarEvento({
-        evento: "purchase",
-        sessaoId,
-        usuarioId,
-        pedidoId: pedido.id,
-        valor: Number(valorTotal),
-      });
-    }
+    await client.query("COMMIT;");
 
     const pedidoFormatado = formatarPedido(updateRes.rows[0], itensRes.rows, endereco);
 

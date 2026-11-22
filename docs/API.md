@@ -93,7 +93,7 @@ Rotas privadas exigem o cabeçalho `Authorization: Bearer <ID Token do Firebase>
 | GET | `/api/integracao/pedidos` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
 | GET | `/api/integracao/pedido-itens` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
 | GET | `/api/integracao/eventos` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
-| GET | `/api/integracao/avaliacoes` | X-API-Key | `desde` (ISO UTC), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV |
+| GET | `/api/integracao/avaliacoes` | X-API-Key | `desde` (ISO UTC, compara com `updated_at`), `limite` (padrão 5000, máx 20000), `formato` (`csv`) | `{ itens, proximoDesde }` ou CSV com as colunas, nesta ordem: `avaliacao_id, pedido_id, sku, usuario_hash, nota, titulo, comentario, avaliado_em, updated_at, origem` (migração 008). `titulo` sai sempre vazio (não existe no site); `avaliado_em` = criação; `origem` = `APP` fixo na exportação (no banco continua `SITE`/`HISTORICO`). Só saem avaliações feitas no site, nunca o histórico importado. Avaliação editada ganha novo `updated_at` e volta no próximo lote |
 
 O preço e o total são **sempre calculados pelo servidor**; o front só exibe. A finalização cobra o preço atual do banco (D7).
 
@@ -104,11 +104,13 @@ O preço e o total são **sempre calculados pelo servidor**; o front só exibe. 
 ## Eventos de Analytics (D-23)
 
 Gravados **exclusivamente pelo back-end** em `loja.analytics_eventos` quando o cabeçalho `X-Sessao-Id` (UUID válido) for enviado pelo front-end:
-- `session_start`: gerado na primeira ocorrência da sessão.
+- `session_start`: sempre o primeiro evento da sessão. Os eventos de uma mesma sessão são gravados um de cada vez (trava por sessão), e o primeiro deles grava `session_start` antes de si.
 - `view_product`: gerado ao consultar `GET /api/produtos/:id` com sucesso.
 - `add_to_cart`: gerado ao aumentar a quantidade de uma variação (sku + tamanho + cor) em `PUT /api/carrinho`.
-- `begin_checkout`: gerado uma vez por sessão em `POST /api/checkout/iniciado` ou ao transicionar `ultimaEtapa` para `CHECKOUT_INICIADO` no carrinho.
-- `purchase`: gerado ao finalizar o pedido em `POST /api/carrinho/finalizar`.
+- `begin_checkout`: gerado uma vez por sessão em `POST /api/checkout/iniciado` ou ao transicionar `ultimaEtapa` para `CHECKOUT_INICIADO` no carrinho. Se a compra for finalizada numa sessão sem `begin_checkout`, ele é gravado logo antes do `purchase`.
+- `purchase`: gravado na **mesma transação** que finaliza o pedido em `POST /api/carrinho/finalizar` (se a transação falhar, nem o pedido nem o evento ficam). Um único `purchase` por pedido. Sem `X-Sessao-Id`, a compra recebe uma sessão própria (`session_start`, `begin_checkout`, `purchase`).
+
+**Sessão (front-end):** o `sessaoId` é um UUID por aba, guardado em `sessionStorage` (ou em memória, se bloqueado). Ele é trocado **depois de cada compra** e **após 30 minutos sem requisições**; o próximo evento abre uma nova sessão com `session_start`. Dados gravados antes desta regra não foram alterados.
 
 ## Erros
 

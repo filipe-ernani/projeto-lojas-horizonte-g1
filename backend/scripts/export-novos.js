@@ -28,9 +28,10 @@ const COLUNAS_EVENTOS = [
   "sku", "quantidade", "valor", "pedido_id", "updated_at", "origem",
 ];
 
+// Ordem e nomes acordados com a Engenharia de Dados (migração 008)
 const COLUNAS_AVALIACOES = [
-  "avaliacao_id", "pedido_id", "usuario_hash", "sku",
-  "nota", "comentario", "criado_em", "updated_at", "origem",
+  "avaliacao_id", "pedido_id", "sku", "usuario_hash", "nota",
+  "titulo", "comentario", "avaliado_em", "updated_at", "origem",
 ];
 
 // Relê um trecho anterior à marca para alcançar transações confirmadas com atraso.

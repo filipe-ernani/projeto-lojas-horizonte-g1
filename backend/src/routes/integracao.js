@@ -51,14 +51,16 @@ const COLUNAS_EVENTOS = [
   "origem",
 ];
 
+// Ordem e nomes acordados com a Engenharia de Dados (migração 008)
 const COLUNAS_AVALIACOES = [
   "avaliacao_id",
   "pedido_id",
-  "usuario_hash",
   "sku",
+  "usuario_hash",
   "nota",
+  "titulo",
   "comentario",
-  "criado_em",
+  "avaliado_em",
   "updated_at",
   "origem",
 ];
