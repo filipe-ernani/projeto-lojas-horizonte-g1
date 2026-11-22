@@ -164,3 +164,4 @@ kaggle.json
 data/olist/
 data/saida/
 *.parquet
+backend/exports/
