@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 420" width="460" height="420" xmlns:c2pa="http://c2pa.org/manifest"><title>Hori neutra</title><rect id="fundo" width="460" height="420" rx="32" fill="#FAF7F2"/><g id="hori-neutra">
+ <ellipse cx="200" cy="392" rx="95" ry="7" fill="#6B4E3D" opacity=".12"><animate attributeName="rx" values="95;86;95" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1"/></ellipse>
+ <g transform="translate(57 120) scale(2.6)">
+  <animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;0 -3;0 0" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1"/>
+  <path id="sol" d="M0.65 58A50 50 0 1 1 99.35 58Z" fill="#C9795D"/>
+  <path id="sorriso" transform="translate(10)" d="M2.3 65A50 50 0 0 0 97.7 65Z" fill="#6B4E3D"/>
+  <g id="olhos"><animateTransform attributeName="transform" type="translate" values="0 0;0 0;3 0;3 0;-3 0;-3 0;0 0" keyTimes="0;.3;.38;.5;.58;.7;1" dur="5s" repeatCount="indefinite"/>
+   <ellipse cx="35" cy="37" rx="5.5" ry="5.5" fill="#6B4E3D"><animate attributeName="ry" values="5.5;5.5;.8;5.5;5.5;.8;5.5;5.5" keyTimes="0;.18;.21;.24;.8;.83;.86;1" dur="5s" repeatCount="indefinite"/></ellipse>
+   <ellipse cx="65" cy="37" rx="5.5" ry="5.5" fill="#6B4E3D"><animate attributeName="ry" values="5.5;5.5;.8;5.5;5.5;.8;5.5;5.5" keyTimes="0;.18;.21;.24;.8;.83;.86;1" dur="5s" repeatCount="indefinite"/></ellipse>
+  </g></g></g></svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 420" width="460" height="420" xmlns:c2pa="http://c2pa.org/manifest">
+<title>Hori pensando</title>
+<rect id="fundo" width="460" height="420" rx="32" fill="#1C1613"/>
+<g id="hori-pensando">
+ <ellipse cx="200" cy="392" rx="95" ry="7" fill="#F3ECE2" opacity=".12"></ellipse>
+ <g transform="translate(57 120) scale(2.6)">
+  
+  <path id="sol" d="M0.65 58A50 50 0 1 1 99.35 58Z" fill="#E08F70"/>
+  <path id="sorriso" transform="translate(10)" d="M2.3 65A50 50 0 0 0 97.7 65Z" fill="#F3ECE2">
+   
+  </path>
+  <g id="olhos">
+   
+   <ellipse cx="35" cy="37" rx="5.5" ry="5.5" fill="#1C1613"></ellipse>
+   <ellipse cx="65" cy="37" rx="5.5" ry="5.5" fill="#1C1613"></ellipse>
+  </g>
+ </g>
+ <g id="pensamento" fill="#E08F70">
+  <circle cx="352" cy="132" r="5"></circle>
+  <circle cx="380" cy="98" r="8"></circle>
+  <circle cx="414" cy="56" r="13"></circle>
+ </g>
+</g></svg>

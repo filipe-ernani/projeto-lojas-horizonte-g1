@@ -15,6 +15,7 @@ const SUGESTOES = [
  * como texto (nunca como HTML).
  */
 export default function ChatMessagesList({
+  boasVindas = "",
   mensagens = [],
   digitando = false,
   erro = null,
@@ -30,29 +31,34 @@ export default function ChatMessagesList({
 
   return (
     <div className={styles.messagesContainer}>
-      {mensagens.length === 0 ? (
-        <div className={styles.welcomeBox}>
-          <p className={styles.welcomeText}>
-            Olá! Posso ajudar a escolher produtos e tirar dúvidas sobre a loja.
-          </p>
-          <ul className={styles.sugestoes} aria-label="Sugestões de perguntas">
-            {SUGESTOES.map((sugestao) => (
-              <li key={sugestao}>
-                <button
-                  type="button"
-                  className={styles.sugestao}
-                  onClick={() => onSugestao?.(sugestao)}
-                  disabled={digitando}
-                >
-                  {sugestao}
-                </button>
-              </li>
-            ))}
-          </ul>
+      {boasVindas ? (
+        <div className={`${styles.messageRow} ${styles.assistantRow}`}>
+          <div className={`${styles.bubble} ${styles.assistantBubble}`}>
+            <span className="sr-only">Hori:</span>
+            <p className={styles.bubbleText}>{boasVindas}</p>
+          </div>
         </div>
       ) : null}
 
+      {mensagens.length === 0 ? (
+        <ul className={styles.sugestoes} aria-label="Sugestões de perguntas">
+          {SUGESTOES.map((sugestao) => (
+            <li key={sugestao}>
+              <button
+                type="button"
+                className={styles.sugestao}
+                onClick={() => onSugestao?.(sugestao)}
+                disabled={digitando}
+              >
+                {sugestao}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
       <div role="log" aria-live="polite" aria-label="Mensagens do chat" className={styles.log}>
+
         {mensagens.map((msg) => {
           const ehUsuario = msg.autor === "usuario";
           return (

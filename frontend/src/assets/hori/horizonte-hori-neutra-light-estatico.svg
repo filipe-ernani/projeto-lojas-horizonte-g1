@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 420" width="460" height="420" xmlns:c2pa="http://c2pa.org/manifest"><title>Hori neutra</title><rect id="fundo" width="460" height="420" rx="32" fill="#FAF7F2"/><g id="hori-neutra">
+ <ellipse cx="200" cy="392" rx="95" ry="7" fill="#6B4E3D" opacity=".12"></ellipse>
+ <g transform="translate(57 120) scale(2.6)">
+  
+  <path id="sol" d="M0.65 58A50 50 0 1 1 99.35 58Z" fill="#C9795D"/>
+  <path id="sorriso" transform="translate(10)" d="M2.3 65A50 50 0 0 0 97.7 65Z" fill="#6B4E3D"/>
+  <g id="olhos">
+   <ellipse cx="35" cy="37" rx="5.5" ry="5.5" fill="#6B4E3D"></ellipse>
+   <ellipse cx="65" cy="37" rx="5.5" ry="5.5" fill="#6B4E3D"></ellipse>
+  </g></g></g></svg>

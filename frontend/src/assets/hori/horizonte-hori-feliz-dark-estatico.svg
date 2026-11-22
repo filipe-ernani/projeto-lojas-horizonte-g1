@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 420" width="460" height="420" xmlns:c2pa="http://c2pa.org/manifest"><title>Hori feliz</title><rect id="fundo" width="460" height="420" rx="32" fill="#1C1613"/><g id="hori-feliz">
+ <ellipse cx="200" cy="392" rx="95" ry="7" fill="#F3ECE2" opacity=".12"></ellipse>
+ <g transform="translate(57 120) scale(2.6)">
+  
+  <g>
+  <path id="sol" d="M0.65 58A50 50 0 1 1 99.35 58Z" fill="#E08F70"/>
+  <path id="sorriso" transform="translate(10)" d="M2.3 65A50 50 0 0 0 97.7 65Z" fill="#F3ECE2"/>
+  <g id="olhos"><path d="M28 41Q35 30 42 41" fill="none" stroke="#1C1613" stroke-width="4.5" stroke-linecap="round"/><path d="M58 41Q65 30 72 41" fill="none" stroke="#1C1613" stroke-width="4.5" stroke-linecap="round"/></g></g></g>
+ <g id="brilhos"><g transform="translate(60 120)"><g opacity="1"><path d="M0 -11L3 -3L11 0L3 3L0 11L-3 3L-11 0L-3 -3Z" fill="#E08F70" transform="scale(1.1)"/></g></g><g transform="translate(388 150)"><g opacity="1"><path d="M0 -11L3 -3L11 0L3 3L0 11L-3 3L-11 0L-3 -3Z" fill="#E08F70" transform="scale(1.4)"/></g></g><g transform="translate(340 66)"><g opacity="1"><path d="M0 -11L3 -3L11 0L3 3L0 11L-3 3L-11 0L-3 -3Z" fill="#E08F70" transform="scale(1)"/></g></g></g></g></svg>
