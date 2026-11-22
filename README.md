@@ -40,13 +40,12 @@ Ambiente de testes utilizado para demonstrar a solução:
 - **BI & Analytics (Henry):** Dicionário de métricas, Databricks AI/BI Dashboard e relatórios automatizados consumindo a camada Gold.
 
 ## 6. Governança e Cronograma Ágil
-O acompanhamento do projeto é realizado através do Kanban neste repositório, com o desenvolvimento estruturado em 5 dias úteis de Sprint, culminando na apresentação final.
+O projeto foi estruturado utilizando a metodologia ágil, com o desenvolvimento planejado para uma Sprint de 5 dias úteis. O acompanhamento micro das tarefas, bloqueios e relatórios diários (Dailies) está documentado no nosso quadro Kanban e na pasta `docs/agile/`.
 
-| Data | Foco | Entregáveis Reais |
+| Sprint | Foco | Entregáveis Planejados |
 | :--- | :--- | :--- |
-| **13/11 (D1)** | Planejamento | Kick-off, Setup do GitHub, contas Databricks, leitura inicial do Olist. |
-| **16/11 (D2)** | Estruturação | Kanban padronizado, V1 do Frontend apresentada, decisão de arquitetura local. |
-| **17/11 (D3)** | Dados & Escopo | Camada Silver (ERP) concluída, Design visual aprovado, foco da IA definido em Recomendação de Produtos. |
-| **18/11 (D4)** | Integração | Fluxo de dados mapeado (5 KPIs), estrutura do Pitch Deck, desenvolvimento da Camada Gold. |
-| **19/11 (D5)** | Validação | Conclusão da Camada Gold e do modelo de IA, ensaio e preparação final. |
-| **23/11** | Apresentação | Apresentação oficial do MVP e proposta técnica para a banca avaliadora. |
+| **Dia 1** | Planejamento & Setup | Kick-off do projeto, estruturação do repositório no GitHub, setup do Databricks e análise exploratória do dataset. |
+| **Dia 2** | Desenho & Arquitetura | Padronização do Kanban, desenho da arquitetura GCP e criação dos primeiros protótipos do Frontend. |
+| **Dia 3** | Construção (Dados & Web) | Finalização do pipeline de ingestão (Camadas Bronze e Silver) e implementação do catálogo/carrinho na aplicação Web. |
+| **Dia 4** | Integração (IA & BI) | Consolidação da Camada Gold, integração do Agente de IA (Ori) e construção do Dashboard de Indicadores (AI/BI). |
+| **Dia 5** | Validação & Entrega | Testes de integração (Docker Compose), validação das regras de negócio, construção do Pitch Deck e ensaio da apresentação. |
