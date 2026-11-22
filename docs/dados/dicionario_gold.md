@@ -120,14 +120,25 @@ Produtos para o agente de recomendação (D21). **Grão:** uma linha por produto
 | `descricao` | STRING | Uma ou duas frases sobre o produto |
 | `ocasioes` | STRING | Ocasiões de uso separadas por `;` (ex.: `treino;corrida`) |
 | `imagem_url` | STRING | `imagens/{categoria}/{tipo}.png` |
-| `nota_media`, `qtd_avaliacoes` | DECIMAL(3,2), INT | Vazias até a `gold_avaliacoes` existir |
+| `nota_media` | DECIMAL(3,2) | Média das notas das avaliações válidas do site (D25); vazia se o produto não tem avaliação |
+| `qtd_avaliacoes` | BIGINT | Quantidade de avaliações válidas (0 se não tem) |
 | `unidades_vendidas` | BIGINT | Loja física + site no período (o marketplace não tem SKU do catálogo, D12) |
 | `unidades_30_dias` | BIGINT | Unidades nos 30 dias até a venda mais recente |
 
-## gold_avaliacoes (pendente)
+## gold_avaliacoes
 
-Nota e texto das avaliações, para o agente e para a vitrine do site. **Grão:** uma linha por avaliação.
-Fonte: as avaliações sintéticas criadas pelo Emanuel e pelo Henry, tratadas no pipeline. Colunas previstas: `avaliacao_id`, `sku`, `nota` (1 a 5), `comentario`, `data`.
+Nota e texto das avaliações de produto do site, para o agente (D21) e, se o Caio usar, para a vitrine. **Grão:** uma linha por avaliação válida.
+Fonte: `gera_avaliacoes.py` (D25), calibrado pelas avaliações reais do Olist; depois, as avaliações da API. Só entram avaliações com nota de 1 a 5, SKU do catálogo e compra anterior do mesmo cliente.
+**Sem `usuario_hash` e `pedido_id`:** o agente conversa com clientes e não precisa saber quem avaliou.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `avaliacao_id` | STRING | Identificador (`H-` no histórico) |
+| `sku` | STRING | Produto avaliado (liga com a `gold_catalogo`) |
+| `nome_produto`, `categoria`, `grupo` | STRING | Do catálogo (`dim_produto`), não do arquivo de avaliações |
+| `nota` | INT | De 1 a 5 |
+| `titulo`, `comentario` | STRING | Podem ser vazios: muita avaliação tem só a nota |
+| `data` | DATE | Dia da avaliação (horário de Brasília) |
 
 ## dim_data e dim_loja (views)
 
@@ -227,6 +238,8 @@ GROUP BY data;
 
 ## Valores de referência (conferidos em 19/11/2026)
 
+Só o histórico. A cada carga ao vivo (D27), os números do site crescem com os pedidos da API: depois do teste de 20/11, o site tem 31.013 unidades e R$ 2.390.208,82.
+
 | Canal | Unidades | Receita | Pedidos | Ticket médio |
 |---|---|---|---|---|
 | Loja física | 403.365 | R$ 30.795.090,78 | 225.151 | R$ 136,78 |
@@ -235,10 +248,12 @@ GROUP BY data;
 
 Site: 669.148 sessões, conversão de 3,02%, abandono de carrinho de 69,8%, cancelamento de 5,1%.
 Catálogo: 200 produtos, 434.376 unidades vendidas (loja física + site).
+Avaliações (20/11/2026): 2.532 válidas, nota média 4,05, 1.024 com comentário, 197 produtos avaliados.
 
 ## Limitações
 
-- **Dados sintéticos:** loja física e site são gerados (D17, D23), calibrados pelo Olist; só o marketplace é real.
+- **Dados sintéticos:** loja física, site e avaliações são gerados (D17, D23, D25), calibrados pelo Olist; só o marketplace é real.
+- **Textos das avaliações montados por regra** (D25): variam pouco, e a nota média de cada produto vem de uma premissa de qualidade por SKU.
 - **Margem do marketplace estimada** (`custo_estimado = true`).
 - **Estoque só da loja física.**
 - **Venda da loja física subestima a demanda nos picos:** quando o estoque zera, a venda perdida não aparece (D17).

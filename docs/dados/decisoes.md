@@ -41,6 +41,9 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 | D22 | Consumidores leem a gold no workspace do pipeline, só com leitura | Aceita |
 | D23 | Premissas do gerador do histórico do site | Proposta |
 | D24 | Contrato da camada gold | Proposta |
+| D25 | Avaliações sintéticas do site, calibradas pelo Olist | Proposta |
+| D26 | Orquestração com um Job do Databricks, a partir do main | Aceita |
+| D27 | Carga ao vivo do site por micro-lote sob demanda | Proposta |
 
 ---
 
@@ -300,6 +303,10 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 - **Equivalente no GCP:** papel `roles/bigquery.dataViewer` no dataset `gold` e `roles/bigquery.jobUser` no projeto, para executar consultas.
 - **Limitações:** no Free Edition, usuários adicionados não podem ser removidos da conta; as consultas deles usam a cota de compute do workspace do pipeline.
 - **Responsável:** Diego.
+- **Complemento (20/11):**
+  - O agente do Emanuel se conecta ao SQL warehouse com um token pessoal do próprio Emanuel (o administrador deu a ele *Can Use* em tokens) e herda só a leitura da gold. O token fica no `.env` local, fora do Git.
+  - Para a carga ao vivo (D27), o Caio recebe só o necessário: `USE CATALOG`, `USE SCHEMA` em `bronze`, `READ VOLUME, WRITE VOLUME` em `horizonte.bronze.landing` e *Can Manage Run* no Job `horizonte_site_ao_vivo`. No Unity Catalog a permissão vale para o Volume inteiro, não para uma pasta: em produção, a API teria um Volume (ou bucket) só dela.
+  - Equivalentes no GCP: conta de serviço do agente com `roles/bigquery.dataViewer` no dataset `gold` e `roles/bigquery.jobUser`; conta de serviço da API com `roles/storage.objectCreator` no bucket de entrada.
 
 ## D23 · Premissas do gerador do histórico do site
 
@@ -323,3 +330,45 @@ Registro das decisões tomadas na frente de dados do projeto Lojas Horizonte: o 
 - **Receita e ticket médio sem frete em todos os canais:** o ERP não tem frete e o marketplace foi tratado sem frete (D20); o contrato com a API calcula o ticket com frete, mas isso deixaria os canais incomparáveis. O frete do site continua disponível na silver.
 - **Ticket e taxas de um período** são calculados somando numerador e denominador, nunca pela média dos valores diários.
 - **Limitações:** estoque só da loja física (D23); margem do marketplace estimada (D20).
+
+## D25 · Avaliações sintéticas do site, calibradas pelo Olist
+
+- **Data:** 2026-11-20
+- **Status:** Proposta (validar colunas com Caio e Emanuel)
+- **Contexto:** o agente (D21) precisa de avaliações com nota e texto ligadas ao SKU. A D23 previa que viriam de uma tabela do Emanuel e do Henry; essa tabela foi descartada.
+- **Decisão:** as avaliações são geradas por `data/geradores/gera_avaliacoes.py` a partir dos pedidos finalizados do histórico do site, com seed fixa e números e frases na seção `avaliacoes` do `parametros.yaml`. Cada avaliação pertence a um item comprado (mesmo `usuario_hash`, `pedido_id` e `sku`), uma por cliente e SKU, com data posterior à compra e anterior ao corte. Colunas propostas para o `avaliacoes.csv` da v1.1: `avaliacao_id, pedido_id, sku, usuario_hash, nota, titulo, comentario, avaliado_em, updated_at, origem`.
+- **Calibração pelo Olist** (`olist_order_reviews`, notebook `02_perfil_olist`, seções 6 e 7): distribuição das notas, chance de comentário e de título por nota e prazo até avaliar (mediana de 13 dias, p90 de 26).
+- **Premissas:** 10% dos itens recebem avaliação (no Olist a pesquisa é automática; avaliação voluntária fica entre 3% e 10% no mercado); qualidade por SKU (algumas notas médias bem acima ou abaixo da média, mantendo a distribuição geral do Olist); textos montados por regra a partir da nota e do tipo de produto.
+- **Sujeira plantada:** 1% de linhas duplicadas, 0,5% de nota inválida (0 ou 6) e 0,5% de SKU sem cadastro. Comentário vazio não é sujeira: a silver marca, mas a avaliação é válida.
+- **Alternativas descartadas:** textos reais do Olist (falam do pedido e da entrega, não do produto, e não têm SKU do catálogo, D12); texto gerado por IA (não reproduzível nem verificável).
+- **Resultado** (seed 42; conteúdo idêntico a cada execução): 2.584 linhas, sendo 2.558 avaliações e 26 duplicadas; 13 com nota inválida e 13 com SKU sem cadastro; mediana de 9 avaliações por SKU, 3 SKUs sem avaliação.
+- **Substitui:** a limitação da D23 sobre a origem das avaliações.
+
+## D26 · Orquestração com um Job do Databricks, a partir do main
+
+- **Data:** 2026-11-20
+- **Status:** Aceita
+- **Contexto:** os notebooks rodavam um a um, à mão. A demo e a carga ao vivo (#14) precisam rodar o pipeline inteiro com um comando, na ordem certa.
+- **Decisão:** um Job do Databricks (`horizonte_pipeline`), definido em `databricks/jobs/horizonte_pipeline.json`, com uma tarefa por notebook: `00_setup`; três ramos em paralelo, um por fonte (01→03, 06→07, 08→09); depois 10, 11 e 12. O código vem do `main` do GitHub (`git_source`): o Job roda só o que passou por PR, e cada execução fica ligada a um commit. Compute serverless, uma execução por vez, disparo sob demanda (botão ou `demo.sh` da #14).
+- **Fora do Job:** `02_perfil_olist`, `04_calibracao_catalogo` e `05_sazonalidade`, que são análises de uma vez só, não etapas do pipeline.
+- **Ajuste:** a `dim_produto` passou do notebook 10 para o início do 09, que é o primeiro a usá-la. Antes, o 09 dependia de uma tabela criada depois dele e só funcionava porque ela já existia.
+- **Alternativas descartadas:** Airflow em Docker (infraestrutura a mais para manter, e Docker ainda não liberado na máquina corporativa); Lakeflow pipelines (limite de um pipeline ativo por tipo no Free Edition e reescrita dos notebooks).
+- **Equivalente no GCP:** Dataform com uma *workflow configuration* (ordem pelas dependências entre as tabelas), agendada ou disparada por arquivo novo no Cloud Storage. O Cloud Composer foi descartado pelo custo fixo alto para o porte.
+
+## D27 · Carga ao vivo do site por micro-lote sob demanda
+
+- **Data:** 2026-11-20
+- **Status:** Proposta (pendências com o Caio, abaixo)
+- **Contexto:** pedidos, eventos e avaliações feitos no site (Postgres local da API) precisam chegar à gold durante a demo. O Databricks Free Edition não alcança um banco local, e o CDC por log (Lakeflow Connect, equivalente ao Datastream) não está disponível: conector de PostgreSQL em prévia, exige compute clássico e acesso de rede ao banco.
+- **Decisão:** CDC por consulta, com marca d'água no `updated_at`: o `npm run export:novos` da API exporta só o que mudou desde a última exportação (com 5 minutos de sobreposição). O `databricks/carga_ao_vivo.sh` exporta, envia cada CSV para `landing/site/api/<tabela>/` e roda o Job `horizonte_site_ao_vivo` (08 → 09 → 10 → 11 → 12); se nada for novo, não dispara o Job. A bronze lê histórico e API juntos, e a silver fica com a versão mais recente de cada registro.
+- **Execução na apresentação:** na máquina do Caio, onde estão a API e o banco, com a CLI logada no usuário dele e só as permissões do complemento da D22.
+- **Latência:** cerca de 3 minutos por rodada (gold pronta em ~2,7 minutos): micro-lote sob demanda, não tempo real. Suficiente para a dor do cliente (relatórios montados à mão).
+- **Teste (20/11):** exportação real da API de 18/11 (1 pedido, 2 itens, 5 eventos, `origem = APP`). O pedido de 00:56 UTC de 18/11 entrou no dia 17/11 (Brasília); a gold do site passou a 31.013 unidades e R$ 2.390.208,82; qualidade com 23 OK e 2 INFO.
+- **Limitações:**
+  - não enxerga exclusões no banco (só o que muda de `updated_at`);
+  - depende de alguém disparar o script;
+  - os IDs da API são sequenciais: se o banco for recriado, colidem com os já enviados e a silver misturaria registros. Mitigação: não recriar o banco, ou limpar `landing/site/api/` e rodar o Job completo. Em produção, IDs únicos (UUID);
+  - permissão por Volume, não por pasta (D22).
+- **Alternativas descartadas:** Lakeflow Connect (motivos acima); pipeline contínuo (Lakeflow Declarative Pipelines: consumo constante da cota e reescrita dos notebooks); a API gravar direto no Volume a cada pedido (a loja passaria a depender da análise); arquivos de exportação pelo Git (dados num repositório público).
+- **Equivalente no GCP:** Datastream lendo o log do Cloud SQL e entregando no BigQuery de forma contínua, inclusive exclusões, e Dataform com tabelas incrementais.
+- **A confirmar:** exportação de avaliações com as mesmas colunas do histórico e `origem = 'APP'`; leitura da coluna `parcelas` junto com o histórico; acesso e CLI do Caio; ensaio com a configuração da apresentação.
