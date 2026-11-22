@@ -5,22 +5,25 @@
   gap: var(--space-1);
 }
 
-.starBox {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 0;
+.estrela {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
 }
 
-.starOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  line-height: 0;
+/* Mesmo traço e cor de contorno nas estrelas cheia, vazia e parcial. */
+.contorno {
+  stroke: var(--color-star);
+}
+
+.stopCheio {
+  stop-color: var(--color-star);
+  stop-opacity: 1;
+}
+
+.stopVazio {
+  stop-color: var(--color-star);
+  stop-opacity: 0;
 }
 
 .starPreenchida {

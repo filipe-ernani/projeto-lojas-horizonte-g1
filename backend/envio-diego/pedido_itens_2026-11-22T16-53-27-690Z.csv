@@ -1,0 +1,4 @@
+item_id,pedido_id,sku,quantidade,preco_unitario,tamanho,cor,updated_at,origem
+PI-240,P-22,HZ-ACE-025,1,316.90,Único,Vinho,2026-11-20T20:31:29.184Z,APP
+PI-249,P-24,HZ-MAS-017,1,55.90,GG,Bege,2026-11-22T16:14:35.791Z,APP
+PI-248,P-24,HZ-CAS-008,1,166.90,Único,Verde,2026-11-22T16:14:35.791Z,APP
