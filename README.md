@@ -36,7 +36,7 @@ Ambiente de testes utilizado para demonstrar a solução:
 ## 5. Equipe e Responsabilidades
 - **PMO (Filipe):** Governança ágil, condução das Dailies, mapeamento de riscos, gestão de resposta a incidentes (SLA 99.9%) e estimativa de custos no GCP.
 - **Engenharia de Dados (Diego):** Pipeline Medallion (Bronze, Silver, Gold), arquitetura de dados e geradores de dados sintéticos para simulação de vendas.
-- **Engenharia de IA (Emanuel):** Desenvolvimento do assistente inteligente "Ori" no ADK com pesquisa Lexical e modelo de previsão de demandas para o painel.
+- **Engenharia de IA (Emanuel):** Desenvolvimento do assistente inteligente "Hori" no ADK com pesquisa Lexical e modelo de previsão de demandas para o painel.
 - **FullStack (Caio):** API FastAPI e interface Web Frontend integrados via Docker Compose, sistema de autenticação e simulação de escalabilidade.
 - **BI & Analytics (Henry):** Dicionário de métricas, modelagem de dados para análise e Databricks AI/BI Dashboard consumindo a camada Gold.
 
