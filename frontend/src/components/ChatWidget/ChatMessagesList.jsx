@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import Button from "@/components/ui/Button/Button";
 import ChatProductCard from "./ChatProductCard";
+import MarkdownText from "./MarkdownText";
 import styles from "./ChatMessagesList.module.css";
 
 const SUGESTOES = [
@@ -64,7 +65,11 @@ export default function ChatMessagesList({
                   className={`${styles.bubble} ${ehUsuario ? styles.userBubble : styles.assistantBubble}`}
                 >
                   <span className="sr-only">{ehUsuario ? "Você disse:" : "Assistente:"}</span>
-                  <p className={styles.bubbleText}>{msg.texto}</p>
+                  {ehUsuario ? (
+                    <p className={styles.bubbleText}>{msg.texto}</p>
+                  ) : (
+                    <MarkdownText texto={msg.texto} />
+                  )}
                 </div>
                 {!ehUsuario && msg.produtos?.length > 0 ? (
                   <ul className={styles.produtos} aria-label="Produtos citados">

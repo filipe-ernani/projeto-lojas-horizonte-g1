@@ -1,4 +1,6 @@
+import os
 from collections.abc import Sequence
+from decimal import Decimal
 from math import isfinite
 from typing import Any
 
@@ -46,9 +48,35 @@ def build_product_documents(
         if product_id is None:
             continue
         document = _document(
-            row, product_id, ("nome", "modelo", "categoria", "grupo"), source, "product"
+            row,
+            product_id,
+            (
+                "nome",
+                "modelo",
+                "categoria",
+                "grupo",
+                "tipo",
+                "variacao",
+                "cor",
+                "descricao",
+                "ocasioes",
+            ),
+            source,
+            "product",
         )
         if document is not None:
+            if "nota_media" in row or "qtd_avaliacoes" in row:
+                rating, count = row.get("nota_media"), row.get("qtd_avaliacoes")
+                document["review_count"] = count if type(count) is int and count >= 0 else None
+                document["average_rating"] = (
+                    float(rating)
+                    if type(rating) in (int, float, Decimal)
+                    and isfinite(rating)
+                    and 1 <= rating <= 5
+                    and document["review_count"] is not None
+                    and document["review_count"] > 0
+                    else None
+                )
             documents.append(document)
     return documents
 
@@ -69,6 +97,7 @@ def _valid_review_rows(
                 )
 
     valid_rows = []
+    seen_ids: set[str] = set()
     for row in reviews:
         product_id = _identifier(row.get(product_id_field))
         if product_id is None:
@@ -77,6 +106,9 @@ def _valid_review_rows(
             review_id = _identifier(row.get(review_id_field))
             if review_id is None or len(product_links[review_id]) != 1:
                 continue
+            if review_id in seen_ids:
+                continue
+            seen_ids.add(review_id)
         valid_rows.append(row)
     return valid_rows
 
@@ -92,12 +124,32 @@ def build_review_documents(
     """Prepare explicitly linked reviews, preserving original IDs and source rows.
 
     Missing IDs, ambiguous product links and comments without text are omitted.
+    Repeated IDs retain the first valid source row; rows without IDs are not deduplicated.
     Pass review_id_field=None explicitly when the source has no review ID.
     """
-    documents = []
-    for row in _valid_review_rows(
+    rows = _valid_review_rows(
         reviews, product_id_field=product_id_field, review_id_field=review_id_field
-    ):
+    )
+    return _review_documents(
+        rows,
+        source=source,
+        product_id_field=product_id_field,
+        review_id_field=review_id_field,
+        text_fields=text_fields,
+    )
+
+
+def _review_documents(
+    rows: Sequence[dict[str, Any]],
+    *,
+    source: str,
+    product_id_field: str,
+    review_id_field: str | None,
+    text_fields: Sequence[str],
+) -> list[dict[str, Any]]:
+    """Build text documents from a batch whose links and IDs are already validated."""
+    documents = []
+    for row in rows:
         product_id = row[product_id_field]
         document = _document(row, product_id, text_fields, source, "review")
         if document is not None:
@@ -112,7 +164,7 @@ def load_documents_from_databricks(
     review_id_field: str | None = None,
     review_text_fields: Sequence[str] = (),
 ) -> list[dict[str, Any]]:
-    """Load the complete catalog; include reviews when their text fields are supplied.
+    """Load the complete catalog; include reviews when fields and source are configured.
 
     Call at startup or for an explicit rebuild, never for each user query.
     Errors propagate to the caller, leaving any existing retriever unchanged.
@@ -121,7 +173,12 @@ def load_documents_from_databricks(
         raise ValueError("Provide review_text_fields and a non-empty review_id_field when set")
 
     table, product_id, _ = catalog_identifiers()
-    review_identifiers = reviews_identifiers() if review_text_fields else None
+    review_identifiers = None
+    if review_text_fields and (
+        os.getenv("DATABRICKS_REVIEWS_TABLE", "").strip()
+        or os.getenv("DATABRICKS_REVIEWS_PRODUCT_ID_COLUMN", "").strip()
+    ):
+        review_identifiers = reviews_identifiers()
     # SQL identifiers have already been validated; document metadata uses unquoted names.
     documents = build_product_documents(
         fetch_products(limit=None),
@@ -137,23 +194,20 @@ def load_documents_from_databricks(
             review_id_field=review_id_field,
         )
         ratings_by_product: dict[str, list[float]] = {}
-        seen_ids: set[str] = set()
         for row in reviews:
             rating = row.get("nota")
             if type(rating) not in (int, float) or not isfinite(rating) or not 1 <= rating <= 5:
                 continue
-            if review_id_field is not None:
-                review_id = row[review_id_field]
-                if review_id in seen_ids:
-                    continue
-                seen_ids.add(review_id)
             ratings_by_product.setdefault(row[review_product_id], []).append(float(rating))
         for document in documents:
+            # Gold catalog aggregates remain authoritative even if comments are partial.
+            if "average_rating" in document:
+                continue
             ratings = ratings_by_product.get(document["product_id"], [])
             document["average_rating"] = sum(ratings) / len(ratings) if ratings else None
             document["review_count"] = len(ratings)
         documents.extend(
-            build_review_documents(
+            _review_documents(
                 reviews,
                 source=review_table.replace("`", ""),
                 product_id_field=review_product_id,

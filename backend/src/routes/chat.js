@@ -104,7 +104,7 @@ router.post("/chat", autenticacaoOpcional, async (req, res, next) => {
       if (!nome) {
         return erro400(res, "Produto do contexto não encontrado.");
       }
-      textoAgente = `[Contexto: o cliente está vendo o produto ${sku} - ${nome}.]\n${texto}`;
+      textoAgente = `[Contexto: o cliente está vendo o produto ${nome}.]\n${texto}`;
     }
 
     const config = lerConfigAdk();

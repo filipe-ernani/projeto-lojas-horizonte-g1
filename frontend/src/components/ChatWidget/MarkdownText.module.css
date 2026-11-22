@@ -1,0 +1,76 @@
+.markdown {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
+}
+
+.paragrafo,
+.titulo {
+  margin: var(--space-2) 0 0;
+}
+
+.lista,
+.listaNumerada {
+  margin: var(--space-1) 0 0;
+  padding-left: var(--space-5);
+}
+
+.lista {
+  list-style: disc;
+}
+
+.listaNumerada {
+  list-style: decimal;
+}
+
+.item {
+  margin: 0;
+  padding-left: var(--space-1);
+}
+
+.item + .item {
+  margin-top: var(--space-1);
+}
+
+.item::marker {
+  color: var(--color-muted);
+}
+
+/* Primeiro e último elemento sem margem extra */
+.markdown > :first-child {
+  margin-top: 0;
+}
+
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.negrito {
+  font-weight: var(--fw-semibold);
+}
+
+.codigo {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  padding: 0 var(--space-1);
+  background-color: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+
+.link {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
