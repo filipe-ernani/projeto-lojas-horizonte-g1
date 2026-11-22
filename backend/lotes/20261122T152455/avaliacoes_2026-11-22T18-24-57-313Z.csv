@@ -1,0 +1,2 @@
+avaliacao_id,pedido_id,sku,usuario_hash,nota,titulo,comentario,avaliado_em,updated_at,origem
+AV-17,P-28,HZ-INF-020,0b72b87f45ef2090,5,,Muito lindo esse conjunto,2026-11-22T18:24:33.474Z,2026-11-22T18:24:33.474Z,APP

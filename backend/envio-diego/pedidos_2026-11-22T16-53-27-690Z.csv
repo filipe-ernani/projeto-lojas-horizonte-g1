@@ -1,3 +1,0 @@
-pedido_id,usuario_hash,status,forma_pagamento,subtotal,frete,valor_total,finalizado_em,cancelado_em,updated_at,origem,parcelas
-P-22,03572e7e95a26c37,FINALIZADO,CARTAO_CREDITO,316.90,15.00,331.90,2026-11-20T20:31:29.184Z,,2026-11-20T20:31:29.184Z,APP,9
-P-24,0b72b87f45ef2090,FINALIZADO,PIX,222.80,15.00,237.80,2026-11-22T16:14:35.791Z,,2026-11-22T16:14:35.791Z,APP,1

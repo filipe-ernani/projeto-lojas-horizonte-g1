@@ -1,0 +1,4 @@
+item_id,pedido_id,sku,quantidade,preco_unitario,tamanho,cor,updated_at,origem
+PI-263,P-28,HZ-INF-020,1,106.90,10,Off-white,2026-11-22T18:23:41.726Z,APP
+PI-264,P-28,HZ-INF-013,1,48.90,8,Rosa,2026-11-22T18:23:41.726Z,APP
+PI-265,P-28,HZ-INF-004,1,31.90,10,Marrom,2026-11-22T18:23:41.726Z,APP

@@ -1,0 +1,2 @@
+item_id,pedido_id,sku,quantidade,preco_unitario,tamanho,cor,updated_at,origem
+PI-276,P-30,HZ-MAS-035,1,163.90,G,Verde,2026-11-22T18:39:15.221Z,APP

@@ -1,0 +1,4 @@
+avaliacao_id,pedido_id,sku,usuario_hash,nota,titulo,comentario,avaliado_em,updated_at,origem
+AV-14,P-24,HZ-CAS-008,0b72b87f45ef2090,2,,Muito ruim,2026-11-22T16:14:49.233Z,2026-11-22T16:14:49.233Z,APP
+AV-15,P-25,HZ-CAL-025,0b72b87f45ef2090,5,,Muito bonita e confortável,2026-11-22T17:32:51.632Z,2026-11-22T17:32:51.632Z,APP
+AV-16,P-26,HZ-ACE-017,0b72b87f45ef2090,2,,Muito ruim esse relógio,2026-11-22T17:44:52.935Z,2026-11-22T17:44:52.935Z,APP

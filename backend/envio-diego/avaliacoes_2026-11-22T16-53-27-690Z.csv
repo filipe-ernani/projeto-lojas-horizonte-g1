@@ -1,3 +1,0 @@
-avaliacao_id,pedido_id,sku,usuario_hash,nota,titulo,comentario,avaliado_em,updated_at,origem
-AV-12,P-22,HZ-ACE-025,03572e7e95a26c37,4,,"Muito boa, mas é pequena",2026-11-20T20:31:48.154Z,2026-11-20T20:40:52.443Z,APP
-AV-14,P-24,HZ-CAS-008,0b72b87f45ef2090,2,,Muito ruim,2026-11-22T16:14:49.233Z,2026-11-22T16:14:49.233Z,APP

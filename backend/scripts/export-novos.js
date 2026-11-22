@@ -14,24 +14,58 @@ dotenv.config({ path: path.resolve(process.cwd(), "backend/.env") });
 dotenv.config();
 
 const COLUNAS_PEDIDOS = [
-  "pedido_id", "usuario_hash", "status", "forma_pagamento",
-  "subtotal", "frete", "valor_total", "finalizado_em", "cancelado_em", "updated_at", "origem",
+  "pedido_id",
+  "usuario_hash",
+  "status",
+  "forma_pagamento",
+  "subtotal",
+  "frete",
+  "valor_total",
+  "finalizado_em",
+  "cancelado_em",
+  "updated_at",
+  "origem",
   "parcelas",
 ];
 
 const COLUNAS_PEDIDO_ITENS = [
-  "item_id", "pedido_id", "sku", "quantidade", "preco_unitario", "tamanho", "cor", "updated_at", "origem",
+  "item_id",
+  "pedido_id",
+  "sku",
+  "quantidade",
+  "preco_unitario",
+  "tamanho",
+  "cor",
+  "updated_at",
+  "origem",
 ];
 
 const COLUNAS_EVENTOS = [
-  "evento_id", "evento", "ocorrido_em", "sessao_id", "usuario_hash",
-  "sku", "quantidade", "valor", "pedido_id", "updated_at", "origem",
+  "evento_id",
+  "evento",
+  "ocorrido_em",
+  "sessao_id",
+  "usuario_hash",
+  "sku",
+  "quantidade",
+  "valor",
+  "pedido_id",
+  "updated_at",
+  "origem",
 ];
 
 // Ordem e nomes acordados com a Engenharia de Dados (migração 008)
 const COLUNAS_AVALIACOES = [
-  "avaliacao_id", "pedido_id", "sku", "usuario_hash", "nota",
-  "titulo", "comentario", "avaliado_em", "updated_at", "origem",
+  "avaliacao_id",
+  "pedido_id",
+  "sku",
+  "usuario_hash",
+  "nota",
+  "titulo",
+  "comentario",
+  "avaliado_em",
+  "updated_at",
+  "origem",
 ];
 
 // Relê um trecho anterior à marca para alcançar transações confirmadas com atraso.
@@ -39,7 +73,30 @@ const JANELA_SOBREPOSICAO_MS = 5 * 60 * 1000;
 const TAMANHO_PAGINA = 20000;
 
 function recuarMarca(marca) {
-  return new Date(new Date(marca).getTime() - JANELA_SOBREPOSICAO_MS).toISOString();
+  return new Date(
+    new Date(marca).getTime() - JANELA_SOBREPOSICAO_MS,
+  ).toISOString();
+}
+
+// Identifica o banco (sem usuário e sem senha) para que as marcas nunca sejam
+// aplicadas a um banco diferente daquele em que foram gravadas.
+// Usa só o primeiro trecho do host, para a URL interna e a externa do Render
+// (dpg-xxx-a e dpg-xxx-a.oregon-postgres.render.com) darem a mesma assinatura.
+function assinaturaBanco() {
+  const url = process.env.DATABASE_URL;
+  if (url) {
+    try {
+      const u = new URL(url);
+      const host =
+        u.hostname === "localhost" || /^[\d.]+$/.test(u.hostname)
+          ? u.hostname
+          : u.hostname.split(".")[0];
+      return `${host}/${u.pathname.replace(/^\//, "")}`;
+    } catch {
+      return "url-invalida";
+    }
+  }
+  return `${process.env.PGHOST || "?"}/${process.env.PGDATABASE || "?"}`;
 }
 
 // Lê todas as páginas a partir de `desde`, mantendo uma única linha por ID.
@@ -54,7 +111,9 @@ async function buscarLinhas(queryFn, colunaId, desde) {
     if (proximoDesde) ultimaMarca = proximoDesde;
     if (itens.length < TAMANHO_PAGINA) break;
     if (proximoDesde === cursor) {
-      throw new Error(`Mais de ${TAMANHO_PAGINA} linhas no mesmo milissegundo em ${colunaId}.`);
+      throw new Error(
+        `Mais de ${TAMANHO_PAGINA} linhas no mesmo milissegundo em ${colunaId}.`,
+      );
     }
     cursor = proximoDesde;
   }
@@ -73,6 +132,16 @@ function obterDiretorioExports() {
   return dir;
 }
 
+function marcasVazias() {
+  return {
+    pedidos: null,
+    pedidoItens: null,
+    eventos: null,
+    avaliacoes: null,
+    vistos: {},
+  };
+}
+
 function carregarMarcas(dir) {
   const arquivoMarca = path.join(dir, ".marca.json");
   if (fs.existsSync(arquivoMarca)) {
@@ -82,7 +151,7 @@ function carregarMarcas(dir) {
       // Ignora erro de leitura e inicia vazio
     }
   }
-  return { pedidos: null, pedidoItens: null, eventos: null, avaliacoes: null };
+  return marcasVazias();
 }
 
 function salvarMarcas(dir, marcas) {
@@ -97,13 +166,39 @@ async function exportarNovos() {
   if (idx !== -1 && args[idx + 1]) {
     desdeParam = args[idx + 1];
   }
+  const trocarBanco = args.includes("--trocar-banco");
 
   const dirExports = obterDiretorioExports();
-  const marcas = carregarMarcas(dirExports);
+  let marcas = carregarMarcas(dirExports);
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 
+  const assinatura = assinaturaBanco();
+  console.log(`Banco: ${assinatura}`);
   console.log(`Iniciando exportação incremental para ${dirExports}`);
-  if (desdeParam) console.log(`Reprocessamento solicitado com --desde: ${desdeParam}`);
+  if (desdeParam)
+    console.log(`Reprocessamento solicitado com --desde: ${desdeParam}`);
+
+  if (trocarBanco) {
+    const arquivoMarca = path.join(dirExports, ".marca.json");
+    if (fs.existsSync(arquivoMarca)) {
+      fs.copyFileSync(
+        arquivoMarca,
+        path.join(dirExports, ".marca.backup.json"),
+      );
+      console.log("Backup das marcas anteriores em .marca.backup.json");
+    }
+    marcas = marcasVazias();
+    console.log(
+      "--trocar-banco: marcas zeradas; a exportação recomeça deste banco.",
+    );
+  } else if (!desdeParam && marcas.banco && marcas.banco !== assinatura) {
+    console.error(
+      `ERRO: as marcas em .marca.json são do banco "${marcas.banco}", mas esta execução usa "${assinatura}".\n` +
+        "Confira o DATABASE_URL. Para recomeçar de propósito com este banco, use --trocar-banco.",
+    );
+    await pool.end();
+    process.exit(1);
+  }
 
   const tarefas = [
     {
@@ -137,46 +232,69 @@ async function exportarNovos() {
   ];
 
   marcas.vistos ??= {};
+  let gerouArquivo = false;
 
   for (const t of tarefas) {
     const marcaAnterior = marcas[t.chaveMarca];
-    const desde = desdeParam || (marcaAnterior ? recuarMarca(marcaAnterior) : null);
+    const desde =
+      desdeParam || (marcaAnterior ? recuarMarca(marcaAnterior) : null);
     const res = await buscarLinhas(t.queryFn, t.colunaId, desde);
 
     // Uma linha só é repetida se o ID e o updated_at forem os já exportados
-    const vistos = desdeParam ? {} : marcas.vistos[t.chaveMarca] || {};
-    const itensNovos = res.itens.filter((i) => vistos[i[t.colunaId]] !== i.updated_at);
-
-    const arquivoSaida = path.join(dirExports, `${t.tipo}_${timestamp}.csv`);
-    const csv = converterParaCsv(t.colunas, itensNovos);
-    fs.writeFileSync(arquivoSaida, csv, "utf8");
-
-    console.log(
-      `[${t.tipo}] ${itensNovos.length} novos registros exportados em: ${path.basename(arquivoSaida)}`,
+    const vistosAnteriores = desdeParam
+      ? {}
+      : marcas.vistos[t.chaveMarca] || {};
+    const itensNovos = res.itens.filter(
+      (i) => vistosAnteriores[i[t.colunaId]] !== i.updated_at,
     );
 
+    // Sem novidade: não grava CSV (evita arquivos só com cabeçalho)
+    if (itensNovos.length === 0) {
+      console.log(`[${t.tipo}] 0 novos registros (nenhum arquivo gerado)`);
+    } else {
+      const arquivoSaida = path.join(dirExports, `${t.tipo}_${timestamp}.csv`);
+      const csv = converterParaCsv(t.colunas, itensNovos);
+      fs.writeFileSync(arquivoSaida, csv, "utf8");
+      gerouArquivo = true;
+      console.log(
+        `[${t.tipo}] ${itensNovos.length} novos registros exportados em: ${path.basename(arquivoSaida)}`,
+      );
+    }
+
     const novaMarca =
-      marcaAnterior && (!res.ultimaMarca || new Date(marcaAnterior) > new Date(res.ultimaMarca))
+      marcaAnterior &&
+      (!res.ultimaMarca || new Date(marcaAnterior) > new Date(res.ultimaMarca))
         ? marcaAnterior
         : res.ultimaMarca;
 
     if (novaMarca) {
       marcas[t.chaveMarca] = novaMarca;
-      // Guarda só o que a próxima execução voltará a ler dentro da janela
+      // Guarda o que a próxima execução voltará a ler dentro da janela. MESCLA com o
+      // que já estava guardado (nunca substitui por um conjunto menor).
       const inicioJanela = new Date(recuarMarca(novaMarca));
-      marcas.vistos[t.chaveMarca] = Object.fromEntries(
+      const mantidos = Object.fromEntries(
+        Object.entries(vistosAnteriores).filter(
+          ([, upd]) => new Date(upd) >= inicioJanela,
+        ),
+      );
+      const lidos = Object.fromEntries(
         res.itens
           .filter((i) => new Date(i.updated_at) >= inicioJanela)
           .map((i) => [i[t.colunaId], i.updated_at]),
       );
+      marcas.vistos[t.chaveMarca] = { ...mantidos, ...lidos };
     }
   }
 
   if (!desdeParam) {
+    marcas.banco = assinatura;
     salvarMarcas(dirExports, marcas);
   }
 
   await pool.end();
+  console.log(
+    gerouArquivo ? `Lote: ${timestamp}` : "Nenhum arquivo gerado (nada novo).",
+  );
   console.log("Exportação incremental finalizada com sucesso!");
 }
 

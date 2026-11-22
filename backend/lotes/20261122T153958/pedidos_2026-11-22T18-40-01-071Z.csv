@@ -1,0 +1,2 @@
+pedido_id,usuario_hash,status,forma_pagamento,subtotal,frete,valor_total,finalizado_em,cancelado_em,updated_at,origem,parcelas
+P-30,0b72b87f45ef2090,FINALIZADO,PIX,163.90,15.00,178.90,2026-11-22T18:39:15.221Z,,2026-11-22T18:39:15.221Z,APP,1
