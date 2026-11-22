@@ -1,4 +1,4 @@
-import apiFetch, { obterSessaoId } from "./api";
+import apiFetch, { obterSessaoId, renovarSessaoId } from "./api";
 import { mapearCarrinho, mapearPedido } from "./mapeadores";
 
 /**
@@ -58,6 +58,9 @@ export async function finalizarCarrinho(dados = {}, opcoes = {}) {
     body: corpo,
     signal: opcoes.signal,
   });
+
+  // A compra encerra a sessão do funil: o próximo evento abre outra com session_start
+  renovarSessaoId();
 
   return mapearPedido(resposta);
 }
