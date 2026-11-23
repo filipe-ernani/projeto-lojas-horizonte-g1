@@ -18,7 +18,6 @@ Para suportar datas de pico (ex: 11/11 ou Black Friday), sem apresentar inativid
 - **Firebase Authentication:** Escalável gratuitamente até 50.000 MAUs (Monthly Active Users) → **$0,00 / mês**
 
 **Total Estimado:** **~$687,34 USD / mês** *(Nota FinOps: em ambiente de homologação ou sem Alta Disponibilidade no Cloud SQL, o custo cai para ~$423,00 USD / mês).*
-**Link da Estimativa Detalhada:** [GCP Pricing Calculator](https://cloud.google.com/products/calculator)
 
 ## 3. Diagrama da solução
 
