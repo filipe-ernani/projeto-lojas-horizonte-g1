@@ -1,5 +1,5 @@
 # Proposta de Arquitetura em Nuvem (GCP)
-*Nota do PMO: O MVP Lojas Horizonte foi construído e executado localmente via Docker Compose devido a restrições de sandbox. Este documento serve como Proposta Técnica e Estimativa de Custos para o ambiente de Produção do Cliente.*
+*Nota do PMO: O MVP Lojas Horizonte foi construído e executado localmente devido a restrições de sandbox. Este documento serve como Proposta Técnica e Estimativa de Custos para o ambiente de Produção do Cliente.*
 
 ## 1. Componentes da Arquitetura
 Para suportar datas de pico (ex: 11/11 ou Black Friday), sem apresentar inatividade ou lentidão, a infraestrutura ideal no Google Cloud será:
