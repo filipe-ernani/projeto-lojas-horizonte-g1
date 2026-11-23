@@ -5,18 +5,20 @@
 Para suportar datas de pico (ex: 11/11 ou Black Friday), sem apresentar inatividade ou lentidão, a infraestrutura ideal no Google Cloud será:
 - **Cloud Run:** Hospedagem da aplicação Web e API Node.js/Express. Escolhido por permitir auto-scaling instantâneo a partir de zero, absorvendo picos sem intervenção manual.
 - **Cloud SQL (PostgreSQL):** Banco de dados relacional para lidar com o alto volume de inserções da tabela `analytics_events` e catálogo de produtos em Alta Disponibilidade (HA).
-- **BigQuery:** Data Warehouse empresarial. Receberá dados paralelamente para as análises de BI e cálculo do Abandono de Carrinho sem onerar o banco de produção.
+- **BigQuery + Datastream:** Data Warehouse empresarial recebendo alterações via CDC (`Datastream`) e arquivos via `Cloud Storage`, permitindo análises de BI sem onerar o banco de produção.
+- **Vertex AI Agent Engine:** Hospedagem gerenciada do agente conversacional ADK (`Hori`).
 - **Firebase Authentication:** Serviço serverless gerido escolhido para a autenticação segura de utilizadores (Google e E-mail/Senha) de forma escalável.
 
 ## 2. Estimativa Mensal de Custos (GCP Pricing Calculator)
-**Premissas utilizadas para o cenário base (Crescimento de Ecommerce):**
-- *Cloud Run:* 4 vCPU, 8GB RAM, estimativa de 5 instâncias ativas durante 30% do mês.
-- *Cloud SQL:* 1 instância Enterprise for PostgreSQL (4 vCPU, 16GB RAM) + 100 GB de armazenamento SSD.
-- *BigQuery:* 50 GB de armazenamento ativo e 500 GB de processamento de queries/mês.
-- *Firebase Authentication:* Escalável gratuitamente até 50.000 MAUs (Monthly Active Users).
+**Premissas utilizadas para o cenário base (Região `us-central1` — Crescimento de E-commerce):**
+- **Cloud Run:** 4 vCPU, 8 GB RAM, média de 5 instâncias ativas durante 30% do mês (~1.095 horas-instância) → **~$122,64 / mês**
+- **Cloud SQL (Enterprise PostgreSQL):** 4 vCPU, 16 GB RAM, Alta Disponibilidade (HA) + 100 GB armazenamento SSD → **~$528,70 / mês**
+- **BigQuery:** 50 GB armazenamento ativo (40 GB cobráveis após Free Tier) + 500 GB queries/mês (cobertos pelo Free Tier de 1 TiB) → **~$1,00 / mês**
+- **Datastream + Cloud Storage + Vertex AI (Gemini API):** Volume baixo/moderado de CDC, bucket landing e chamadas do agente → **~$35,00 / mês**
+- **Firebase Authentication:** Escalável gratuitamente até 50.000 MAUs (Monthly Active Users) → **$0,00 / mês**
 
-**Total Estimado:** ~ $ 450,00 USD / mês (Custos do Firebase absorvidos no Free Tier para a dimensão atual).
-**Link da Estimativa Detalhada:** [Clique aqui para acessar a simulação no GCP](COLE_O_SEU_LINK_GERADO_AQUI_OU_INDIQUE_O_PDF)
+**Total Estimado:** **~$687,34 USD / mês** *(Nota FinOps: em ambiente de homologação ou sem Alta Disponibilidade no Cloud SQL, o custo cai para ~$423,00 USD / mês).*
+**Link da Estimativa Detalhada:** [GCP Pricing Calculator](https://cloud.google.com/products/calculator)
 
 ## 3. Diagrama da solução
 
